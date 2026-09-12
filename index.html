@@ -653,17 +653,41 @@ function telaChat(tela, repo, conversa) {
     ));
   }
 
-  function etapas(comentarios, desde) {
+  // Cancelar: para a execução no GitHub e deixa marcado na conversa.
+  // A mensagem "🛑" é ignorada pelo robô, então não começa outro pedido.
+  async function cancelarPedido(tituloDaConversa, botao) {
+    if (!confirm("Cancelar este pedido? O Claude para agora e nada é enviado ao GitHub.")) return;
+    vibrar(); botao.disabled = true; botao.textContent = "Cancelando…";
+    try {
+      const listas = await Promise.all(["in_progress", "queued", "waiting", "pending"].map((s) =>
+        gh(`/repos/${repo.full_name}/actions/workflows/lovablex.yml/runs?status=${s}&per_page=30`).catch(() => ({ workflow_runs: [] }))));
+      const rodando = listas.flatMap((l) => l.workflow_runs || []);
+      const desta = rodando.filter((r) => r.display_title === tituloDaConversa);
+      const alvos = desta.length ? desta : rodando;
+      await Promise.all(alvos.map((r) => gh(`/repos/${repo.full_name}/actions/runs/${r.id}/cancel`, { metodo: "POST" }).catch(() => null)));
+      await gh(`/repos/${repo.full_name}/issues/${numero}/comments`, { metodo: "POST", corpo: { body: "🛑 Pedido cancelado." } });
+      toast(alvos.length ? "Pedido cancelado ✓" : "Não havia nada rodando — marcado como cancelado");
+      assinatura = ""; clearTimeout(espera); ciclo();
+    } catch (e) {
+      toast(`Não consegui cancelar: ${e.message}`, 5000);
+      botao.disabled = false; botao.textContent = "Cancelar pedido";
+    }
+  }
+
+  function etapas(comentarios, desde, tituloDaConversa) {
     // pedido mais recente = a última mensagem da pessoa; acompanha só o que veio depois dela
     const depois = comentarios.filter((c) => new Date(c.created_at) >= new Date(desde));
     const comecou = depois.some(ehInicio);
     const terminou = depois.some((c) => ehRobo(c) && !ehInicio(c));
     if (terminou) return null;
     const item = (txt, estado) => el("div", { class: `etapa ${estado}` }, el("i", {}, estado === "feita" ? "✓" : ""), txt);
+    const cancelar = el("button", { class: "btn claro pequeno", style: "margin-top:10px;color:var(--vermelho)" }, "Cancelar pedido");
+    cancelar.onclick = () => cancelarPedido(tituloDaConversa, cancelar);
     return el("div", { class: "etapas" },
       item("Pedido recebido", "feita"),
       item("Claude trabalhando", comecou ? "agora" : ""),
-      item("Enviado ao GitHub", "")
+      item("Enviado ao GitHub", ""),
+      cancelar
     );
   }
 
@@ -675,9 +699,11 @@ function telaChat(tela, repo, conversa) {
       gh(`/repos/${repo.full_name}/issues/${numero}/comments?per_page=100`)
     ]);
     const nova = `${issue.updated_at}|${comentarios.length}|${comentarios.at(-1)?.updated_at || ""}`;
+    const ehCancelamento = (c) => !ehRobo(c) && /^🛑/.test(c.body || "");
     const ultimaDaPessoa = [...comentarios].reverse().find((c) => !ehRobo(c));
+    const cancelado = Boolean(ultimaDaPessoa && ehCancelamento(ultimaDaPessoa));
     const desde = ultimaDaPessoa ? ultimaDaPessoa.created_at : issue.created_at;
-    const final = !etapas(comentarios, desde);
+    const final = cancelado || !etapas(comentarios, desde, issue.title);
     if (nova === assinatura) return final;
     assinatura = nova;
 
@@ -687,11 +713,15 @@ function telaChat(tela, repo, conversa) {
     nos.push(bolhaEu([issue.title, issue.body].filter(Boolean).join("\n\n"), issue.created_at));
     for (const c of comentarios) {
       if (ehInicio(c)) continue;
+      if (ehCancelamento(c)) {
+        nos.push(el("div", { class: "bolha bot", style: "color:var(--vermelho)" }, "🛑 Pedido cancelado", el("span", { class: "hora" }, hora(c.created_at))));
+        continue;
+      }
       nos.push(ehRobo(c)
         ? el("div", { class: "bolha bot" }, markdownSimples(c.body), el("span", { class: "hora" }, hora(c.created_at)))
         : bolhaEu(c.body, c.created_at));
     }
-    const andamento = etapas(comentarios, desde);
+    const andamento = cancelado ? null : etapas(comentarios, desde, issue.title);
     if (andamento) nos.push(andamento);
     chat.replaceChildren(...nos);
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });

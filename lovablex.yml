@@ -1,4 +1,4 @@
-# lovablex-versao: 2
+# lovablex-versao: 3
 # LovableX Celular — pedidos pelo celular, sem precisar do computador.
 #
 # O app do celular abre uma "issue" com a etiqueta `lovablex` (ou comenta
@@ -32,10 +32,12 @@ concurrency:
 jobs:
   pedido:
     # só conversas do app; ignora as respostas do próprio robô (evita laço)
+    # e o aviso de cancelamento enviado pelo botão "Cancelar pedido"
     if: >-
       contains(github.event.issue.labels.*.name, 'lovablex') &&
       github.event.issue.pull_request == null &&
-      (github.event_name == 'issues' || github.event.comment.user.type != 'Bot')
+      (github.event_name == 'issues' ||
+        (github.event.comment.user.type != 'Bot' && !startsWith(github.event.comment.body, '🛑')))
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
@@ -135,11 +137,18 @@ jobs:
           rm -rf .lovablex/anexos
           git config user.name "LovableX Celular"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # instalar dependências reescreve os arquivos de trava; isso NÃO é
+          # alteração pedida e não pode virar commit nem "✅ alterado"
+          git checkout -q -- package-lock.json bun.lockb bun.lock yarn.lock pnpm-lock.yaml 2>/dev/null || true
           git add -A
-          git reset -q -- node_modules 2>/dev/null || true
-          if ! git diff --cached --quiet; then
-            git diff --cached --name-only | grep -v '^\.lovablex/anexos/' > "$RUNNER_TEMP/arquivos.txt" || true
+          git reset -q -- node_modules package-lock.json bun.lockb bun.lock yarn.lock pnpm-lock.yaml 2>/dev/null || true
+          git diff --cached --name-only | grep -v '^\.lovablex/' > "$RUNNER_TEMP/arquivos.txt" || true
+          if [ -s "$RUNNER_TEMP/arquivos.txt" ]; then
             git commit -q -m "LovableX: $(printf '%s' "$TITULO" | head -c 70)"
+          elif ! git diff --cached --quiet; then
+            # só limpeza dos anexos: guarda a limpeza, mas não conta como alteração
+            git commit -q -m "LovableX: limpa anexos do pedido"
+            echo "so_limpeza=1" >> "$GITHUB_OUTPUT"
           fi
           if [ "$(git rev-parse HEAD)" != "$(git rev-parse "origin/$RAMO")" ]; then
             git push -q origin "HEAD:$RAMO" || { git pull -q --rebase origin "$RAMO" && git push -q origin "HEAD:$RAMO"; }
@@ -147,9 +156,11 @@ jobs:
           fi
 
       - name: Responder no celular
-        if: always()
+        # cancelado pelo botão do app: não responde (o app já mostrou "cancelado")
+        if: ${{ !cancelled() }}
         env:
-          SHA: ${{ steps.enviar.outputs.sha }}
+          SHA_BRUTO: ${{ steps.enviar.outputs.sha }}
+          SO_LIMPEZA: ${{ steps.enviar.outputs.so_limpeza }}
           CODIGO: ${{ steps.claude.outputs.codigo }}
         run: |
           node - <<'JS'
@@ -160,6 +171,8 @@ jobs:
           try { r = JSON.parse(ler("claude.json")); } catch {}
           const resumo = ler("resposta.md").trim() || String(r.result || "").trim();
           const arquivos = ler("arquivos.txt").split("\n").map((l) => l.trim()).filter(Boolean);
+          // ✅ só quando arquivo de verdade do projeto mudou (não trava de pacote, não anexo)
+          env.SHA = arquivos.length && env.SO_LIMPEZA !== "1" ? env.SHA_BRUTO : "";
           const runUrl = `https://github.com/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}`;
           const partes = [];
           if (env.SHA) {

@@ -338,14 +338,82 @@ async function telaProjetos(tela) {
   const esqueleto = () => grade.replaceChildren(...Array.from({ length: 4 }, () => el("div", { class: "projeto", style: "opacity:.35" })));
   esqueleto();
 
+  // Ativar TODOS de uma vez: cola a chave do Claude uma vez só e o app instala
+  // o robô em cada projeto que ainda não está pronto.
+  const estados = new Map(); // full_name -> { robo, chave }
+  const faixa = el("div", {});
+  tela.insertBefore(faixa, grade);
+
+  const desenharFaixa = () => {
+    const faltam = repos.filter((r) => { const e = estados.get(r.full_name); return e && !(e.robo && e.chave); });
+    const conferidos = repos.filter((r) => estados.has(r.full_name)).length;
+    if (!repos.length || conferidos < repos.length || !faltam.length) return faixa.replaceChildren();
+    const status = el("div", { class: "progresso", hidden: true });
+    const erro = el("div", { class: "erro", hidden: true });
+    const guardada = ler("lx_claude") || "";
+    const botao = el("button", { class: "btn" }, guardada ? `⚡  Ativar os ${faltam.length} projetos` : `📋  Colar chave e ativar os ${faltam.length}`);
+    const copiar = el("button", {}, "copiar");
+    copiar.onclick = async () => { try { await navigator.clipboard.writeText("claude setup-token"); copiar.textContent = "copiado ✓"; } catch {} };
+    botao.onclick = async () => {
+      vibrar(); erro.hidden = true;
+      let chave = guardada || await colarDaAreaDeTransferencia();
+      if (!/^sk-ant-/.test(chave)) { erro.textContent = "Não achei a chave copiada. Ela começa com sk-ant-"; erro.hidden = false; return; }
+      botao.disabled = true; status.hidden = false;
+      let ok = 0; const falhas = [];
+      for (const [i, r] of faltam.entries()) {
+        try {
+          const e = estados.get(r.full_name);
+          await ativar(r, e.chave ? "" : chave, (m) => { status.textContent = `${i + 1}/${faltam.length} · ${r.name}: ${m}`; });
+          estados.set(r.full_name, { robo: true, chave: true }); ok += 1;
+        } catch (err) { falhas.push(`${r.name} (${err.message})`); }
+        desenhar();
+      }
+      guardar("lx_claude", chave);
+      status.textContent = `${ok} de ${faltam.length} projetos ativados ✓`;
+      if (falhas.length) { erro.textContent = `Não ativou: ${falhas.join(", ")}`; erro.hidden = false; }
+      toast(`${ok} projetos prontos ✓`); vibrar();
+      botao.disabled = false;
+      if (!falhas.length) setTimeout(desenharFaixa, 1500);
+    };
+    faixa.replaceChildren(el("div", { class: "folha" },
+      el("h3", {}, `✨ ${faltam.length} ${faltam.length === 1 ? "projeto precisa" : "projetos precisam"} ser ativados`),
+      el("p", {}, "Autorize o Claude uma vez e ative todos de uma vez. Depois funciona com o computador desligado."),
+      guardada ? null : el("ol", {},
+        el("li", {}, "No computador, rode no Terminal:"),
+        el("div", { class: "comando", style: "margin:6px 0 8px -20px" }, el("span", {}, "claude setup-token"), copiar),
+        el("li", {}, "Copie o código sk-ant-… e mande para o celular."),
+        el("li", {}, "Copie no celular e toque no botão abaixo.")
+      ),
+      botao, status, erro
+    ));
+  };
+
+  async function conferirTodos() {
+    const fila = repos.filter((r) => !estados.has(r.full_name));
+    const trabalhador = async () => {
+      while (fila.length) {
+        const r = fila.shift();
+        try { estados.set(r.full_name, await estadoDoProjeto(r)); } catch { estados.set(r.full_name, { robo: false, chave: false }); }
+        desenhar();
+      }
+    };
+    await Promise.all([trabalhador(), trabalhador(), trabalhador(), trabalhador()]);
+    desenharFaixa();
+  }
+
   const desenhar = () => {
     const q = busca.value.trim().toLowerCase();
     const lista = repos.filter((r) => !q || r.name.toLowerCase().includes(q));
     if (!lista.length) return grade.replaceChildren(el("div", { class: "vazio", style: "grid-column:1/-1" }, q ? "Nenhum projeto com esse nome." : "Nenhum projeto encontrado."));
     grade.replaceChildren(...lista.map((r) => {
       const [a, b] = corDe(r.name).split(",");
+      const e = estados.get(r.full_name);
+      const pronto = e && e.robo && e.chave;
       return el("button", { class: "projeto", onclick: () => { vibrar(); ir((t) => telaProjeto(t, r)); } },
-        el("div", { class: "icone", style: `background:linear-gradient(135deg,${a},${b})` }, r.name.replace(/[^a-z0-9]/gi, "").slice(0, 2).toUpperCase()),
+        el("div", { style: "display:flex;justify-content:space-between;align-items:flex-start" },
+          el("div", { class: "icone", style: `background:linear-gradient(135deg,${a},${b})` }, r.name.replace(/[^a-z0-9]/gi, "").slice(0, 2).toUpperCase()),
+          e ? el("span", { class: `ponto ${pronto ? "ok" : ""}` }, pronto ? "pronto" : "ativar") : null
+        ),
         el("div", {}, el("b", {}, r.name), el("small", {}, `mexido ${quando(r.pushed_at)}`))
       );
     }));

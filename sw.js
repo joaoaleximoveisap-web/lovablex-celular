@@ -1,6 +1,6 @@
 // Guarda só a "casca" do app para abrir rápido e funcionar como app instalado.
 // Nada da API do GitHub é guardado: conversas e projetos vêm sempre ao vivo.
-const CACHE = "lovablex-celular-v3";
+const CACHE = "lovablex-celular-v4";
 const CASCA = ["./", "./index.html", "./selado.mjs", "./lovablex.yml", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {

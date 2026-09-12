@@ -269,21 +269,27 @@ function telaInicio(tela) {
   const erro = el("div", { class: "erro", hidden: true });
   const manual = el("input", { class: "campo", type: "password", placeholder: "ghp_…", autocomplete: "off", hidden: true });
   const entrar = el("button", { class: "btn" }, "📋  Colar e entrar");
-  const abrirGithub = el("button", { class: "btn claro" }, "1. Abrir o GitHub  ↗");
+  // link de verdade (e não window.open): navegador de dentro de outros apps
+  // (Instagram, WhatsApp, Telegram) bloqueia janela aberta por script
+  const abrirGithub = el("a", { class: "btn claro", href: LINK_TOKEN_GH, target: "_blank", rel: "noopener", style: "text-decoration:none;color:#fff" }, "1. Abrir o GitHub  ↗");
   const passo1 = el("div", { class: "passo ativo" });
   const passo2 = el("div", { class: "passo" });
 
-  abrirGithub.onclick = () => {
+  abrirGithub.addEventListener("click", () => {
     vibrar();
-    window.open(LINK_TOKEN_GH, "_blank", "noopener");
     passo1.className = "passo feito"; passo2.className = "passo ativo";
-  };
+  });
 
   const tentar = async (t) => {
     erro.hidden = true;
     if (!/^(ghp_|github_pat_)/.test(t)) {
-      erro.textContent = t ? "Isso não parece um token do GitHub. Ele começa com ghp_" : "Não achei nada copiado. Copie o código ghp_… no GitHub e toque de novo.";
-      erro.hidden = false; manual.hidden = false; return;
+      // navegador de dentro de app não deixa ler o que foi copiado: abre o campo
+      // e ensina o jeito que sempre funciona (tocar e segurar → Colar)
+      erro.textContent = t
+        ? "Isso não parece um token do GitHub. Ele começa com ghp_"
+        : "Este navegador não deixou pegar o código sozinho. Toque e segure no campo abaixo → Colar → Entrar.";
+      erro.hidden = false; manual.hidden = false; manual.focus();
+      entrar.textContent = "Entrar"; return;
     }
     entrar.disabled = true; entrar.textContent = "Entrando…";
     tokenGH = t;
@@ -295,8 +301,9 @@ function telaInicio(tela) {
       tokenGH = "";
       erro.textContent = e.status === 401 ? "O GitHub recusou esse token. Gere outro e tente de novo." : e.message;
       erro.hidden = false;
-    } finally { entrar.disabled = false; entrar.textContent = "📋  Colar e entrar"; }
+    } finally { entrar.disabled = false; if (manual.hidden) entrar.textContent = "📋  Colar e entrar"; }
   };
+  manual.addEventListener("input", () => { if (/^(ghp_|github_pat_)/.test(manual.value.trim())) tentar(manual.value.trim()); });
   entrar.onclick = async () => { vibrar(); await tentar(manual.value.trim() || await colarDaAreaDeTransferencia()); };
   manual.addEventListener("keydown", (e) => { if (e.key === "Enter") tentar(manual.value.trim()); });
 

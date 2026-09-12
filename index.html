@@ -444,13 +444,35 @@ async function telaProjetos(tela) {
 }
 
 /* =================== ativação =================== */
+// versão do robô publicada junto com o app; projeto com versão velha é
+// atualizado sozinho ao abrir (a pessoa não precisa fazer nada)
+let roboPublicado = null;
+async function textoDoRobo() {
+  if (roboPublicado == null) roboPublicado = await (await fetch("./lovablex.yml", { cache: "no-store" })).text();
+  return roboPublicado;
+}
+const versaoDe = (yml) => Number((String(yml).match(/lovablex-versao:\s*(\d+)/) || [])[1] || 1);
+
 async function estadoDoProjeto(repo) {
-  const [wf, seg] = await Promise.all([
+  const [wf, seg, publicado] = await Promise.all([
     gh(`/repos/${repo.full_name}/contents/${WORKFLOW}`, { bruto: true }),
-    gh(`/repos/${repo.full_name}/actions/secrets?per_page=100`).catch(() => ({ secrets: [] }))
+    gh(`/repos/${repo.full_name}/actions/secrets?per_page=100`).catch(() => ({ secrets: [] })),
+    textoDoRobo().catch(() => "")
   ]);
   const nomes = (seg.secrets || []).map((s) => s.name);
-  return { robo: wf.status === 200, chave: nomes.includes("CLAUDE_CODE_OAUTH_TOKEN") || nomes.includes("ANTHROPIC_API_KEY") };
+  let desatualizado = false;
+  if (wf.status === 200) {
+    try {
+      const j = await wf.json();
+      const instalado = new TextDecoder().decode(deB64(String(j.content || "").replace(/\s/g, "")));
+      desatualizado = Boolean(publicado) && versaoDe(instalado) < versaoDe(publicado);
+    } catch {}
+  }
+  return {
+    robo: wf.status === 200,
+    chave: nomes.includes("CLAUDE_CODE_OAUTH_TOKEN") || nomes.includes("ANTHROPIC_API_KEY"),
+    desatualizado
+  };
 }
 
 async function ativar(repo, chaveClaude, progresso) {
@@ -528,6 +550,10 @@ async function telaProjeto(tela, repo) {
         estadoDoProjeto(repo),
         gh(`/repos/${repo.full_name}/issues?labels=${ETIQUETA}&state=all&sort=updated&per_page=50`).catch(() => [])
       ]);
+      if (estado.robo && estado.chave && estado.desatualizado) {
+        // robô antigo: troca pela versão nova em silêncio, antes do próximo pedido
+        try { await ativar(repo, "", () => {}); toast("Robô do projeto atualizado ✓"); estado.desatualizado = false; } catch {}
+      }
       const pronto = estado.robo && estado.chave;
       novo.hidden = !pronto;
       const partes = [];

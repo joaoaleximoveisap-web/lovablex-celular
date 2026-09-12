@@ -1,9 +1,13 @@
+# lovablex-versao: 2
 # LovableX Celular — pedidos pelo celular, sem precisar do computador.
 #
 # O app do celular abre uma "issue" com a etiqueta `lovablex` (ou comenta
 # numa que já existe). Este workflow roda o Claude Code na nuvem do GitHub,
 # faz a alteração, envia para a branch principal (o Lovable puxa sozinho) e
 # responde na própria conversa — que é o que aparece no chat do celular.
+#
+# A resposta sempre diz a verdade sobre o que aconteceu: quais arquivos
+# mudaram e o commit; ou, se nada mudou, o motivo que o Claude deu; ou o erro.
 #
 # Precisa de UM destes secrets no repositório (o app cadastra para você):
 #   CLAUDE_CODE_OAUTH_TOKEN  → usa o seu plano do Claude (gerado com `claude setup-token`)
@@ -19,7 +23,6 @@ on:
 permissions:
   contents: write
   issues: write
-  id-token: write
 
 # um pedido por vez em cada projeto: dois ao mesmo tempo brigariam pelo mesmo arquivo
 concurrency:
@@ -34,7 +37,7 @@ jobs:
       github.event.issue.pull_request == null &&
       (github.event_name == 'issues' || github.event.comment.user.type != 'Bot')
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     env:
       GH_TOKEN: ${{ github.token }}
       NUM: ${{ github.event.issue.number }}
@@ -43,18 +46,26 @@ jobs:
       COMENTARIO: ${{ github.event.comment.body }}
       EVENTO: ${{ github.event_name }}
       RAMO: ${{ github.event.repository.default_branch }}
-      TEM_OAUTH: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Avisar que começou
         run: gh issue comment "$NUM" --body "⏳ Recebi. Trabalhando no pedido…"
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependências do projeto (para o Claude poder rodar o build)
+        continue-on-error: true
+        run: |
+          if [ -f package-lock.json ]; then npm ci --no-audit --no-fund --loglevel=error || npm install --no-audit --no-fund --loglevel=error
+          elif [ -f package.json ]; then npm install --no-audit --no-fund --loglevel=error; fi
+
       - name: Montar o pedido com o histórico da conversa
-        id: montar
         run: |
           gh api "repos/$GITHUB_REPOSITORY/issues/$NUM/comments" --paginate > "$RUNNER_TEMP/comentarios.json" || echo "[]" > "$RUNNER_TEMP/comentarios.json"
           node - <<'JS'
@@ -62,59 +73,57 @@ jobs:
           const env = process.env;
           let comentarios = [];
           try { comentarios = JSON.parse(fs.readFileSync(`${env.RUNNER_TEMP}/comentarios.json`, "utf8")); } catch {}
-          const limpar = (t) => String(t || "").replace(/^⏳ Recebi\. Trabalhando no pedido…$/m, "").trim();
+          const ehInicio = (t) => /^⏳ Recebi/.test(String(t || ""));
           const historico = comentarios
-            .filter((c) => limpar(c.body))
-            .slice(-12)
-            .map((c) => `${c.user && c.user.type === "Bot" ? "LOVABLEX" : "PESSOA"}: ${limpar(c.body).slice(0, 1500)}`)
+            .filter((c) => c.body && !ehInicio(c.body))
+            .slice(-12, -1)
+            .map((c) => `${c.user && c.user.type === "Bot" ? "LOVABLEX" : "PESSOA"}: ${String(c.body).slice(0, 2000)}`)
             .join("\n\n");
           const atual = env.EVENTO === "issue_comment" ? env.COMENTARIO : `${env.TITULO}\n\n${env.CORPO || ""}`;
           const pedido = [
             "Você é o LovableX: recebe pedidos do celular para um projeto do Lovable sincronizado com este repositório do GitHub.",
-            "Tudo que você mudar aqui vai para a branch principal e o Lovable puxa sozinho em seguida.",
+            "Tudo que você mudar nos arquivos vai para a branch principal e o Lovable puxa sozinho em seguida.",
             "",
-            "REGRAS:",
-            "- Faça a menor alteração completa que resolve o pedido. Não reescreva o que não foi pedido.",
-            "- Não mexa em .github/ nem em arquivos de configuração do Lovable.",
-            "- Não faça commit nem push: o workflow cuida disso depois que você terminar.",
-            "- Anexos enviados pelo celular ficam em .lovablex/anexos/. Leia-os quando forem relevantes.",
-            "  Se um anexo precisar ficar no app (ex.: imagem), COPIE para a pasta public/ e use esse caminho.",
-            "- Pedido sobre dados do banco (cadastros, acessos) não se resolve só com código: explique isso na resposta.",
-            "- AO TERMINAR, escreva em .lovablex/resposta.md um resumo curto em português (2 a 5 linhas),",
-            "  para leigo: o que mudou e onde ver na tela. Esse arquivo é a sua resposta no celular.",
+            "REGRAS OBRIGATÓRIAS:",
+            "- IMPLEMENTE o pedido editando os arquivos de verdade. Não responda só com explicação ou plano.",
+            "- Pedido longo com várias partes: faça TODAS as partes.",
+            "- Só deixe de alterar se o pedido já estiver 100% atendido no código; nesse caso, diga ONDE e POR QUE já está.",
+            "- Faça a menor alteração completa. Não mexa no que não foi pedido.",
+            "- Não mexa em .github/. Não faça commit nem push: o workflow cuida disso.",
+            "- Anexos enviados pelo celular ficam em .lovablex/anexos/. Abra e leia as imagens anexadas: elas mostram o problema.",
+            "  Se um anexo precisar ficar no app, COPIE para public/ e use esse caminho.",
+            "- Se der, rode o build (npm run build) para garantir que nada quebrou, e corrija o que quebrar.",
+            "- Pedido sobre dados do banco (cadastros, acessos) não se resolve só com código: explique isso.",
+            "- AO TERMINAR, escreva em .lovablex/resposta.md um resumo em português, para leigo (3 a 8 linhas):",
+            "  o que mudou, em qual tela ver, e se o build passou.",
             "",
             historico ? `CONVERSA ATÉ AQUI:\n${historico}\n` : "",
             `PEDIDO ATUAL:\n${String(atual || "").trim()}`
           ].join("\n");
-          const marca = `FIM_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-          fs.appendFileSync(env.GITHUB_OUTPUT, `pedido<<${marca}\n${pedido}\n${marca}\n`);
+          fs.writeFileSync(`${env.RUNNER_TEMP}/pedido.txt`, pedido);
           JS
 
-      - name: Claude (plano do Claude)
-        id: claude_oauth
-        if: env.TEM_OAUTH == 'true'
+      - name: Claude trabalha
+        id: claude
         continue-on-error: true
-        uses: anthropics/claude-code-action@v1
-        with:
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          github_token: ${{ github.token }}
-          prompt: ${{ steps.montar.outputs.pedido }}
-          claude_args: >-
-            --max-turns 60
-            --allowedTools "Read,Edit,Write,Glob,Grep,Bash(npm *),Bash(npx *),Bash(node *),Bash(ls *),Bash(git status *),Bash(git diff *),Bash(git log *)"
-
-      - name: Claude (chave da API)
-        id: claude_api
-        if: env.TEM_OAUTH != 'true'
-        continue-on-error: true
-        uses: anthropics/claude-code-action@v1
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          github_token: ${{ github.token }}
-          prompt: ${{ steps.montar.outputs.pedido }}
-          claude_args: >-
-            --max-turns 60
-            --allowedTools "Read,Edit,Write,Glob,Grep,Bash(npm *),Bash(npx *),Bash(node *),Bash(ls *),Bash(git status *),Bash(git diff *),Bash(git log *)"
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          npm install -g @anthropic-ai/claude-code@latest --no-audit --no-fund --loglevel=error
+          [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ] && unset CLAUDE_CODE_OAUTH_TOKEN
+          [ -z "$ANTHROPIC_API_KEY" ] && unset ANTHROPIC_API_KEY
+          set +e
+          claude -p "$(cat "$RUNNER_TEMP/pedido.txt")" \
+            --output-format json \
+            --max-turns 150 \
+            --permission-mode acceptEdits \
+            --allowedTools "Read,Edit,Write,MultiEdit,Glob,Grep,TodoWrite,Bash(npm *),Bash(npx *),Bash(node *),Bash(ls *),Bash(cat *),Bash(mkdir *),Bash(cp *),Bash(mv *),Bash(git status *),Bash(git diff *),Bash(git log *)" \
+            > "$RUNNER_TEMP/claude.json" 2> "$RUNNER_TEMP/claude.err"
+          codigo=$?
+          echo "codigo=$codigo" >> "$GITHUB_OUTPUT"
+          echo "Claude terminou com código $codigo"
+          tail -c 3000 "$RUNNER_TEMP/claude.err" || true
 
       - name: Enviar ao GitHub
         id: enviar
@@ -127,7 +136,9 @@ jobs:
           git config user.name "LovableX Celular"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
+          git reset -q -- node_modules 2>/dev/null || true
           if ! git diff --cached --quiet; then
+            git diff --cached --name-only | grep -v '^\.lovablex/anexos/' > "$RUNNER_TEMP/arquivos.txt" || true
             git commit -q -m "LovableX: $(printf '%s' "$TITULO" | head -c 70)"
           fi
           if [ "$(git rev-parse HEAD)" != "$(git rev-parse "origin/$RAMO")" ]; then
@@ -139,16 +150,37 @@ jobs:
         if: always()
         env:
           SHA: ${{ steps.enviar.outputs.sha }}
-          CLAUDE_OK: ${{ steps.claude_oauth.outcome == 'success' || steps.claude_api.outcome == 'success' }}
+          CODIGO: ${{ steps.claude.outputs.codigo }}
         run: |
-          {
-            if [ -f "$RUNNER_TEMP/resposta.md" ]; then cat "$RUNNER_TEMP/resposta.md"; echo; fi
-            if [ -n "$SHA" ]; then
-              echo "✅ **Enviado ao GitHub** · [\`${SHA:0:7}\`](https://github.com/$GITHUB_REPOSITORY/commit/$SHA) — o Lovable puxa em instantes."
-            elif [ "$CLAUDE_OK" != "true" ]; then
-              echo "❌ Não consegui concluir. [Ver detalhes](https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)"
-            else
-              echo "ℹ️ Nada precisou mudar no código."
-            fi
-          } > "$RUNNER_TEMP/final.md"
+          node - <<'JS'
+          const fs = require("fs");
+          const env = process.env, tmp = env.RUNNER_TEMP;
+          const ler = (f) => { try { return fs.readFileSync(`${tmp}/${f}`, "utf8"); } catch { return ""; } };
+          let r = {};
+          try { r = JSON.parse(ler("claude.json")); } catch {}
+          const resumo = ler("resposta.md").trim() || String(r.result || "").trim();
+          const arquivos = ler("arquivos.txt").split("\n").map((l) => l.trim()).filter(Boolean);
+          const runUrl = `https://github.com/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}`;
+          const partes = [];
+          if (env.SHA) {
+            if (resumo) partes.push(resumo.slice(0, 2500));
+            partes.push("");
+            partes.push(`✅ **Alterado de verdade no GitHub** · [\`${env.SHA.slice(0, 7)}\`](https://github.com/${env.GITHUB_REPOSITORY}/commit/${env.SHA})`);
+            if (arquivos.length) partes.push(`Arquivos: ${arquivos.slice(0, 12).map((a) => `\`${a}\``).join(", ")}${arquivos.length > 12 ? ` e mais ${arquivos.length - 12}` : ""}`);
+            partes.push("O Lovable puxa em cerca de 1 minuto — atualize a prévia do Lovable para ver.");
+          } else if (!r.result && (env.CODIGO !== "0" || r.is_error)) {
+            const erro = String(r.result || r.error || ler("claude.err") || "sem detalhes").trim().split("\n").slice(-6).join("\n").slice(0, 900);
+            partes.push("❌ **O Claude não conseguiu trabalhar neste pedido.**");
+            if (/auth|oauth|token|401|403|credential|login/i.test(erro)) partes.push("A chave do Claude parece inválida ou expirou. Gere outra com `claude setup-token` e ative o projeto de novo no app.");
+            partes.push("```\n" + erro + "\n```");
+            partes.push(`[Ver detalhes](${runUrl})`);
+          } else {
+            partes.push("⚠️ **Nenhum arquivo foi alterado.**");
+            if (r.subtype === "error_max_turns") partes.push("O pedido era grande demais para uma rodada. Mande de novo dividido em partes menores.");
+            if (Array.isArray(r.permission_denials) && r.permission_denials.length) partes.push(`Ações bloqueadas: ${r.permission_denials.slice(0, 5).map((d) => d.tool_name).join(", ")}`);
+            if (resumo) { partes.push("O que o Claude disse:"); partes.push(resumo.slice(0, 2500)); }
+            partes.push(`[Ver detalhes](${runUrl})`);
+          }
+          fs.writeFileSync(`${tmp}/final.md`, partes.join("\n"));
+          JS
           gh issue comment "$NUM" --body-file "$RUNNER_TEMP/final.md"

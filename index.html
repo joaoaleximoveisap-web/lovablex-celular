@@ -32,7 +32,8 @@
   [hidden] { display: none !important; }
 
   .app { max-width: 560px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column;
-    padding-top: env(safe-area-inset-top); }
+    padding-top: env(safe-area-inset-top); overflow-x: hidden; }
+  html, body { overflow-x: hidden; }
   .tela { flex: 1; display: flex; flex-direction: column; animation: entra .28s ease; }
   /* só desliza: sem começar invisível. Se o celular pausar a animação (modo
      economia de bateria), a tela continua aparecendo em vez de ficar preta. */
@@ -84,23 +85,41 @@
   .comando span { flex: 1; }
   .comando button { color: #d8b4fe; font-size: 13px; font-family: inherit; }
 
-  /* projetos */
-  .ola { padding: 6px 18px 14px; }
-  .ola h2 { margin: 0; font-size: 26px; letter-spacing: -.5px; }
-  .ola p { margin: 4px 0 0; color: var(--suave); }
-  .busca { margin: 0 18px 14px; position: relative; }
-  .busca input { width: 100%; background: var(--vidro); border: 1px solid var(--linha); border-radius: 16px; padding: 13px 14px 13px 42px; outline: none; }
-  .busca::before { content: "⌕"; position: absolute; left: 15px; top: 50%; transform: translateY(-52%); color: var(--apagado); font-size: 19px; }
-  .grade { padding: 0 18px 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .projeto { text-align: left; background: var(--vidro); border: 1px solid var(--linha); border-radius: var(--raio); padding: 14px;
-    display: flex; flex-direction: column; gap: 12px; min-height: 128px; transition: transform .12s ease; }
-  .projeto:active { transform: scale(.97); }
-  .projeto .icone { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; font-weight: 800; font-size: 15px; color: #fff; }
-  .projeto b { font-size: 15px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .projeto small { color: var(--apagado); font-size: 12px; }
-  .ponto { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--suave); }
-  .ponto::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--apagado); }
-  .ponto.ok::before { background: var(--verde); box-shadow: 0 0 8px var(--verde); }
+  /* projetos: lista limpa, uma coluna, nada escapa da tela */
+  .cabeca { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px 4px; }
+  .marca { display: flex; align-items: center; gap: 10px; font-weight: 650; font-size: 15px; color: var(--suave); }
+  .marca img { width: 26px; height: 26px; border-radius: 8px; }
+  .perfil { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: var(--vidro2); border: 1px solid var(--linha); flex: none; }
+  .perfil img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ola { padding: 18px 20px 16px; }
+  .ola h2 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -.8px; }
+  .ola p { margin: 4px 0 0; color: var(--apagado); font-size: 14px; }
+  .busca { margin: 0 20px 18px; position: relative; }
+  .busca input { width: 100%; background: var(--vidro); border: 1px solid var(--linha); border-radius: 14px; padding: 12px 14px 12px 40px; outline: none; font-size: 15px; }
+  .busca input:focus { border-color: rgba(139,92,246,.6); }
+  .busca::before { content: ""; position: absolute; left: 15px; top: 50%; width: 11px; height: 11px; transform: translateY(-60%);
+    border: 2px solid var(--apagado); border-radius: 50%; }
+  .busca::after { content: ""; position: absolute; left: 26px; top: 57%; width: 6px; height: 2px; background: var(--apagado); transform: rotate(45deg); }
+  .grupo { margin: 0 20px 22px; }
+  .grupo-titulo { display: flex; justify-content: space-between; align-items: baseline; color: var(--apagado); font-size: 12px;
+    text-transform: uppercase; letter-spacing: 1px; margin: 0 4px 8px; }
+  .caixa-lista { background: var(--vidro); border: 1px solid var(--linha); border-radius: 18px; overflow: hidden; }
+  .linha-projeto { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 13px 14px; min-width: 0; }
+  .linha-projeto + .linha-projeto { border-top: 1px solid var(--linha); }
+  .linha-projeto:active { background: var(--vidro2); }
+  .linha-projeto .inicial { width: 40px; height: 40px; border-radius: 12px; flex: none; display: grid; place-items: center;
+    font-weight: 700; font-size: 16px; color: #fff; }
+  .linha-projeto .textos { flex: 1; min-width: 0; }
+  .linha-projeto b { display: block; font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .linha-projeto small { display: block; color: var(--apagado); font-size: 12.5px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .linha-projeto .seta { color: var(--apagado); font-size: 20px; flex: none; }
+  .selo { flex: none; font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 999px; background: var(--vidro2); color: var(--suave); }
+  .selo.ok { background: rgba(52,211,153,.12); color: var(--verde); }
+  .selo.carregando { opacity: .4; }
+  details.outros summary { list-style: none; cursor: pointer; }
+  details.outros summary::-webkit-details-marker { display: none; }
+  details.outros summary .grupo-titulo::after { content: "mostrar"; text-transform: none; letter-spacing: 0; color: #d8b4fe; font-size: 13px; }
+  details.outros[open] summary .grupo-titulo::after { content: "esconder"; }
 
   /* conversas */
   .secao { padding: 4px 18px 8px; color: var(--apagado); font-size: 13px; text-transform: uppercase; letter-spacing: .8px; }
@@ -331,30 +350,57 @@ function telaInicio(tela) {
 }
 
 /* =================== 2. projetos =================== */
+// Nome de verdade de cada app: o <title> do index.html (o mesmo da aba do
+// navegador). "elyongest-web-dash-92b2ffd8" não diz nada; "CRM DAJ" diz.
+const META = "lx_meta_v2";
+const lerMeta = () => { try { return JSON.parse(ler(META) || "{}"); } catch { return {}; } };
+async function lerArquivoBruto(repo, caminho) {
+  const r = await fetch(`https://api.github.com/repos/${repo.full_name}/contents/${caminho}`, {
+    headers: { Authorization: `Bearer ${tokenGH}`, Accept: "application/vnd.github.raw+json", "X-GitHub-Api-Version": "2022-11-28" }, cache: "no-store"
+  });
+  return r.ok ? r.text() : "";
+}
+const nomeBonito = (slug) => slug.replace(/-[0-9a-f]{6,}$/i, "").replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()).trim();
+async function identificar(repo) {
+  const cache = lerMeta();
+  const guardado = cache[repo.full_name];
+  if (guardado && guardado.pushed === repo.pushed_at) return guardado;
+  const [html, pacote] = await Promise.all([lerArquivoBruto(repo, "index.html").catch(() => ""), lerArquivoBruto(repo, "package.json").catch(() => "")]);
+  let titulo = ((html.match(/<title[^>]*>([^<]*)<\/title>/i) || [])[1] || "").replace(/&amp;/g, "&").replace(/\s*[|–-]\s*Lovable.*$/i, "").trim();
+  if (!titulo || /^(vite|react|lovable app|my lovable app|index)/i.test(titulo)) titulo = nomeBonito(repo.name);
+  // só sinais reais do Lovable: a palavra "Lovable" no título (ex.: o próprio
+  // LovableX) não faz de um repositório um projeto do Lovable
+  const doLovable = /lovable-tagger/.test(pacote) || /cdn\.gpteng\.co|gptengineer|lovable\.dev\/(opengraph|projects)/i.test(html);
+  const meta = { titulo, lovable: doLovable, pushed: repo.pushed_at };
+  cache[repo.full_name] = meta;
+  guardar(META, JSON.stringify(cache));
+  return meta;
+}
+
 async function telaProjetos(tela) {
-  const sair = el("button", { class: "acao", "aria-label": "Sair", onclick: () => {
-    if (!confirm("Sair deste celular? Você vai precisar autorizar de novo.")) return;
+  const perfil = el("button", { class: "perfil", "aria-label": "Conta", onclick: () => {
+    if (!confirm(`Conectado como ${eu?.login || ""}.\n\nSair deste celular? Você vai precisar autorizar de novo.`)) return;
     tokenGH = ""; eu = null; guardar("lx_github", null); guardar("lx_claude", null);
     ir(telaInicio, { raiz: true });
-  } }, "⎋");
-  const cab = el("div", { class: "ola" }, el("h2", {}, "Seus projetos"), el("p", {}, "Toque em um para pedir alterações"));
+  } });
+  const sub = el("p", {}, "Carregando seus projetos…");
   const busca = el("input", { type: "search", placeholder: "Buscar projeto" });
-  const grade = el("div", { class: "grade" });
-  tela.append(topo({ titulo: "LovableX", sub: "", voltarBtn: false, acao: sair }), cab, el("div", { class: "busca" }, busca), grade);
-
-  const esqueleto = () => grade.replaceChildren(...Array.from({ length: 4 }, () => el("div", { class: "projeto", style: "opacity:.35" })));
-  esqueleto();
-
-  // Ativar TODOS de uma vez: cola a chave do Claude uma vez só e o app instala
-  // o robô em cada projeto que ainda não está pronto.
-  const estados = new Map(); // full_name -> { robo, chave }
   const faixa = el("div", {});
-  tela.insertBefore(faixa, grade);
+  const lista = el("div", {});
+  tela.append(
+    el("div", { class: "cabeca" }, el("div", { class: "marca" }, el("img", { src: "icon-192.png", alt: "" }), "LovableX"), perfil),
+    el("div", { class: "ola" }, el("h2", {}, "Projetos"), sub),
+    el("div", { class: "busca" }, busca), faixa, lista
+  );
+
+  const estados = new Map();   // full_name -> { robo, chave }
+  const metas = new Map();     // full_name -> { titulo, lovable }
 
   const desenharFaixa = () => {
-    const faltam = repos.filter((r) => { const e = estados.get(r.full_name); return e && !(e.robo && e.chave); });
-    const conferidos = repos.filter((r) => estados.has(r.full_name)).length;
-    if (!repos.length || conferidos < repos.length || !faltam.length) return faixa.replaceChildren();
+    const alvo = repos.filter((r) => metas.get(r.full_name)?.lovable);
+    const faltam = alvo.filter((r) => { const e = estados.get(r.full_name); return e && !(e.robo && e.chave); });
+    const conferidos = alvo.filter((r) => estados.has(r.full_name)).length;
+    if (!alvo.length || conferidos < alvo.length || !faltam.length) return faixa.replaceChildren();
     const status = el("div", { class: "progresso", hidden: true });
     const erro = el("div", { class: "erro", hidden: true });
     const guardada = ler("lx_claude") || "";
@@ -382,9 +428,9 @@ async function telaProjetos(tela) {
       botao.disabled = false;
       if (!falhas.length) setTimeout(desenharFaixa, 1500);
     };
-    faixa.replaceChildren(el("div", { class: "folha" },
-      el("h3", {}, `✨ ${faltam.length} ${faltam.length === 1 ? "projeto precisa" : "projetos precisam"} ser ativados`),
-      el("p", {}, "Autorize o Claude uma vez e ative todos de uma vez. Depois funciona com o computador desligado."),
+    // compacto: uma linha só; as instruções abrem ao tocar (não polui a lista)
+    const detalhes = el("div", { hidden: true, style: "margin-top:12px" },
+      el("p", { style: "margin:0 0 10px" }, "Autorize o Claude uma vez e ative todos juntos. Depois funciona com o computador desligado."),
       guardada ? null : el("ol", {},
         el("li", {}, "No computador, rode no Terminal:"),
         el("div", { class: "comando", style: "margin:6px 0 8px -20px" }, el("span", {}, "claude setup-token"), copiar),
@@ -392,54 +438,104 @@ async function telaProjetos(tela) {
         el("li", {}, "Copie no celular e toque no botão abaixo.")
       ),
       botao, status, erro
-    ));
+    );
+    const abrir = el("button", { style: "display:flex;align-items:center;gap:10px;width:100%;text-align:left" },
+      el("span", { style: "font-size:18px" }, "✨"),
+      el("span", { style: "flex:1;font-weight:600;font-size:15px" }, `${faltam.length} ${faltam.length === 1 ? "projeto para ativar" : "projetos para ativar"}`),
+      el("span", { style: "color:#d8b4fe;font-size:14px" }, "Ativar ›")
+    );
+    abrir.onclick = () => { vibrar(); detalhes.hidden = !detalhes.hidden; };
+    faixa.replaceChildren(el("div", { class: "folha", style: "margin:0 20px 22px;padding:14px 16px" }, abrir, detalhes));
   };
 
+  // identifica nome e tipo de cada projeto, e confere o robô só nos do Lovable
   async function conferirTodos() {
-    const fila = repos.filter((r) => !estados.has(r.full_name));
+    const fila = [...repos];
     const trabalhador = async () => {
       while (fila.length) {
         const r = fila.shift();
-        try { estados.set(r.full_name, await estadoDoProjeto(r)); } catch { estados.set(r.full_name, { robo: false, chave: false }); }
+        try { metas.set(r.full_name, await identificar(r)); } catch { metas.set(r.full_name, { titulo: nomeBonito(r.name), lovable: false }); }
+        r.titulo = metas.get(r.full_name).titulo;
+        if (metas.get(r.full_name).lovable) {
+          try { estados.set(r.full_name, await estadoDoProjeto(r)); } catch { estados.set(r.full_name, { robo: false, chave: false }); }
+        }
         desenhar();
       }
     };
     await Promise.all([trabalhador(), trabalhador(), trabalhador(), trabalhador()]);
+    desenhar();
     desenharFaixa();
   }
 
-  const desenhar = () => {
+  function linha(r, duplicados) {
+    const meta = metas.get(r.full_name);
+    const titulo = meta?.titulo || nomeBonito(r.name);
+    const [a, b] = corDe(titulo).split(",");
+    const e = estados.get(r.full_name);
+    const pronto = e && e.robo && e.chave;
+    // dois projetos com o mesmo nome (cópias/remix): mostra o final do repositório
+    const detalhe = duplicados.has(titulo.toLowerCase())
+      ? `${r.name.slice(-8)} · mexido ${quando(r.pushed_at)}`
+      : `mexido ${quando(r.pushed_at)}`;
+    return el("button", { class: "linha-projeto", onclick: () => { vibrar(); r.titulo = titulo; ir((t) => telaProjeto(t, r)); } },
+      el("div", { class: "inicial", style: `background:linear-gradient(135deg,${a},${b})` }, titulo.replace(/[^\p{L}\p{N}]/gu, "").slice(0, 1).toUpperCase() || "•"),
+      el("div", { class: "textos" }, el("b", {}, titulo), el("small", {}, detalhe)),
+      meta?.lovable ? el("span", { class: `selo ${pronto ? "ok" : ""} ${e ? "" : "carregando"}` }, pronto ? "Pronto" : "Ativar") : null,
+      el("span", { class: "seta" }, "›")
+    );
+  }
+
+  function desenhar() {
     const q = busca.value.trim().toLowerCase();
-    const lista = repos.filter((r) => !q || r.name.toLowerCase().includes(q));
-    if (!lista.length) return grade.replaceChildren(el("div", { class: "vazio", style: "grid-column:1/-1" }, q ? "Nenhum projeto com esse nome." : "Nenhum projeto encontrado."));
-    grade.replaceChildren(...lista.map((r) => {
-      const [a, b] = corDe(r.name).split(",");
-      const e = estados.get(r.full_name);
-      const pronto = e && e.robo && e.chave;
-      return el("button", { class: "projeto", onclick: () => { vibrar(); ir((t) => telaProjeto(t, r)); } },
-        el("div", { style: "display:flex;justify-content:space-between;align-items:flex-start" },
-          el("div", { class: "icone", style: `background:linear-gradient(135deg,${a},${b})` }, r.name.replace(/[^a-z0-9]/gi, "").slice(0, 2).toUpperCase()),
-          e ? el("span", { class: `ponto ${pronto ? "ok" : ""}` }, pronto ? "pronto" : "ativar") : null
-        ),
-        el("div", {}, el("b", {}, r.name), el("small", {}, `mexido ${quando(r.pushed_at)}`))
+    const filtrados = repos.filter((r) => !q || r.name.toLowerCase().includes(q) || (metas.get(r.full_name)?.titulo || "").toLowerCase().includes(q));
+    const contagem = new Map();
+    for (const r of filtrados) { const t = (metas.get(r.full_name)?.titulo || r.name).toLowerCase(); contagem.set(t, (contagem.get(t) || 0) + 1); }
+    const duplicados = new Set([...contagem].filter(([, n]) => n > 1).map(([t]) => t));
+    const doLovable = filtrados.filter((r) => metas.get(r.full_name)?.lovable);
+    const outros = filtrados.filter((r) => metas.has(r.full_name) && !metas.get(r.full_name).lovable);
+    const pendentes = filtrados.filter((r) => !metas.has(r.full_name));
+    const conferindo = pendentes.length > 0;
+
+    sub.textContent = conferindo
+      ? "Identificando seus projetos…"
+      : `${doLovable.length} ${doLovable.length === 1 ? "projeto" : "projetos"} do Lovable`;
+
+    const partes = [];
+    if (doLovable.length || conferindo) {
+      partes.push(el("div", { class: "grupo" },
+        el("div", { class: "grupo-titulo" }, "Lovable"),
+        el("div", { class: "caixa-lista" }, [...doLovable, ...pendentes].map((r) => linha(r, duplicados)))
+      ));
+    }
+    if (outros.length) {
+      const det = el("details", { class: "grupo outros", ...(q ? { open: true } : {}) },
+        el("summary", {}, el("div", { class: "grupo-titulo" }, `Outros repositórios · ${outros.length}`)),
+        el("div", { class: "caixa-lista" }, outros.map((r) => linha(r, duplicados)))
       );
-    }));
-  };
+      partes.push(det);
+    }
+    if (!partes.length) partes.push(el("div", { class: "vazio" }, q ? "Nenhum projeto com esse nome." : "Nenhum projeto encontrado."));
+    lista.replaceChildren(...partes);
+  }
   busca.oninput = desenhar;
 
   try {
     if (!eu) eu = await gh("/user");
-    cab.firstChild.textContent = `Olá, ${(eu.name || eu.login).split(" ")[0]} 👋`;
+    if (eu.avatar_url) perfil.append(el("img", { src: eu.avatar_url, alt: "" }));
     const todos = [];
     for (let p = 1; p <= 5; p += 1) {
       const lote = await gh(`/user/repos?per_page=100&sort=pushed&affiliation=owner,collaborator,organization_member&page=${p}`);
       todos.push(...lote); if (lote.length < 100) break;
     }
     repos = todos.filter((r) => r.permissions?.push && !r.archived);
+    // o que já foi identificado antes aparece na hora, sem esperar a rede
+    const cache = lerMeta();
+    for (const r of repos) if (cache[r.full_name]) { metas.set(r.full_name, cache[r.full_name]); r.titulo = cache[r.full_name].titulo; }
     desenhar();
+    conferirTodos();
   } catch (e) {
     if (e.status === 401) { tokenGH = ""; guardar("lx_github", null); return ir(telaInicio, { raiz: true }); }
-    grade.replaceChildren(el("div", { class: "vazio", style: "grid-column:1/-1" }, `Sem conexão com o GitHub agora. ${e.message}`));
+    lista.replaceChildren(el("div", { class: "vazio" }, `Sem conexão com o GitHub agora. ${e.message}`));
   }
 }
 
@@ -541,7 +637,7 @@ function folhaAtivacao(repo, estado, depois) {
 async function telaProjeto(tela, repo) {
   const conteudo = el("div", {});
   const novo = el("button", { class: "btn fab", onclick: () => { vibrar(); ir((t) => telaChat(t, repo, null)); } }, "✏️  Novo pedido");
-  tela.append(topo({ titulo: repo.name, sub: repo.owner.login }), conteudo, novo);
+  tela.append(topo({ titulo: repo.titulo || repo.name, sub: repo.name }), conteudo, novo);
   conteudo.append(el("div", { class: "vazio" }, "Carregando…"));
 
   const carregar = async () => {
@@ -600,7 +696,7 @@ const ehInicio = (c) => ehRobo(c) && /^⏳/.test(c.body);
 
 function telaChat(tela, repo, conversa) {
   let numero = conversa?.number || null;
-  const cab = topo({ titulo: conversa?.title || "Novo pedido", sub: repo.name });
+  const cab = topo({ titulo: conversa?.title || "Novo pedido", sub: repo.titulo || repo.name });
   const chat = el("div", { class: "chat" });
   const anexosEl = el("div", { class: "anexos", hidden: true });
   const texto = el("textarea", { rows: 1, placeholder: "O que você quer mudar?" });

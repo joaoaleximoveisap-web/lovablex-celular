@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LovableX</title>
+<meta name="theme-color" content="#0f0a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LovableX">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<style>
+  :root {
+    --fundo: #0f0a1a; --cartao: #1a1228; --cartao2: #231837; --borda: #34264d;
+    --texto: #f1ecfa; --suave: #a597bd; --roxo: #a855f7; --rosa: #d946ef;
+    --verde: #34d399; --vermelho: #f87171; --amarelo: #fbbf24;
+    --bolha-eu: linear-gradient(135deg, #7c3aed, #c026d3);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: var(--fundo); color: var(--texto);
+    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { display: flex; flex-direction: column; min-height: 100dvh; }
+  button { font: inherit; color: inherit; border: 0; cursor: pointer; }
+  input, textarea { font: inherit; color: var(--texto); }
+  a { color: #d8b4fe; }
+
+  header { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 10px;
+    padding: calc(10px + env(safe-area-inset-top)) 14px 10px; background: rgba(15,10,26,.92);
+    backdrop-filter: blur(10px); border-bottom: 1px solid var(--borda); }
+  header .voltar { background: none; font-size: 22px; padding: 2px 8px 2px 0; }
+  header .titulo { flex: 1; min-width: 0; }
+  header .titulo b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  header .titulo small { color: var(--suave); font-size: 12px; }
+  header img { width: 28px; height: 28px; border-radius: 8px; }
+  .icone { background: var(--cartao2); border-radius: 10px; padding: 7px 10px; font-size: 13px; }
+
+  main { flex: 1; display: flex; flex-direction: column; }
+  .conteudo { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .cartao { background: var(--cartao); border: 1px solid var(--borda); border-radius: 16px; padding: 14px; }
+  .cartao h2 { margin: 0 0 6px; font-size: 18px; }
+  .cartao p { margin: 6px 0; color: var(--suave); }
+  .campo { width: 100%; background: var(--fundo); border: 1px solid var(--borda); border-radius: 12px;
+    padding: 12px; outline: none; }
+  .campo:focus { border-color: var(--roxo); }
+  .btn { background: var(--bolha-eu); color: #fff; border-radius: 12px; padding: 12px 16px; font-weight: 600; width: 100%; }
+  .btn[disabled] { opacity: .5; }
+  .btn.sec { background: var(--cartao2); }
+  .passos { margin: 8px 0 0; padding-left: 20px; color: var(--suave); }
+  .passos li { margin: 4px 0; }
+  .erro { color: var(--vermelho); font-size: 13px; min-height: 18px; }
+
+  .busca { position: sticky; top: 0; }
+  .lista { display: flex; flex-direction: column; gap: 8px; }
+  .item { display: flex; align-items: center; gap: 12px; text-align: left; width: 100%;
+    background: var(--cartao); border: 1px solid var(--borda); border-radius: 14px; padding: 12px; }
+  .item .avatar { width: 38px; height: 38px; border-radius: 10px; flex: none; display: grid; place-items: center;
+    background: var(--cartao2); font-weight: 700; color: #d8b4fe; }
+  .item .meio { flex: 1; min-width: 0; }
+  .item .meio b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item .meio small { color: var(--suave); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .selo { font-size: 11px; padding: 3px 8px; border-radius: 999px; background: var(--cartao2); color: var(--suave); flex: none; }
+  .selo.ok { color: var(--verde); background: rgba(52,211,153,.12); }
+  .selo.rodando { color: var(--amarelo); background: rgba(251,191,36,.12); }
+  .vazio { text-align: center; color: var(--suave); padding: 30px 10px; }
+
+  .chat { flex: 1; padding: 14px 12px 8px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+  .msg { max-width: 86%; padding: 10px 12px; border-radius: 16px; white-space: pre-wrap; word-wrap: break-word; }
+  .msg.eu { align-self: flex-end; background: var(--bolha-eu); color: #fff; border-bottom-right-radius: 5px; }
+  .msg.bot { align-self: flex-start; background: var(--cartao); border: 1px solid var(--borda); border-bottom-left-radius: 5px; }
+  .msg.bot.trabalhando { color: var(--amarelo); }
+  .msg .hora { display: block; font-size: 10px; opacity: .6; margin-top: 4px; text-align: right; }
+  .msg code { background: rgba(255,255,255,.1); padding: 1px 5px; border-radius: 5px; font-size: 13px; }
+  .msg.eu a { color: #fff; }
+  .digitando { align-self: flex-start; color: var(--suave); font-size: 13px; padding: 4px 6px; }
+
+  .compositor { position: sticky; bottom: 0; background: rgba(15,10,26,.96); border-top: 1px solid var(--borda);
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); }
+  .anexos { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .anexos span { background: var(--cartao2); border-radius: 999px; padding: 4px 10px; font-size: 12px; }
+  .anexos span button { background: none; color: var(--suave); margin-left: 4px; }
+  .linha { display: flex; align-items: flex-end; gap: 8px; }
+  .linha textarea { flex: 1; resize: none; max-height: 140px; background: var(--cartao); border: 1px solid var(--borda);
+    border-radius: 20px; padding: 10px 14px; outline: none; }
+  .redondo { width: 42px; height: 42px; border-radius: 50%; flex: none; display: grid; place-items: center;
+    background: var(--cartao2); font-size: 18px; }
+  .redondo.enviar { background: var(--bolha-eu); color: #fff; }
+  .redondo.gravando { background: var(--vermelho); }
+
+  .aviso { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.35); color: #fde68a;
+    border-radius: 14px; padding: 12px; font-size: 14px; }
+  .aviso .btn { margin-top: 10px; }
+  .toast { position: fixed; left: 50%; bottom: calc(90px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+    background: var(--cartao2); border: 1px solid var(--borda); padding: 10px 14px; border-radius: 12px; z-index: 20;
+    max-width: 90vw; font-size: 14px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <button class="voltar" id="voltar" hidden aria-label="Voltar">‹</button>
+  <img src="icon-192.png" alt="" id="logo">
+  <div class="titulo"><b id="tituloTopo">LovableX</b><small id="subTopo">pedidos pelo celular</small></div>
+  <button class="icone" id="botaoSair" hidden>Sair</button>
+</header>
+<main id="tela"></main>
+<div class="toast" id="toast" hidden></div>
+
+<script type="module">
+import nacl from "https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/+esm";
+import { blake2b } from "https://cdn.jsdelivr.net/npm/blakejs@1.2.1/+esm";
+import { selar } from "./selado.mjs";
+
+/* ============ estado ============ */
+const ETIQUETA = "lovablex";
+const WORKFLOW = ".github/workflows/lovablex.yml";
+const guardar = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} };
+const ler = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+let tokenGH = ler("lx_github") || "";
+let eu = null;               // usuário do GitHub
+let repos = [];
+let pilha = [];              // histórico de telas para o "voltar"
+let pararPolling = null;
+
+const $ = (id) => document.getElementById(id);
+const el = (tag, attrs = {}, ...filhos) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const f of filhos.flat()) if (f != null) n.append(f.nodeType ? f : document.createTextNode(String(f)));
+  return n;
+};
+function toast(texto, ms = 3000) {
+  const t = $("toast"); t.textContent = texto; t.hidden = false;
+  clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, ms);
+}
+const quando = (iso) => {
+  const d = new Date(iso), agora = new Date();
+  const mesmoDia = d.toDateString() === agora.toDateString();
+  return mesmoDia ? d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+    : d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) + " " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+};
+
+/* ============ GitHub API ============ */
+async function gh(caminho, { metodo = "GET", corpo, bruto = false } = {}) {
+  const r = await fetch(caminho.startsWith("http") ? caminho : `https://api.github.com${caminho}`, {
+    method: metodo,
+    headers: {
+      Authorization: `Bearer ${tokenGH}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      ...(corpo ? { "Content-Type": "application/json" } : {})
+    },
+    body: corpo ? JSON.stringify(corpo) : undefined,
+    cache: "no-store"
+  });
+  if (bruto) return r;
+  if (r.status === 204) return null;
+  const dados = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const e = new Error(dados.message || `GitHub respondeu ${r.status}`);
+    e.status = r.status; throw e;
+  }
+  return dados;
+}
+const b64 = (bytes) => { let s = ""; const passo = 0x8000; for (let i = 0; i < bytes.length; i += passo) s += String.fromCharCode(...bytes.subarray(i, i + passo)); return btoa(s); };
+const b64texto = (texto) => b64(new TextEncoder().encode(texto));
+const deB64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+
+/* ============ navegação ============ */
+function mostrar(render, { raiz = false } = {}) {
+  if (pararPolling) { pararPolling(); pararPolling = null; }
+  if (raiz) pilha = [];
+  pilha.push(render);
+  desenhar();
+}
+function voltar() {
+  if (pilha.length <= 1) return;
+  if (pararPolling) { pararPolling(); pararPolling = null; }
+  pilha.pop();
+  desenhar();
+}
+function desenhar() {
+  const tela = $("tela"); tela.replaceChildren();
+  $("voltar").hidden = pilha.length <= 1;
+  $("logo").hidden = pilha.length > 1;
+  $("botaoSair").hidden = !(tokenGH && pilha.length === 1);
+  pilha[pilha.length - 1](tela);
+}
+$("voltar").onclick = voltar;
+$("botaoSair").onclick = () => {
+  if (!confirm("Sair e apagar o token do GitHub deste celular?")) return;
+  tokenGH = ""; guardar("lx_github", null); guardar("lx_claude", null); eu = null;
+  mostrar(telaEntrar, { raiz: true });
+};
+function topo(titulo, sub) { $("tituloTopo").textContent = titulo; $("subTopo").textContent = sub || ""; }
+
+/* ============ tela: entrar ============ */
+function telaEntrar(tela) {
+  topo("LovableX", "pedidos pelo celular");
+  const campo = el("input", { class: "campo", type: "password", placeholder: "Cole aqui o token do GitHub (ghp_…)", autocomplete: "off" });
+  const erro = el("div", { class: "erro" });
+  const botao = el("button", { class: "btn" }, "Entrar");
+  botao.onclick = async () => {
+    const t = campo.value.trim();
+    if (!t) return;
+    botao.disabled = true; erro.textContent = "";
+    tokenGH = t;
+    try {
+      eu = await gh("/user");
+      guardar("lx_github", t);
+      mostrar(telaProjetos, { raiz: true });
+    } catch (e) {
+      tokenGH = ""; erro.textContent = e.status === 401 ? "Token inválido. Confira se copiou inteiro." : e.message;
+    } finally { botao.disabled = false; }
+  };
+  const link = "https://github.com/settings/tokens/new?scopes=repo,workflow&description=LovableX%20Celular";
+  tela.append(el("div", { class: "conteudo" },
+    el("div", { class: "cartao" },
+      el("h2", {}, "Conecte seu GitHub"),
+      el("p", {}, "Uma vez só. O token fica guardado apenas neste celular."),
+      el("ol", { class: "passos" },
+        el("li", {}, "Abra ", el("a", { href: link, target: "_blank", rel: "noopener" }, "este link do GitHub"), " (já vem com as permissões certas: repo e workflow)."),
+        el("li", {}, "Em Expiration, escolha a validade que quiser."),
+        el("li", {}, "Toque em Generate token e copie o código ghp_…"),
+        el("li", {}, "Cole abaixo e toque em Entrar.")
+      )
+    ),
+    campo, erro, botao
+  ));
+}
+
+/* ============ tela: projetos ============ */
+async function telaProjetos(tela) {
+  topo("Seus projetos", eu ? `@${eu.login}` : "");
+  const busca = el("input", { class: "campo", type: "search", placeholder: "Buscar projeto…" });
+  const lista = el("div", { class: "lista" }, el("div", { class: "vazio" }, "Carregando projetos…"));
+  tela.append(el("div", { class: "conteudo" }, busca, lista));
+
+  const pintar = () => {
+    const q = busca.value.trim().toLowerCase();
+    const filtrados = repos.filter((r) => !q || r.full_name.toLowerCase().includes(q));
+    lista.replaceChildren(...(filtrados.length ? filtrados.map((r) =>
+      el("button", { class: "item", onclick: () => mostrar((t) => telaConversas(t, r)) },
+        el("div", { class: "avatar" }, r.name.slice(0, 2).toUpperCase()),
+        el("div", { class: "meio" }, el("b", {}, r.name), el("small", {}, `${r.owner.login} · ${r.private ? "privado" : "público"} · mexido ${quando(r.pushed_at)}`)),
+        el("span", { class: "selo" }, "›")
+      )) : [el("div", { class: "vazio" }, q ? "Nenhum projeto com esse nome." : "Nenhum projeto encontrado.")]));
+  };
+  busca.oninput = pintar;
+
+  try {
+    if (!eu) eu = await gh("/user");
+    topo("Seus projetos", `@${eu.login}`);
+    const todos = [];
+    for (let pagina = 1; pagina <= 5; pagina += 1) {
+      const lote = await gh(`/user/repos?per_page=100&sort=pushed&affiliation=owner,collaborator,organization_member&page=${pagina}`);
+      todos.push(...lote);
+      if (lote.length < 100) break;
+    }
+    repos = todos.filter((r) => r.permissions?.push);
+    pintar();
+  } catch (e) {
+    if (e.status === 401) { tokenGH = ""; guardar("lx_github", null); return mostrar(telaEntrar, { raiz: true }); }
+    lista.replaceChildren(el("div", { class: "vazio" }, `Não consegui listar: ${e.message}`));
+  }
+}
+
+/* ============ ativação do projeto ============ */
+async function estadoAtivacao(repo) {
+  const [wf, segredos] = await Promise.all([
+    gh(`/repos/${repo.full_name}/contents/${WORKFLOW}`, { bruto: true }),
+    gh(`/repos/${repo.full_name}/actions/secrets?per_page=100`).catch(() => ({ secrets: [] }))
+  ]);
+  const nomes = (segredos.secrets || []).map((s) => s.name);
+  return {
+    workflow: wf.status === 200,
+    chave: nomes.includes("CLAUDE_CODE_OAUTH_TOKEN") || nomes.includes("ANTHROPIC_API_KEY")
+  };
+}
+
+async function ativar(repo, tokenClaude, aoProgresso) {
+  // 1. workflow que roda o Claude na nuvem do GitHub
+  aoProgresso("Instalando o robô no projeto…");
+  const yml = await (await fetch("./lovablex.yml", { cache: "no-store" })).text();
+  let sha;
+  const atual = await gh(`/repos/${repo.full_name}/contents/${WORKFLOW}`, { bruto: true });
+  if (atual.status === 200) sha = (await atual.json()).sha;
+  await gh(`/repos/${repo.full_name}/contents/${WORKFLOW}`, {
+    metodo: "PUT",
+    corpo: { message: "LovableX Celular: ativar pedidos pelo celular", content: b64texto(yml), ...(sha ? { sha } : {}) }
+  });
+
+  // 2. etiqueta que marca as conversas do app
+  aoProgresso("Criando a etiqueta das conversas…");
+  await gh(`/repos/${repo.full_name}/labels`, { metodo: "POST", corpo: { name: ETIQUETA, color: "a855f7", description: "Pedido feito pelo LovableX Celular" } })
+    .catch((e) => { if (e.status !== 422) throw e; });
+
+  // 3. chave do Claude, criptografada com a chave pública do repositório
+  if (tokenClaude) {
+    aoProgresso("Guardando a chave do Claude com segurança…");
+    const nome = /^sk-ant-oat/i.test(tokenClaude) ? "CLAUDE_CODE_OAUTH_TOKEN" : "ANTHROPIC_API_KEY";
+    const pub = await gh(`/repos/${repo.full_name}/actions/secrets/public-key`);
+    const selado = selar(nacl, blake2b, new TextEncoder().encode(tokenClaude), deB64(pub.key));
+    await gh(`/repos/${repo.full_name}/actions/secrets/${nome}`, {
+      metodo: "PUT", corpo: { encrypted_value: b64(selado), key_id: pub.key_id }
+    });
+  }
+}
+
+function cartaoAtivacao(repo, estado, aoAtivar) {
+  const salvo = ler("lx_claude") || "";
+  const campo = el("input", { class: "campo", type: "password", placeholder: "Token do Claude (sk-ant-oat…) ou chave da API (sk-ant-api…)", autocomplete: "off", value: salvo });
+  const lembrar = el("input", { type: "checkbox", checked: Boolean(salvo) });
+  const erro = el("div", { class: "erro" });
+  const botao = el("button", { class: "btn" }, estado.workflow ? "Atualizar e guardar a chave" : "Ativar este projeto");
+  botao.onclick = async () => {
+    const t = campo.value.trim();
+    if (!estado.chave && !t) { erro.textContent = "Cole o token do Claude para ativar."; return; }
+    botao.disabled = true; erro.textContent = "";
+    try {
+      await ativar(repo, t, (msg) => { botao.textContent = msg; });
+      guardar("lx_claude", lembrar.checked && t ? t : null);
+      toast("Projeto ativado ✓");
+      aoAtivar();
+    } catch (e) {
+      erro.textContent = e.status === 404 || e.status === 403
+        ? "O token do GitHub precisa das permissões repo e workflow. Gere outro pelo link da primeira tela."
+        : e.message;
+      botao.textContent = "Tentar de novo";
+    } finally { botao.disabled = false; }
+  };
+  return el("div", { class: "aviso" },
+    el("b", {}, estado.workflow ? "Falta a chave do Claude" : "Este projeto ainda não está ativado"),
+    el("p", { style: "margin:6px 0" }, "Para o Claude trabalhar com o computador desligado, ele roda na nuvem do GitHub e precisa de uma chave sua."),
+    el("ol", { class: "passos", style: "color:#fde68a" },
+      el("li", {}, "No computador, abra o terminal e rode: ", el("code", {}, "claude setup-token")),
+      el("li", {}, "Faça login quando o navegador abrir e copie o token sk-ant-oat…"),
+      el("li", {}, "Cole abaixo. Isso usa o seu plano do Claude, sem custo extra.")
+    ),
+    campo,
+    el("label", { style: "display:flex;gap:8px;align-items:center;margin-top:8px;font-size:13px" }, lembrar, "Lembrar neste celular para ativar outros projetos"),
+    erro, botao
+  );
+}
+
+/* ============ tela: conversas de um projeto ============ */
+async function telaConversas(tela, repo) {
+  topo(repo.name, "conversas");
+  const caixa = el("div", { class: "conteudo" }, el("div", { class: "vazio" }, "Carregando…"));
+  tela.append(caixa);
+
+  const carregar = async () => {
+    try {
+      const [estado, conversas] = await Promise.all([
+        estadoAtivacao(repo),
+        gh(`/repos/${repo.full_name}/issues?labels=${ETIQUETA}&state=all&sort=updated&per_page=50`).catch(() => [])
+      ]);
+      const partes = [];
+      if (!estado.workflow || !estado.chave) partes.push(cartaoAtivacao(repo, estado, carregar));
+      partes.push(el("button", { class: "btn", onclick: () => mostrar((t) => telaChat(t, repo, null)) }, "＋ Nova conversa"));
+      if (!conversas.length) {
+        partes.push(el("div", { class: "vazio" }, "Nenhuma conversa ainda. Toque em Nova conversa e peça o que quiser mudar."));
+      } else {
+        partes.push(el("div", { class: "lista" }, conversas.filter((c) => !c.pull_request).map((c) =>
+          el("button", { class: "item", onclick: () => mostrar((t) => telaChat(t, repo, c)) },
+            el("div", { class: "avatar" }, "💬"),
+            el("div", { class: "meio" }, el("b", {}, c.title), el("small", {}, `${c.comments} mensagens · ${quando(c.updated_at)}`)),
+            el("span", { class: `selo ${c.state === "closed" ? "" : "ok"}` }, c.state === "closed" ? "arquivada" : "aberta")
+          ))));
+      }
+      caixa.replaceChildren(...partes);
+    } catch (e) {
+      caixa.replaceChildren(el("div", { class: "vazio" }, `Não consegui abrir: ${e.message}`));
+    }
+  };
+  await carregar();
+}
+
+/* ============ tela: chat ============ */
+function textoParaNos(texto) {
+  // markdown bem simples: links, **negrito** e `código`
+  const frag = document.createDocumentFragment();
+  const re = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)|\*\*([^*]+)\*\*|`([^`]+)`/g;
+  let ultimo = 0, m;
+  while ((m = re.exec(texto))) {
+    if (m.index > ultimo) frag.append(texto.slice(ultimo, m.index));
+    if (m[1]) frag.append(el("a", { href: m[2], target: "_blank", rel: "noopener" }, m[1]));
+    else if (m[3]) frag.append(el("b", {}, m[3]));
+    else if (m[4]) frag.append(el("code", {}, m[4]));
+    ultimo = re.lastIndex;
+  }
+  frag.append(texto.slice(ultimo));
+  return frag;
+}
+
+function telaChat(tela, repo, conversa) {
+  topo(conversa ? conversa.title : "Nova conversa", repo.name);
+  const chat = el("div", { class: "chat" });
+  const anexosEl = el("div", { class: "anexos", hidden: true });
+  const texto = el("textarea", { rows: 1, placeholder: "Peça uma alteração…" });
+  const seletor = el("input", { type: "file", multiple: true, hidden: true });
+  const clipe = el("button", { class: "redondo", "aria-label": "Anexar", onclick: () => seletor.click() }, "📎");
+  const mic = el("button", { class: "redondo", "aria-label": "Ditar" }, "🎤");
+  const enviar = el("button", { class: "redondo enviar", "aria-label": "Enviar" }, "➤");
+  let arquivos = [];
+  let numero = conversa ? conversa.number : null;
+  let enviando = false;
+
+  tela.append(chat, el("div", { class: "compositor" }, anexosEl, el("div", { class: "linha" }, clipe, texto, mic, enviar), seletor));
+
+  texto.addEventListener("input", () => { texto.style.height = "auto"; texto.style.height = Math.min(texto.scrollHeight, 140) + "px"; });
+  texto.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !matchMedia("(pointer:coarse)").matches) { e.preventDefault(); mandar(); } });
+
+  const pintarAnexos = () => {
+    anexosEl.hidden = !arquivos.length;
+    anexosEl.replaceChildren(...arquivos.map((f, i) => el("span", {}, `📄 ${f.name}`,
+      el("button", { onclick: () => { arquivos.splice(i, 1); pintarAnexos(); } }, "✕"))));
+  };
+  seletor.onchange = () => {
+    for (const f of seletor.files) {
+      if (f.size > 20 * 1024 * 1024) { toast(`${f.name} passa de 20 MB`); continue; }
+      arquivos.push(f);
+    }
+    seletor.value = ""; pintarAnexos();
+  };
+
+  // ditado por voz (Chrome/Android e Safari/iPhone)
+  const Reconhecer = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!Reconhecer) mic.hidden = true;
+  else {
+    let rec = null;
+    mic.onclick = () => {
+      if (rec) { rec.stop(); return; }
+      rec = new Reconhecer(); rec.lang = "pt-BR"; rec.interimResults = true;
+      const base = texto.value ? texto.value + " " : "";
+      rec.onresult = (e) => { texto.value = base + [...e.results].map((r) => r[0].transcript).join(""); texto.dispatchEvent(new Event("input")); };
+      rec.onend = () => { rec = null; mic.classList.remove("gravando"); };
+      mic.classList.add("gravando"); rec.start();
+    };
+  }
+
+  const bolha = (quem, corpo, hora, extra = "") =>
+    el("div", { class: `msg ${quem} ${extra}` }, textoParaNos(corpo), hora ? el("span", { class: "hora" }, quando(hora)) : null);
+
+  let assinatura = "";
+  async function atualizar() {
+    if (!numero) {
+      if (!chat.childElementCount) chat.append(el("div", { class: "vazio" }, "Diga o que você quer mudar no projeto. Ex.: \"deixe o título do Dashboard em amarelo\"."));
+      return true;
+    }
+    const [issue, comentarios] = await Promise.all([
+      gh(`/repos/${repo.full_name}/issues/${numero}`),
+      gh(`/repos/${repo.full_name}/issues/${numero}/comments?per_page=100`)
+    ]);
+    const nova = `${issue.updated_at}|${comentarios.length}|${comentarios.at(-1)?.updated_at || ""}`;
+    if (nova === assinatura) return ultimaEhFinal(comentarios);
+    assinatura = nova;
+    const nos = [bolha("eu", [issue.title, issue.body].filter(Boolean).join("\n\n").replace(/\n\n📎 Anexos:[\s\S]*$/, "\n\n📎 com anexo"), issue.created_at)];
+    for (const c of comentarios) {
+      const doRobo = c.user?.type === "Bot";
+      const trabalhando = doRobo && /^⏳/.test(c.body);
+      nos.push(bolha(doRobo ? "bot" : "eu", c.body.replace(/\n\n📎 Anexos:[\s\S]*$/, "\n\n📎 com anexo"), c.created_at, trabalhando ? "trabalhando" : ""));
+    }
+    const final = ultimaEhFinal(comentarios);
+    if (!final) nos.push(el("div", { class: "digitando" }, "Claude está trabalhando… a resposta aparece aqui sozinha."));
+    const noFim = chat.scrollHeight - chat.scrollTop - chat.clientHeight < 80;
+    chat.replaceChildren(...nos);
+    if (noFim) chat.scrollTop = chat.scrollHeight;
+    return final;
+  }
+  const ultimaEhFinal = (comentarios) => {
+    const ultimo = comentarios.at(-1);
+    return Boolean(ultimo && ultimo.user?.type === "Bot" && !/^⏳/.test(ultimo.body));
+  };
+
+  // acompanha a conversa ao vivo enquanto a tela está aberta
+  let vivo = true, espera = null;
+  const ciclo = async () => {
+    if (!vivo) return;
+    let final = true;
+    try { final = await atualizar(); } catch (e) { if (e.status === 401) return mostrar(telaEntrar, { raiz: true }); }
+    if (vivo) espera = setTimeout(ciclo, final ? 20000 : 5000);
+  };
+  pararPolling = () => { vivo = false; clearTimeout(espera); };
+  ciclo();
+
+  async function subirAnexos() {
+    const caminhos = [];
+    for (const f of arquivos) {
+      const nome = `${Date.now()}-${f.name.replace(/[^\w.\-() ]+/g, "_")}`;
+      const caminho = `.lovablex/anexos/${nome}`;
+      const bytes = new Uint8Array(await f.arrayBuffer());
+      await gh(`/repos/${repo.full_name}/contents/${encodeURI(caminho)}`, {
+        metodo: "PUT", corpo: { message: `LovableX Celular: anexo ${f.name}`, content: b64(bytes) }
+      });
+      caminhos.push(caminho);
+    }
+    return caminhos;
+  }
+
+  async function mandar() {
+    const pedido = texto.value.trim();
+    if (enviando || (!pedido && !arquivos.length)) return;
+    enviando = true; enviar.disabled = true; enviar.textContent = "…";
+    try {
+      let corpo = pedido || "Veja o anexo.";
+      if (arquivos.length) {
+        toast("Enviando anexos…", 8000);
+        const caminhos = await subirAnexos();
+        corpo += `\n\n📎 Anexos:\n${caminhos.map((c) => `- \`${c}\``).join("\n")}`;
+      }
+      if (numero) {
+        await gh(`/repos/${repo.full_name}/issues/${numero}/comments`, { metodo: "POST", corpo: { body: corpo } });
+      } else {
+        const titulo = (pedido || "Pedido com anexo").split("\n")[0].slice(0, 80);
+        const issue = await gh(`/repos/${repo.full_name}/issues`, {
+          metodo: "POST", corpo: { title: titulo, body: corpo.slice(titulo.length).trim() || corpo, labels: [ETIQUETA] }
+        });
+        numero = issue.number;
+        topo(issue.title, repo.name);
+      }
+      texto.value = ""; texto.style.height = "auto"; arquivos = []; pintarAnexos();
+      assinatura = "";
+      clearTimeout(espera); ciclo();
+    } catch (e) {
+      toast(e.status === 410 ? "As issues estão desligadas neste repositório. Ligue em Settings → Features → Issues." : `Não enviou: ${e.message}`, 6000);
+    } finally { enviando = false; enviar.disabled = false; enviar.textContent = "➤"; }
+  }
+  enviar.onclick = mandar;
+}
+
+/* ============ início ============ */
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+mostrar(tokenGH ? telaProjetos : telaEntrar, { raiz: true });
+</script>
+</body>
+</html>

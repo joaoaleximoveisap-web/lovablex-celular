@@ -1,4 +1,4 @@
-# lovablex-versao: 3
+# lovablex-versao: 4
 # LovableX Celular — pedidos pelo celular, sem precisar do computador.
 #
 # O app do celular abre uma "issue" com a etiqueta `lovablex` (ou comenta
@@ -180,7 +180,8 @@ jobs:
             partes.push("");
             partes.push(`✅ **Alterado de verdade no GitHub** · [\`${env.SHA.slice(0, 7)}\`](https://github.com/${env.GITHUB_REPOSITORY}/commit/${env.SHA})`);
             if (arquivos.length) partes.push(`Arquivos: ${arquivos.slice(0, 12).map((a) => `\`${a}\``).join(", ")}${arquivos.length > 12 ? ` e mais ${arquivos.length - 12}` : ""}`);
-            partes.push("O Lovable puxa em cerca de 1 minuto — atualize a prévia do Lovable para ver.");
+            // não prometer o que depende do Lovable: a sincronização dele pode estar desligada
+            partes.push("Aparece no Lovable quando ele puxar do GitHub (se a sincronização Git do projeto estiver ativa). Se não aparecer em alguns minutos, a ligação do Lovable com o GitHub está desligada — nada a ver com o pedido.");
           } else if (!r.result && (env.CODIGO !== "0" || r.is_error)) {
             const erro = String(r.result || r.error || ler("claude.err") || "sem detalhes").trim().split("\n").slice(-6).join("\n").slice(0, 900);
             partes.push("❌ **O Claude não conseguiu trabalhar neste pedido.**");

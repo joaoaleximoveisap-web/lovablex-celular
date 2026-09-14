@@ -533,6 +533,12 @@ async function telaProjetos(tela) {
     for (const r of repos) if (cache[r.full_name]) { metas.set(r.full_name, cache[r.full_name]); r.titulo = cache[r.full_name].titulo; }
     desenhar();
     conferirTodos();
+    // painel da extensão: abre direto no projeto aberto no Lovable (?repo=dono/nome)
+    const alvo = new URLSearchParams(location.search).get("repo");
+    if (alvo && !telaProjetos.jaAbriu) {
+      const r = repos.find((x) => x.full_name.toLowerCase() === alvo.toLowerCase());
+      if (r) { telaProjetos.jaAbriu = true; r.titulo = metas.get(r.full_name)?.titulo; ir((t) => telaProjeto(t, r)); }
+    }
   } catch (e) {
     if (e.status === 401) { tokenGH = ""; guardar("lx_github", null); return ir(telaInicio, { raiz: true }); }
     lista.replaceChildren(el("div", { class: "vazio" }, `Sem conexão com o GitHub agora. ${e.message}`));

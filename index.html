@@ -537,7 +537,12 @@ async function telaProjetos(tela) {
     const alvo = new URLSearchParams(location.search).get("repo");
     if (alvo && !telaProjetos.jaAbriu) {
       const r = repos.find((x) => x.full_name.toLowerCase() === alvo.toLowerCase());
-      if (r) { telaProjetos.jaAbriu = true; r.titulo = metas.get(r.full_name)?.titulo; ir((t) => telaProjeto(t, r)); }
+      if (r) {
+        telaProjetos.jaAbriu = true;
+        // descobre o nome de verdade ANTES de abrir, senão o topo mostra "crmdaj"
+        try { const m = metas.get(r.full_name) || await identificar(r); metas.set(r.full_name, m); r.titulo = m.titulo; } catch {}
+        ir((t) => telaProjeto(t, r));
+      }
     }
   } catch (e) {
     if (e.status === 401) { tokenGH = ""; guardar("lx_github", null); return ir(telaInicio, { raiz: true }); }

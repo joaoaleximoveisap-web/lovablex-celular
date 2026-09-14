@@ -195,7 +195,10 @@ import { selar } from "./selado.mjs";
 /* =================== base =================== */
 const ETIQUETA = "lovablex";
 const WORKFLOW = ".github/workflows/lovablex.yml";
-const LINK_TOKEN_GH = "https://github.com/settings/tokens/new?scopes=repo,workflow&description=LovableX%20Celular";
+// nome único a cada vez: o GitHub recusa dois tokens com o mesmo nome
+// ("Note has already been taken") — celular e computador geram um cada
+const LINK_TOKEN_GH = "https://github.com/settings/tokens/new?scopes=repo,workflow&description="
+  + encodeURIComponent(`LovableX ${/Mobi|Android|iPhone/i.test(navigator.userAgent) ? "celular" : "computador"} ${new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}`);
 const guardar = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} };
 const ler = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
 let tokenGH = ler("lx_github") || "";

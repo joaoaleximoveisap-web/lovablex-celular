@@ -1,4 +1,4 @@
-# lovablex-versao: 4
+# lovablex-versao: 5
 # LovableX Celular — pedidos pelo celular, sem precisar do computador.
 #
 # O app do celular abre uma "issue" com a etiqueta `lovablex` (ou comenta
@@ -92,6 +92,8 @@ jobs:
             "- Só deixe de alterar se o pedido já estiver 100% atendido no código; nesse caso, diga ONDE e POR QUE já está.",
             "- Faça a menor alteração completa. Não mexa no que não foi pedido.",
             "- Não mexa em .github/. Não faça commit nem push: o workflow cuida disso.",
+            "- NUNCA edite src/integrations/supabase/types.ts nem src/integrations/supabase/client.ts: são gerados pelo Lovable.",
+            "  Editar esses arquivos por fora trava a sincronização do Lovable com o GitHub. Se precisar de um campo novo, use `as any`.",
             "- Anexos enviados pelo celular ficam em .lovablex/anexos/. Abra e leia as imagens anexadas: elas mostram o problema.",
             "  Se um anexo precisar ficar no app, COPIE para public/ e use esse caminho.",
             "- Se der, rode o build (npm run build) para garantir que nada quebrou, e corrija o que quebrar.",
@@ -140,6 +142,8 @@ jobs:
           # instalar dependências reescreve os arquivos de trava; isso NÃO é
           # alteração pedida e não pode virar commit nem "✅ alterado"
           git checkout -q -- package-lock.json bun.lockb bun.lock yarn.lock pnpm-lock.yaml 2>/dev/null || true
+          # arquivos gerados pelo Lovable: editar por fora trava a sincronização Lovable ↔ GitHub
+          git checkout -q -- src/integrations/supabase/types.ts src/integrations/supabase/client.ts 2>/dev/null || true
           git add -A
           git reset -q -- node_modules package-lock.json bun.lockb bun.lock yarn.lock pnpm-lock.yaml 2>/dev/null || true
           git diff --cached --name-only | grep -v '^\.lovablex/' > "$RUNNER_TEMP/arquivos.txt" || true

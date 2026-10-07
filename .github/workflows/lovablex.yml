@@ -113,8 +113,14 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           npm install -g @anthropic-ai/claude-code@latest --no-audit --no-fund --loglevel=error
-          [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ] && unset CLAUDE_CODE_OAUTH_TOKEN
-          [ -z "$ANTHROPIC_API_KEY" ] && unset ANTHROPIC_API_KEY
+          if [ -n "${CLAUDE_CODE_OAUTH_TOKEN:-}" ]; then
+            unset ANTHROPIC_API_KEY
+          elif [ -n "${ANTHROPIC_API_KEY:-}" ]; then
+            unset CLAUDE_CODE_OAUTH_TOKEN
+          else
+            echo "Nenhuma credencial Claude configurada" >&2
+            exit 1
+          fi
           set +e
           claude -p "$(cat "$RUNNER_TEMP/pedido.txt")" \
             --output-format json \

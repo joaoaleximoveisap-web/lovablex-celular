@@ -39,7 +39,7 @@ jobs:
       (github.event_name == 'issues' ||
         (github.event.comment.user.type != 'Bot' && !startsWith(github.event.comment.body, '🛑')))
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 25
     env:
       GH_TOKEN: ${{ github.token }}
       NUM: ${{ github.event.issue.number }}
@@ -78,8 +78,8 @@ jobs:
           const ehInicio = (t) => /^⏳ Recebi/.test(String(t || ""));
           const historico = comentarios
             .filter((c) => c.body && !ehInicio(c.body))
-            .slice(-12, -1)
-            .map((c) => `${c.user && c.user.type === "Bot" ? "LOVABLEX" : "PESSOA"}: ${String(c.body).slice(0, 2000)}`)
+            .slice(-6, -1)
+            .map((c) => `${c.user && c.user.type === "Bot" ? "LOVABLEX" : "PESSOA"}: ${String(c.body).slice(0, 800)}`)
             .join("\n\n");
           const atual = env.EVENTO === "issue_comment" ? env.COMENTARIO : `${env.TITULO}\n\n${env.CORPO || ""}`;
           const pedido = [
@@ -118,7 +118,8 @@ jobs:
           set +e
           claude -p "$(cat "$RUNNER_TEMP/pedido.txt")" \
             --output-format json \
-            --max-turns 150 \
+            --model sonnet \
+            --max-turns 40 \
             --permission-mode acceptEdits \
             --allowedTools "Read,Edit,Write,MultiEdit,Glob,Grep,TodoWrite,Bash(npm *),Bash(npx *),Bash(node *),Bash(ls *),Bash(cat *),Bash(mkdir *),Bash(cp *),Bash(mv *),Bash(git status *),Bash(git diff *),Bash(git log *)" \
             > "$RUNNER_TEMP/claude.json" 2> "$RUNNER_TEMP/claude.err"

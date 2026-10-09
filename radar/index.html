@@ -567,7 +567,7 @@ function desenharDiscrepancia() {
   const ord = dem.slice().sort((a, b) => b[1] - a[1]);
   if (ord.length) ins.push(`<div class="insight"><div class="tag info">◆ Sazonalidade</div>Alta: <b>${ord.slice(0, 3).map(p => MESES_L[p[0]]).join(", ")}</b>. Baixa: <b>${ord.slice(-3).reverse().map(p => MESES_L[p[0]]).join(", ")}</b>. Diferença entre o mês mais forte e o mais fraco: <b>${nf(ord[0][1] - ord.at(-1)[1])} pts</b>.</div>`);
   const pc = picosFuturo().slice().sort((a, b) => b[1] - a[1])[0];
-  if (pc) ins.push(`<div class="insight"><div class="tag info">◆ Já reservado</div>No calendário, a noite que mais se destaca é <b>${new Date(pc[0][0] + "T12:00").toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })}</b>: ${pct(pc[0][2])} do estoque já fechado, ${nf(pc[1])} pts acima das semanas vizinhas.</div>`);
+  if (pc) ins.push(`<div class="insight"><div class="tag info">◆ Já reservado</div>No calendário, a noite que mais se destaca é <b>${new Date(pc[0][0] + "T12:00").toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })}</b>: ${pct(pc[0][2])} do estoque já fechado, ${nf(pc[1])} pts acima do mesmo dia da semana nas semanas vizinhas.</div>`);
   if (pre.length < 3) ins.push(`<div class="insight"><div class="tag neutro">● Histórico de preço curto</div>Só ${col.length} coleta(s) pública(s) com preço até aqui. O robô salva uma nova por trimestre; os pontos laranja vão preenchendo o ano sozinhos.</div>`);
   $("#insightsDisc").innerHTML = ins.join("");
 }
@@ -608,10 +608,10 @@ function desenharCalor() {
 }
 
 // ---------- próximos 365 dias ----------
-// picos: noites muito mais fechadas que as vizinhas (±15 dias) — feriados, eventos, Réveillon, Carnaval
+// picos: noites muito mais fechadas que o mesmo dia da semana nas 3 semanas antes e depois — feriados, eventos, Réveillon, Carnaval
 function picosFuturo() {
   const f = D.futuro;
-  const exc = f.map((r, i) => { if (i < 10 || r[2] == null) return null; const viz = f.slice(Math.max(0, i - 15), i + 16).map(x => x[2]).filter(v => v != null); return [r, r[2] - mediana(viz)]; }).filter(Boolean).sort((a, b) => b[1] - a[1]);
+  const exc = f.map((r, i) => { if (i < 10 || r[2] == null) return null; const viz = [-21, -14, -7, 7, 14, 21].map(k => f[i + k]?.[2]).filter(v => v != null); if (viz.length < 3) return null; return [r, r[2] - mediana(viz)]; }).filter(Boolean).sort((a, b) => b[1] - a[1]);
   const escolhidos = [];
   for (const [r, e] of exc) { if (e < 4) break; if (escolhidos.every(x => Math.abs(new Date(x[0][0]) - new Date(r[0])) > 6 * 864e5)) escolhidos.push([r, e]); if (escolhidos.length === 6) break; }
   return escolhidos;
@@ -630,7 +630,7 @@ function desenharFuturo() {
   comum("gFutDisp", 1, COR.oferta, v => `${nf(v)} unidades aceitando reserva`, { beginAtZero: true, ticks: { color: COR.apagado, callback: v => nf(v) } });
   comum("gFutOcup", 2, COR.demanda, v => `${pct(v, 1)} do estoque ativo já fechado`, { suggestedMin: 0, max: 100, ticks: { color: COR.apagado, callback: v => v + "%" } });
   const escolhidos = picosFuturo();
-  $("#picos").innerHTML = escolhidos.length ? `<div class="pico" style="border-color:transparent;background:none;padding-left:0"><small>datas que já se destacam</small><b>picos de procura</b></div>` + escolhidos.sort((a, b) => a[0][0] < b[0][0] ? -1 : 1).map(([r, e]) => `<div class="pico"><small>${new Date(r[0] + "T12:00").toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}</small><b>${pct(r[2])}</b> fechado · +${nf(e)} pts vs. semanas vizinhas</div>`).join("") : "";
+  $("#picos").innerHTML = escolhidos.length ? `<div class="pico" style="border-color:transparent;background:none;padding-left:0"><small>datas que já se destacam</small><b>picos de procura</b></div>` + escolhidos.sort((a, b) => a[0][0] < b[0][0] ? -1 : 1).map(([r, e]) => `<div class="pico"><small>${new Date(r[0] + "T12:00").toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}</small><b>${pct(r[2])}</b> fechado · +${nf(e)} pts vs. mesmo dia nas semanas vizinhas</div>`).join("") : "";
 }
 
 // ---------- preços ----------
@@ -706,7 +706,7 @@ function desenharTabBairros() {
   const { col, dir } = estado.ordB;
   const lin = D.bairros.slice().sort((a, b) => { const x = a[col], y = b[col]; if (x == null) return 1; if (y == null) return -1; return (typeof x === "string" ? x.localeCompare(y) : x - y) * dir; }).slice(0, estado.todosB ? undefined : 15);
   const maxO = Math.max(...D.bairros.map(b => b.ocup || 0));
-  $("#tabBairros").innerHTML = `<thead><tr>${cols.map(([k, t, n]) => `<th data-ord="${k}" class="${n ? "num" : ""} ${col === k ? (dir > 0 ? "asc" : "desc") : ""}">${t}</th>`).join("")}</tr></thead><tbody>${lin.map(b => `<tr><td>${esc(b.nome)}</td><td class="num">${nf(b.n)}</td><td class="num">${moeda(b.preco)}</td><td class="num"><span class="barrinha" style="width:${(b.ocup || 0) / maxO * 60}px"></span>${pct(b.ocup, 1)}</td><td class="num">${moeda(b.receita)}</td><td class="num">${nf(b.disp30, 1)}</td></tr>`).join("")}</tbody>${D.bairros.length > 15 ? `<tfoot><tr><td colspan="6" style="text-align:center;border:0;padding-top:12px"><button class="botao sec" id="todosB">${estado.todosB ? "Mostrar menos" : `Ver todos os ${D.bairros.length} bairros`}</button></td></tr></tfoot>` : ""}`;
+  $("#tabBairros").innerHTML = `<thead><tr>${cols.map(([k, t, n]) => `<th data-ord="${k}" class="${n ? "num" : ""} ${col === k ? (dir > 0 ? "asc" : "desc") : ""}">${t}</th>`).join("")}</tr></thead><tbody>${lin.map(b => `<tr><td>${esc(b.nome)}</td><td class="num">${nf(b.n)}</td><td class="num">${moeda(b.preco)}</td><td class="num"><span class="barrinha" style="width:${(b.ocup || 0) / maxO * 60}px"></span>${pct(b.ocup, 1)}</td><td class="num">${moeda(b.receita)}</td><td class="num">${nf(b.disp30, 1)}</td></tr>`).join("")}</tbody>${D.bairros.length > 15 ? `<tfoot><tr><td colspan="6" style="text-align:left;border:0;padding-top:12px"><button class="botao sec" id="todosB">${estado.todosB ? "Mostrar menos" : `Ver todos os ${D.bairros.length} bairros`}</button></td></tr></tfoot>` : ""}`;
 }
 $("#tabBairros").onclick = e => { if (e.target.id === "todosB") { estado.todosB = !estado.todosB; desenharTabBairros(); return; } const th = e.target.closest("th[data-ord]"); if (!th) return; const k = th.dataset.ord; estado.ordB = { col: k, dir: estado.ordB.col === k ? -estado.ordB.dir : (k === "nome" ? 1 : -1) }; desenharTabBairros(); };
 

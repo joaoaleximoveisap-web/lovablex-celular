@@ -1,0 +1,826 @@
+{
+ "atualizado": "2026-10-09T23:37:59+00:00",
+ "prontas": [
+  {
+   "link": "buenos-aires",
+   "arquivo": "buenos-aires",
+   "cidade": "Buenos Aires",
+   "pais": "Argentina",
+   "regiao": "Ciudad Autónoma de Buenos Aires",
+   "coleta": "2026-09-23",
+   "moeda": "ARS",
+   "anuncios": 29753,
+   "preco": 106099.9,
+   "ocup": 19.7
+  },
+  {
+   "link": "rio-de-janeiro",
+   "arquivo": "rio-de-janeiro",
+   "cidade": "Rio de Janeiro",
+   "pais": "Brazil",
+   "regiao": "Rio de Janeiro",
+   "coleta": "2026-09-22",
+   "moeda": "BRL",
+   "anuncios": 48247,
+   "preco": 450.0,
+   "ocup": 16.4
+  },
+  {
+   "link": "são-paulo",
+   "arquivo": "sao-paulo",
+   "cidade": "São Paulo",
+   "pais": "Brazil",
+   "regiao": "São Paulo",
+   "coleta": "2026-09-14",
+   "moeda": "BRL",
+   "anuncios": 44080,
+   "preco": 339.0,
+   "ocup": 19.7
+  },
+  {
+   "link": "santiago",
+   "arquivo": "santiago",
+   "cidade": "Santiago",
+   "pais": "Chile",
+   "regiao": "Región Metropolitana de Santiago",
+   "coleta": "2026-09-23",
+   "moeda": "CLP",
+   "anuncios": 18904,
+   "preco": 55000.0,
+   "ocup": 21.4
+  },
+  {
+   "link": "bogotá",
+   "arquivo": "bogota",
+   "cidade": "Bogotá",
+   "pais": "Colombia",
+   "regiao": "Distrito Capital",
+   "coleta": "2026-09-14",
+   "moeda": "COP",
+   "anuncios": 19505,
+   "preco": 160461.0,
+   "ocup": 16.4
+  },
+  {
+   "link": "paris",
+   "arquivo": "paris",
+   "cidade": "Paris",
+   "pais": "France",
+   "regiao": "Île-de-France",
+   "coleta": "2026-09-16",
+   "moeda": "EUR",
+   "anuncios": 77149,
+   "preco": 217.0,
+   "ocup": 28.5
+  },
+  {
+   "link": "rome",
+   "arquivo": "rome",
+   "cidade": "Rome",
+   "pais": "Italy",
+   "regiao": "Lazio",
+   "coleta": "2026-09-17",
+   "moeda": "EUR",
+   "anuncios": 37451,
+   "preco": 188.0,
+   "ocup": 26.3
+  },
+  {
+   "link": "mexico-city",
+   "arquivo": "mexico-city",
+   "cidade": "Mexico City",
+   "pais": "Mexico",
+   "regiao": "Distrito Federal",
+   "coleta": "2026-09-23",
+   "moeda": "MXN",
+   "anuncios": 30468,
+   "preco": 1500.0,
+   "ocup": 24.7
+  },
+  {
+   "link": "lisbon",
+   "arquivo": "lisbon",
+   "cidade": "Lisbon",
+   "pais": "Portugal",
+   "regiao": "Lisbon",
+   "coleta": "2026-09-19",
+   "moeda": "EUR",
+   "anuncios": 25020,
+   "preco": 140.0,
+   "ocup": 19.7
+  },
+  {
+   "link": "porto",
+   "arquivo": "porto",
+   "cidade": "Porto",
+   "pais": "Portugal",
+   "regiao": "Norte",
+   "coleta": "2026-09-19",
+   "moeda": "EUR",
+   "anuncios": 15551,
+   "preco": 120.91,
+   "ocup": 20.5
+  },
+  {
+   "link": "barcelona",
+   "arquivo": "barcelona",
+   "cidade": "Barcelona",
+   "pais": "Spain",
+   "regiao": "Catalonia",
+   "coleta": "2026-09-17",
+   "moeda": "EUR",
+   "anuncios": 15236,
+   "preco": 190.0,
+   "ocup": 41.1
+  },
+  {
+   "link": "madrid",
+   "arquivo": "madrid",
+   "cidade": "Madrid",
+   "pais": "Spain",
+   "regiao": "Comunidad de Madrid",
+   "coleta": "2026-09-17",
+   "moeda": "EUR",
+   "anuncios": 23109,
+   "preco": 150.33,
+   "ocup": 37.8
+  },
+  {
+   "link": "london",
+   "arquivo": "london",
+   "cidade": "London",
+   "pais": "United Kingdom",
+   "regiao": "England",
+   "coleta": "2026-09-17",
+   "moeda": "GBP",
+   "anuncios": 91954,
+   "preco": 174.0,
+   "ocup": 17.5
+  },
+  {
+   "link": "broward-county",
+   "arquivo": "broward-county",
+   "cidade": "Broward County",
+   "pais": "United States",
+   "regiao": "Florida",
+   "coleta": "2026-09-22",
+   "moeda": "USD",
+   "anuncios": 17630,
+   "preco": 228.4,
+   "ocup": 18.1
+  },
+  {
+   "link": "clark-county-nv",
+   "arquivo": "clark-county-nv",
+   "cidade": "Clark County, NV",
+   "pais": "United States",
+   "regiao": "Nevada",
+   "coleta": "2026-09-20",
+   "moeda": "USD",
+   "anuncios": 20651,
+   "preco": 228.31,
+   "ocup": 21.4
+  },
+  {
+   "link": "hawaii",
+   "arquivo": "hawaii",
+   "cidade": "Hawaii",
+   "pais": "United States",
+   "regiao": "Hawaii",
+   "coleta": "2026-09-17",
+   "moeda": "USD",
+   "anuncios": 38779,
+   "preco": 382.72,
+   "ocup": 15.9
+  },
+  {
+   "link": "new-york-city",
+   "arquivo": "new-york-city",
+   "cidade": "New York City",
+   "pais": "United States",
+   "regiao": "New York",
+   "coleta": "2026-09-14",
+   "moeda": "USD",
+   "anuncios": 29918,
+   "preco": 181.36,
+   "ocup": 32.9
+  }
+ ],
+ "disponiveis": [
+  {
+   "link": "buenos-aires",
+   "cidade": "Buenos Aires",
+   "pais": "Argentina"
+  },
+  {
+   "link": "barossa-valley",
+   "cidade": "Barossa Valley",
+   "pais": "Australia"
+  },
+  {
+   "link": "barwon-south-west-vic",
+   "cidade": "Barwon South West, Vic",
+   "pais": "Australia"
+  },
+  {
+   "link": "brisbane",
+   "cidade": "Brisbane",
+   "pais": "Australia"
+  },
+  {
+   "link": "melbourne",
+   "cidade": "Melbourne",
+   "pais": "Australia"
+  },
+  {
+   "link": "mid-north-coast",
+   "cidade": "Mid North Coast",
+   "pais": "Australia"
+  },
+  {
+   "link": "mornington-peninsula",
+   "cidade": "Mornington Peninsula",
+   "pais": "Australia"
+  },
+  {
+   "link": "northern-rivers",
+   "cidade": "Northern Rivers",
+   "pais": "Australia"
+  },
+  {
+   "link": "sunshine-coast",
+   "cidade": "Sunshine Coast",
+   "pais": "Australia"
+  },
+  {
+   "link": "sydney",
+   "cidade": "Sydney",
+   "pais": "Australia"
+  },
+  {
+   "link": "tasmania",
+   "cidade": "Tasmania",
+   "pais": "Australia"
+  },
+  {
+   "link": "western-australia",
+   "cidade": "Western Australia",
+   "pais": "Australia"
+  },
+  {
+   "link": "vienna",
+   "cidade": "Vienna",
+   "pais": "Austria"
+  },
+  {
+   "link": "antwerp",
+   "cidade": "Antwerp",
+   "pais": "Belgium"
+  },
+  {
+   "link": "brussels",
+   "cidade": "Brussels",
+   "pais": "Belgium"
+  },
+  {
+   "link": "ghent",
+   "cidade": "Ghent",
+   "pais": "Belgium"
+  },
+  {
+   "link": "belize",
+   "cidade": "Belize",
+   "pais": "Belize"
+  },
+  {
+   "link": "rio-de-janeiro",
+   "cidade": "Rio de Janeiro",
+   "pais": "Brazil"
+  },
+  {
+   "link": "são-paulo",
+   "cidade": "São Paulo",
+   "pais": "Brazil"
+  },
+  {
+   "link": "montreal",
+   "cidade": "Montreal",
+   "pais": "Canada"
+  },
+  {
+   "link": "new-brunswick",
+   "cidade": "New Brunswick",
+   "pais": "Canada"
+  },
+  {
+   "link": "ottawa",
+   "cidade": "Ottawa",
+   "pais": "Canada"
+  },
+  {
+   "link": "quebec-city",
+   "cidade": "Quebec City",
+   "pais": "Canada"
+  },
+  {
+   "link": "toronto",
+   "cidade": "Toronto",
+   "pais": "Canada"
+  },
+  {
+   "link": "vancouver",
+   "cidade": "Vancouver",
+   "pais": "Canada"
+  },
+  {
+   "link": "victoria",
+   "cidade": "Victoria",
+   "pais": "Canada"
+  },
+  {
+   "link": "winnipeg",
+   "cidade": "Winnipeg",
+   "pais": "Canada"
+  },
+  {
+   "link": "santiago",
+   "cidade": "Santiago",
+   "pais": "Chile"
+  },
+  {
+   "link": "hong-kong",
+   "cidade": "Hong Kong",
+   "pais": "China"
+  },
+  {
+   "link": "bogotá",
+   "cidade": "Bogotá",
+   "pais": "Colombia"
+  },
+  {
+   "link": "prague",
+   "cidade": "Prague",
+   "pais": "Czech Republic"
+  },
+  {
+   "link": "copenhagen",
+   "cidade": "Copenhagen",
+   "pais": "Denmark"
+  },
+  {
+   "link": "bordeaux",
+   "cidade": "Bordeaux",
+   "pais": "France"
+  },
+  {
+   "link": "lyon",
+   "cidade": "Lyon",
+   "pais": "France"
+  },
+  {
+   "link": "paris",
+   "cidade": "Paris",
+   "pais": "France"
+  },
+  {
+   "link": "pays-basque",
+   "cidade": "Pays Basque",
+   "pais": "France"
+  },
+  {
+   "link": "berlin",
+   "cidade": "Berlin",
+   "pais": "Germany"
+  },
+  {
+   "link": "munich",
+   "cidade": "Munich",
+   "pais": "Germany"
+  },
+  {
+   "link": "athens",
+   "cidade": "Athens",
+   "pais": "Greece"
+  },
+  {
+   "link": "crete",
+   "cidade": "Crete",
+   "pais": "Greece"
+  },
+  {
+   "link": "south-aegean",
+   "cidade": "South Aegean",
+   "pais": "Greece"
+  },
+  {
+   "link": "thessaloniki",
+   "cidade": "Thessaloniki",
+   "pais": "Greece"
+  },
+  {
+   "link": "budapest",
+   "cidade": "Budapest",
+   "pais": "Hungary"
+  },
+  {
+   "link": "dublin",
+   "cidade": "Dublin",
+   "pais": "Ireland"
+  },
+  {
+   "link": "ireland",
+   "cidade": "ireland",
+   "pais": "Ireland"
+  },
+  {
+   "link": "bergamo",
+   "cidade": "Bergamo",
+   "pais": "Italy"
+  },
+  {
+   "link": "bologna",
+   "cidade": "Bologna",
+   "pais": "Italy"
+  },
+  {
+   "link": "florence",
+   "cidade": "Florence",
+   "pais": "Italy"
+  },
+  {
+   "link": "milan",
+   "cidade": "Milan",
+   "pais": "Italy"
+  },
+  {
+   "link": "naples",
+   "cidade": "Naples",
+   "pais": "Italy"
+  },
+  {
+   "link": "puglia",
+   "cidade": "Puglia",
+   "pais": "Italy"
+  },
+  {
+   "link": "rome",
+   "cidade": "Rome",
+   "pais": "Italy"
+  },
+  {
+   "link": "sicily",
+   "cidade": "Sicily",
+   "pais": "Italy"
+  },
+  {
+   "link": "trentino",
+   "cidade": "Trentino",
+   "pais": "Italy"
+  },
+  {
+   "link": "venice",
+   "cidade": "Venice",
+   "pais": "Italy"
+  },
+  {
+   "link": "tokyo",
+   "cidade": "Tokyo",
+   "pais": "Japan"
+  },
+  {
+   "link": "nairobi",
+   "cidade": "Nairobi",
+   "pais": "Kenya"
+  },
+  {
+   "link": "riga",
+   "cidade": "Riga",
+   "pais": "Latvia"
+  },
+  {
+   "link": "malta",
+   "cidade": "malta",
+   "pais": "Malta"
+  },
+  {
+   "link": "mexico-city",
+   "cidade": "Mexico City",
+   "pais": "Mexico"
+  },
+  {
+   "link": "new-zealand",
+   "cidade": "new-zealand",
+   "pais": "New Zealand"
+  },
+  {
+   "link": "oslo",
+   "cidade": "Oslo",
+   "pais": "Norway"
+  },
+  {
+   "link": "lisbon",
+   "cidade": "Lisbon",
+   "pais": "Portugal"
+  },
+  {
+   "link": "porto",
+   "cidade": "Porto",
+   "pais": "Portugal"
+  },
+  {
+   "link": "singapore",
+   "cidade": "Singapore",
+   "pais": "Singapore"
+  },
+  {
+   "link": "cape-town",
+   "cidade": "Cape Town",
+   "pais": "South Africa"
+  },
+  {
+   "link": "barcelona",
+   "cidade": "Barcelona",
+   "pais": "Spain"
+  },
+  {
+   "link": "euskadi",
+   "cidade": "Euskadi",
+   "pais": "Spain"
+  },
+  {
+   "link": "girona",
+   "cidade": "Girona",
+   "pais": "Spain"
+  },
+  {
+   "link": "madrid",
+   "cidade": "Madrid",
+   "pais": "Spain"
+  },
+  {
+   "link": "malaga",
+   "cidade": "Malaga",
+   "pais": "Spain"
+  },
+  {
+   "link": "mallorca",
+   "cidade": "Mallorca",
+   "pais": "Spain"
+  },
+  {
+   "link": "menorca",
+   "cidade": "Menorca",
+   "pais": "Spain"
+  },
+  {
+   "link": "sevilla",
+   "cidade": "Sevilla",
+   "pais": "Spain"
+  },
+  {
+   "link": "valencia",
+   "cidade": "Valencia",
+   "pais": "Spain"
+  },
+  {
+   "link": "stockholm",
+   "cidade": "Stockholm",
+   "pais": "Sweden"
+  },
+  {
+   "link": "geneva",
+   "cidade": "Geneva",
+   "pais": "Switzerland"
+  },
+  {
+   "link": "vaud",
+   "cidade": "Vaud",
+   "pais": "Switzerland"
+  },
+  {
+   "link": "zurich",
+   "cidade": "Zurich",
+   "pais": "Switzerland"
+  },
+  {
+   "link": "taipei",
+   "cidade": "Taipei",
+   "pais": "Taiwan"
+  },
+  {
+   "link": "bangkok",
+   "cidade": "Bangkok",
+   "pais": "Thailand"
+  },
+  {
+   "link": "amsterdam",
+   "cidade": "Amsterdam",
+   "pais": "The Netherlands"
+  },
+  {
+   "link": "rotterdam",
+   "cidade": "Rotterdam",
+   "pais": "The Netherlands"
+  },
+  {
+   "link": "the-hague",
+   "cidade": "The Hague",
+   "pais": "The Netherlands"
+  },
+  {
+   "link": "istanbul",
+   "cidade": "Istanbul",
+   "pais": "Turkey"
+  },
+  {
+   "link": "bristol",
+   "cidade": "Bristol",
+   "pais": "United Kingdom"
+  },
+  {
+   "link": "edinburgh",
+   "cidade": "Edinburgh",
+   "pais": "United Kingdom"
+  },
+  {
+   "link": "greater-manchester",
+   "cidade": "Greater Manchester",
+   "pais": "United Kingdom"
+  },
+  {
+   "link": "london",
+   "cidade": "London",
+   "pais": "United Kingdom"
+  },
+  {
+   "link": "albany",
+   "cidade": "Albany",
+   "pais": "United States"
+  },
+  {
+   "link": "asheville",
+   "cidade": "Asheville",
+   "pais": "United States"
+  },
+  {
+   "link": "austin",
+   "cidade": "Austin",
+   "pais": "United States"
+  },
+  {
+   "link": "boston",
+   "cidade": "Boston",
+   "pais": "United States"
+  },
+  {
+   "link": "bozeman",
+   "cidade": "Bozeman",
+   "pais": "United States"
+  },
+  {
+   "link": "broward-county",
+   "cidade": "Broward County",
+   "pais": "United States"
+  },
+  {
+   "link": "cambridge",
+   "cidade": "Cambridge",
+   "pais": "United States"
+  },
+  {
+   "link": "chicago",
+   "cidade": "Chicago",
+   "pais": "United States"
+  },
+  {
+   "link": "clark-county-nv",
+   "cidade": "Clark County, NV",
+   "pais": "United States"
+  },
+  {
+   "link": "columbus",
+   "cidade": "Columbus",
+   "pais": "United States"
+  },
+  {
+   "link": "dallas",
+   "cidade": "Dallas",
+   "pais": "United States"
+  },
+  {
+   "link": "denver",
+   "cidade": "Denver",
+   "pais": "United States"
+  },
+  {
+   "link": "fort-worth",
+   "cidade": "Fort Worth",
+   "pais": "United States"
+  },
+  {
+   "link": "hawaii",
+   "cidade": "Hawaii",
+   "pais": "United States"
+  },
+  {
+   "link": "jersey-city",
+   "cidade": "Jersey City",
+   "pais": "United States"
+  },
+  {
+   "link": "los-angeles",
+   "cidade": "Los Angeles",
+   "pais": "United States"
+  },
+  {
+   "link": "nashville",
+   "cidade": "Nashville",
+   "pais": "United States"
+  },
+  {
+   "link": "new-orleans",
+   "cidade": "New Orleans",
+   "pais": "United States"
+  },
+  {
+   "link": "new-york-city",
+   "cidade": "New York City",
+   "pais": "United States"
+  },
+  {
+   "link": "newark",
+   "cidade": "Newark",
+   "pais": "United States"
+  },
+  {
+   "link": "oakland",
+   "cidade": "Oakland",
+   "pais": "United States"
+  },
+  {
+   "link": "pacific-grove",
+   "cidade": "Pacific Grove",
+   "pais": "United States"
+  },
+  {
+   "link": "portland",
+   "cidade": "Portland",
+   "pais": "United States"
+  },
+  {
+   "link": "rhode-island",
+   "cidade": "Rhode Island",
+   "pais": "United States"
+  },
+  {
+   "link": "rochester",
+   "cidade": "Rochester",
+   "pais": "United States"
+  },
+  {
+   "link": "salem-or",
+   "cidade": "Salem, OR",
+   "pais": "United States"
+  },
+  {
+   "link": "san-diego",
+   "cidade": "San Diego",
+   "pais": "United States"
+  },
+  {
+   "link": "san-francisco",
+   "cidade": "San Francisco",
+   "pais": "United States"
+  },
+  {
+   "link": "san-mateo-county",
+   "cidade": "San Mateo County",
+   "pais": "United States"
+  },
+  {
+   "link": "santa-clara-county",
+   "cidade": "Santa Clara County",
+   "pais": "United States"
+  },
+  {
+   "link": "santa-cruz-county",
+   "cidade": "Santa Cruz County",
+   "pais": "United States"
+  },
+  {
+   "link": "seattle",
+   "cidade": "Seattle",
+   "pais": "United States"
+  },
+  {
+   "link": "twin-cities-msa",
+   "cidade": "Twin Cities MSA",
+   "pais": "United States"
+  },
+  {
+   "link": "washington-dc",
+   "cidade": "Washington, D.C.",
+   "pais": "United States"
+  }
+ ]
+}

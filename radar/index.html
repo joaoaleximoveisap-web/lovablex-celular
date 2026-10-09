@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Radar de Hospedagem</title>
+<meta name="description" content="Oferta, demanda e preço de hospedagem de temporada ao longo do ano — com histórico desde o primeiro anúncio da cidade.">
+<meta name="theme-color" content="#080b12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233987e5'/%3E%3Cstop offset='1' stop-color='%23d95926'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%23080b12'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='url(%23g)' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='9' fill='url(%23g)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+  :root {
+    color-scheme: dark;
+    --fundo: #080b12; --superficie: #0f1420; --superficie2: #151b2a; --linha: rgba(255,255,255,.08); --linha2: rgba(255,255,255,.14);
+    --texto: #f0efec; --texto2: #c3c2b7; --apagado: #8a8d99;
+    /* séries (paleta validada para fundo escuro) */
+    --demanda: #3987e5; --preco: #d95926; --oferta: #199e70; --voce: #c98500;
+    /* status */
+    --bom: #34d399; --alerta: #fbbf24; --ruim: #fb7185;
+    --acento: linear-gradient(120deg, #3987e5 0%, #9085e9 45%, #d95926 100%);
+    --raio: 22px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--fundo); color: var(--texto); font: 15px/1.55 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(600px 400px at 10% -5%, rgba(57,135,229,.22), transparent 70%),
+      radial-gradient(500px 380px at 95% 5%, rgba(217,89,38,.16), transparent 70%),
+      radial-gradient(700px 500px at 50% 110%, rgba(144,133,233,.12), transparent 70%); }
+  a { color: #86b6ef; }
+  h1, h2, h3 { font-family: "Space Grotesk", Inter, sans-serif; letter-spacing: -.02em; margin: 0; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+
+  /* topo */
+  header.topo { position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    background: rgba(8,11,18,.72); border-bottom: 1px solid var(--linha); }
+  header.topo .wrap { display: flex; align-items: center; gap: 14px; height: 62px; }
+  .marca { display: flex; align-items: center; gap: 10px; font-family: "Space Grotesk"; font-weight: 700; font-size: 18px; white-space: nowrap; }
+  .radar { width: 30px; height: 30px; border-radius: 50%; position: relative; background: conic-gradient(from 0deg, rgba(57,135,229,.0), rgba(57,135,229,.9) 20%, rgba(57,135,229,0) 22%); animation: gira 3.5s linear infinite; box-shadow: inset 0 0 0 2px rgba(57,135,229,.5); }
+  .radar::after { content: ""; position: absolute; inset: 11px; border-radius: 50%; background: #d95926; box-shadow: 0 0 12px #d95926; }
+  @keyframes gira { to { transform: rotate(360deg); } }
+  nav.atalhos { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+  nav.atalhos::-webkit-scrollbar { display: none; }
+  nav.atalhos a { color: var(--texto2); text-decoration: none; font-size: 13px; padding: 7px 11px; border-radius: 999px; white-space: nowrap; }
+  nav.atalhos a:hover { background: var(--superficie2); color: var(--texto); }
+
+  /* herói */
+  .heroi { padding: 46px 0 22px; }
+  .selo { display: inline-flex; gap: 8px; align-items: center; font-size: 12px; color: var(--texto2); border: 1px solid var(--linha2); padding: 5px 12px; border-radius: 999px; background: rgba(255,255,255,.03); }
+  .selo i { width: 7px; height: 7px; border-radius: 50%; background: var(--bom); box-shadow: 0 0 10px var(--bom); }
+  .heroi h1 { font-size: clamp(34px, 6vw, 64px); line-height: 1.02; margin: 16px 0 12px; }
+  .heroi h1 .grad { background: var(--acento); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .heroi p.sub { color: var(--texto2); max-width: 720px; font-size: clamp(15px, 2vw, 18px); margin: 0 0 24px; }
+
+  .seletor { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .busca { position: relative; flex: 1 1 320px; max-width: 460px; }
+  .busca input { width: 100%; font: inherit; color: var(--texto); background: var(--superficie); border: 1px solid var(--linha2); border-radius: 14px; padding: 13px 14px 13px 42px; outline: none; }
+  .busca input:focus { border-color: #3987e5; box-shadow: 0 0 0 4px rgba(57,135,229,.18); }
+  .busca svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); opacity: .6; }
+  .lista-cidades { position: absolute; left: 0; right: 0; top: calc(100% + 6px); background: var(--superficie2); border: 1px solid var(--linha2); border-radius: 14px; max-height: 340px; overflow: auto; display: none; z-index: 2000; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+  .lista-cidades.aberta { display: block; }
+  .lista-cidades button { display: flex; width: 100%; justify-content: space-between; gap: 10px; text-align: left; font: inherit; color: var(--texto); background: none; border: 0; padding: 10px 14px; cursor: pointer; }
+  .lista-cidades button:hover, .lista-cidades button.foco { background: rgba(57,135,229,.15); }
+  .lista-cidades small { color: var(--apagado); }
+  .lista-cidades .grupo { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--apagado); padding: 10px 14px 4px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { font: 500 13px Inter; color: var(--texto2); background: var(--superficie); border: 1px solid var(--linha); border-radius: 999px; padding: 8px 13px; cursor: pointer; transition: .15s; }
+  .chip:hover { color: var(--texto); border-color: var(--linha2); }
+  .chip.ativo { color: #fff; background: rgba(57,135,229,.22); border-color: rgba(57,135,229,.6); }
+
+  /* kpis */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 28px 0 8px; }
+  .kpi { background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015)); border: 1px solid var(--linha); border-radius: 18px; padding: 16px 18px; position: relative; overflow: hidden; }
+  .kpi .rot { font-size: 12.5px; color: var(--texto2); }
+  .kpi .val { font: 600 clamp(24px, 3.2vw, 32px)/1.15 "Space Grotesk"; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .kpi .det { font-size: 12px; color: var(--apagado); margin-top: 4px; }
+  .kpi::after { content: ""; position: absolute; left: 0; top: 0; height: 2px; width: 100%; background: var(--acento); opacity: .55; }
+
+  /* seções */
+  section.bloco { margin: 26px 0; padding: 24px; background: rgba(15,20,32,.72); border: 1px solid var(--linha); border-radius: var(--raio); scroll-margin-top: 80px; }
+  .bloco-cab { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: flex-end; justify-content: space-between; margin-bottom: 14px; }
+  .bloco-cab h2 { font-size: clamp(21px, 2.6vw, 27px); }
+  .bloco-cab p { margin: 6px 0 0; color: var(--texto2); max-width: 760px; font-size: 14px; }
+  .eyebrow { font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: #86b6ef; font-weight: 600; margin-bottom: 6px; }
+  .grafico { position: relative; height: 360px; }
+  .grafico.baixo { height: 230px; }
+  .legenda { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--texto2); margin: 4px 0 10px; }
+  .legenda span { display: inline-flex; align-items: center; gap: 7px; }
+  .legenda i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+  .legenda i.pt { width: 10px; height: 10px; border-radius: 50%; }
+  .grade2 { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; }
+  @media (max-width: 900px) { .grade2 { grid-template-columns: 1fr; } }
+
+  .insights { display: grid; gap: 10px; align-content: start; }
+  .insight { border: 1px solid var(--linha); background: var(--superficie); border-radius: 16px; padding: 13px 15px; font-size: 14px; color: var(--texto2); }
+  .insight b { color: var(--texto); }
+  .insight .tag { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+  .tag.sobe { color: var(--bom); } .tag.desce { color: var(--ruim); } .tag.neutro { color: var(--alerta); } .tag.info { color: #86b6ef; }
+
+  .controles { display: flex; flex-wrap: wrap; gap: 8px; }
+  .seg { display: inline-flex; flex-wrap: wrap; max-width: 100%; background: var(--superficie); border: 1px solid var(--linha); border-radius: 12px; padding: 3px; }
+  .seg button { font: 500 13px Inter; color: var(--texto2); background: none; border: 0; padding: 7px 12px; border-radius: 9px; cursor: pointer; }
+  .seg button.ativo { background: var(--superficie2); color: var(--texto); box-shadow: 0 0 0 1px var(--linha2); }
+
+  /* mapa de calor */
+  .calor { overflow-x: auto; padding-bottom: 6px; }
+  .calor table { border-collapse: separate; border-spacing: 3px; font-size: 12px; min-width: 640px; width: 100%; }
+  .calor th { color: var(--apagado); font-weight: 500; padding: 2px 6px; text-align: center; }
+  .calor th.ano { text-align: right; font-variant-numeric: tabular-nums; }
+  .calor td { height: 26px; border-radius: 5px; text-align: center; color: rgba(255,255,255,.0); font-variant-numeric: tabular-nums; cursor: default; transition: transform .1s; }
+  .calor td:hover { transform: scale(1.12); color: var(--t, #fff); outline: 2px solid var(--fundo); position: relative; z-index: 1; }
+  .calor td.vazio { background: rgba(255,255,255,.025); }
+  .escala { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--apagado); margin-top: 10px; }
+  .escala .barra { height: 8px; width: 180px; border-radius: 4px; background: linear-gradient(90deg, #104281, #256abf, #3987e5, #86b6ef, #cde2fb); }
+
+  .picos { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .pico { font-size: 13px; background: var(--superficie); border: 1px solid var(--linha); border-radius: 12px; padding: 8px 12px; }
+  .pico b { font-family: "Space Grotesk"; }
+  .pico small { color: var(--apagado); display: block; font-size: 11.5px; }
+
+  /* tabelas */
+  .tabela { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  .tabela th { text-align: left; color: var(--apagado); font-weight: 500; font-size: 12px; padding: 9px 10px; border-bottom: 1px solid var(--linha2); cursor: pointer; white-space: nowrap; user-select: none; }
+  .tabela th.num, .tabela td.num { text-align: right; }
+  .tabela th[data-ord]::after { content: " ↕"; opacity: .35; }
+  .tabela th.asc::after { content: " ↑"; opacity: 1; } .tabela th.desc::after { content: " ↓"; opacity: 1; }
+  .tabela td { padding: 9px 10px; border-bottom: 1px solid var(--linha); }
+  .tabela tr:hover td { background: rgba(255,255,255,.025); }
+  .tabela td a { text-decoration: none; }
+  .rolagem { overflow-x: auto; max-width: 100%; }
+  .grade2 > * { min-width: 0; }
+  .barrinha { display: inline-block; height: 6px; border-radius: 3px; background: var(--demanda); vertical-align: middle; margin-right: 6px; }
+
+  .filtros { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .filtros select, .filtros input { font: 13px Inter; color: var(--texto); background: var(--superficie); border: 1px solid var(--linha2); border-radius: 10px; padding: 8px 10px; outline: none; min-width: 0; }
+  .filtros input[type=number] { width: 110px; }
+  .filtros label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--texto2); }
+  .botao { font: 600 13px Inter; color: #fff; background: linear-gradient(120deg, #2a78d6, #6250d6); border: 0; border-radius: 10px; padding: 9px 14px; cursor: pointer; }
+  .botao.sec { background: var(--superficie2); border: 1px solid var(--linha2); color: var(--texto); font-weight: 500; }
+  #mapa { height: 420px; border-radius: 16px; border: 1px solid var(--linha); margin-bottom: 14px; background: #0b0f18; }
+  .leaflet-container { font: 13px Inter; }
+  /* mapa gratuito do OpenStreetMap, escurecido para combinar com o app */
+  .leaflet-tile-pane { filter: invert(1) hue-rotate(185deg) brightness(.82) contrast(.92) saturate(.6); }
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--superficie2); color: var(--texto); }
+  .pagina { display: flex; gap: 8px; align-items: center; justify-content: flex-end; margin-top: 10px; font-size: 13px; color: var(--texto2); }
+
+  .ranking { display: grid; gap: 6px; }
+  .rk { display: grid; grid-template-columns: 150px 1fr 90px; align-items: center; gap: 10px; font-size: 13px; cursor: pointer; padding: 4px 6px; border-radius: 8px; }
+  .rk:hover { background: rgba(255,255,255,.03); }
+  .rk .trilho { height: 10px; background: rgba(255,255,255,.04); border-radius: 5px; overflow: hidden; }
+  .rk .trilho i { display: block; height: 100%; border-radius: 0 4px 4px 0; background: var(--demanda); }
+  .rk .v { text-align: right; font-variant-numeric: tabular-nums; color: var(--texto2); }
+  .rk.atual .nome { color: #86b6ef; font-weight: 600; }
+
+  .drop { border: 1.5px dashed var(--linha2); border-radius: 16px; padding: 20px; text-align: center; color: var(--texto2); font-size: 14px; }
+  .drop.sobre { border-color: #3987e5; background: rgba(57,135,229,.06); }
+  code { background: rgba(255,255,255,.06); padding: 1px 6px; border-radius: 6px; font-size: 12.5px; }
+  .metodo { color: var(--texto2); font-size: 14px; }
+  .metodo h3 { color: var(--texto); font-size: 16px; margin: 18px 0 6px; }
+  .metodo ul { padding-left: 18px; margin: 6px 0; }
+  .ok { color: var(--bom); } .x { color: var(--ruim); }
+
+  #tip { position: fixed; pointer-events: none; z-index: 3000; background: rgba(21,27,42,.97); border: 1px solid var(--linha2); border-radius: 10px; padding: 8px 10px; font-size: 12.5px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+  .carregando { position: fixed; inset: 0; display: grid; place-items: center; background: rgba(8,11,18,.6); z-index: 4000; backdrop-filter: blur(4px); transition: opacity .25s; }
+  .carregando.some { opacity: 0; pointer-events: none; }
+  .carregando .radar { width: 64px; height: 64px; }
+  .carregando .radar::after { inset: 24px; }
+  .vazio-msg { color: var(--apagado); font-size: 14px; padding: 30px; text-align: center; }
+  footer { color: var(--apagado); font-size: 12.5px; padding: 30px 0 50px; text-align: center; }
+  .revela { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+  .revela.visto { opacity: 1; transform: none; }
+  @media (max-width: 640px) {
+    section.bloco { padding: 18px 14px; border-radius: 18px; }
+    .grafico { height: 300px; }
+    nav.atalhos { display: none; }
+    .rk { grid-template-columns: 110px 1fr 70px; }
+    .kpis { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .kpi { padding: 13px 14px; }
+    .kpi .det { font-size: 11.5px; }
+    .heroi h1 br { display: none; }
+    #mapa { height: 320px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .radar { animation: none; } .revela { opacity: 1; transform: none; transition: none; } }
+</style>
+</head>
+<body>
+<div class="carregando" id="carregando"><div class="radar"></div></div>
+<div id="tip"></div>
+
+<header class="topo">
+  <div class="wrap">
+    <div class="marca"><div class="radar" aria-hidden="true"></div>Radar de Hospedagem</div>
+    <nav class="atalhos">
+      <a href="#discrepancia">Preço × demanda</a>
+      <a href="#historico">Histórico</a>
+      <a href="#futuro">Próximos 365 dias</a>
+      <a href="#precos">Preços</a>
+      <a href="#bairros">Bairros</a>
+      <a href="#unidades">Unidades</a>
+      <a href="#comparar">Outras plataformas</a>
+      <a href="#metodo">Como funciona</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="heroi">
+    <span class="selo"><i></i><span id="seloTxt">Dados públicos · sem API paga</span></span>
+    <h1>Onde está a <span class="grad">demanda</span>,<br>quanto custa — e quando o preço erra.</h1>
+    <p class="sub">Todas as unidades de temporada da cidade, a procura mês a mês desde o primeiro anúncio e os próximos 365 dias de calendário. Lado a lado com o preço, pra enxergar onde ele está descolado da demanda.</p>
+    <div class="seletor">
+      <div class="busca">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="busca" placeholder="Buscar cidade… (ex.: Rio, Lisboa, Miami)" autocomplete="off" aria-label="Buscar cidade">
+        <div class="lista-cidades" id="listaCidades" role="listbox"></div>
+      </div>
+      <div class="chips" id="chipsCidades"></div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <section class="bloco revela" id="discrepancia">
+    <div class="bloco-cab">
+      <div>
+        <div class="eyebrow">O ponto central</div>
+        <h2>Preço × demanda ao longo do ano</h2>
+        <p>Demanda histórica de cada mês (média de todos os anos) contra o preço medido em cada coleta, ambos em índice (média = 100) para caber num eixo só. Quando a linha azul passa muito acima da laranja, a procura está alta e o preço não acompanhou — dá pra cobrar mais. Quando é o contrário, o preço está acima do que o mês sustenta.</p>
+      </div>
+    </div>
+    <div class="grade2">
+      <div>
+        <div class="legenda" id="legDisc"></div>
+        <div class="grafico"><canvas id="gDisc" role="img" aria-label="Índices de demanda e preço por mês do ano"></canvas></div>
+      </div>
+      <div class="insights" id="insightsDisc"></div>
+    </div>
+  </section>
+
+  <section class="bloco revela" id="historico">
+    <div class="bloco-cab">
+      <div>
+        <div class="eyebrow">Desde o primeiro anúncio</div>
+        <h2>Histórico de demanda e oferta</h2>
+        <p id="histSub">Cada avaliação é uma estadia que aconteceu. Convertemos em noites estimadas e dividimos pelas unidades ativas no mês.</p>
+      </div>
+      <div class="controles">
+        <div class="seg" id="segMedida">
+          <button data-v="ocup" class="ativo">Ocupação estimada</button>
+          <button data-v="rev">Estadias/mês</button>
+          <button data-v="ativos">Unidades ativas</button>
+        </div>
+        <div class="seg" id="segPeriodo">
+          <button data-v="0" class="ativo">Tudo</button>
+          <button data-v="60">5 anos</button>
+          <button data-v="24">2 anos</button>
+        </div>
+      </div>
+    </div>
+    <div class="grafico"><canvas id="gHist" role="img" aria-label="Histórico mensal de demanda"></canvas></div>
+    <h3 style="font-size:17px;margin:26px 0 4px">Mapa de calor: ocupação estimada por mês e ano</h3>
+    <p style="color:var(--texto2);font-size:13.5px;margin:0 0 10px">Cada linha é um ano. Cores mais claras = mais procura. Passe o dedo/mouse para ver o valor.</p>
+    <div class="calor" id="calor"></div>
+    <div class="escala"><span>menos</span><span class="barra"></span><span>mais procura</span></div>
+  </section>
+
+  <section class="bloco revela" id="futuro">
+    <div class="bloco-cab">
+      <div>
+        <div class="eyebrow">Calendário real dos anúncios</div>
+        <h2>Próximos 365 dias</h2>
+        <p>Quantas unidades ainda aceitam reserva em cada noite, e quanto do estoque ativo já está fechado (reservado ou bloqueado pelo anfitrião). A curva cai com a distância porque as reservas chegam perto da data — compare os picos, não o nível. Datas que já se destacam = o mercado sabe que vão lotar. Cada anúncio só conta até onde abriu a agenda.</p>
+      </div>
+    </div>
+    <div class="legenda"><span><i style="background:var(--oferta)"></i>Unidades disponíveis por noite</span></div>
+    <div class="grafico baixo"><canvas id="gFutDisp" role="img" aria-label="Unidades disponíveis por noite"></canvas></div>
+    <div class="legenda" style="margin-top:16px"><span><i style="background:var(--demanda)"></i>% do estoque ativo já indisponível</span></div>
+    <div class="grafico baixo"><canvas id="gFutOcup" role="img" aria-label="Porcentagem indisponível por noite"></canvas></div>
+    <div class="picos" id="picos"></div>
+  </section>
+
+  <section class="bloco revela" id="precos">
+    <div class="bloco-cab">
+      <div>
+        <div class="eyebrow">Preço anunciado por noite</div>
+        <h2>Preço em cada coleta</h2>
+        <p id="precoSub">Mediana e faixa central (25%–75%) dos preços anunciados em cada coleta pública. O histórico de preço cresce sozinho: todo mês o robô salva a coleta nova.</p>
+      </div>
+      <div class="seg" id="segTipo"></div>
+    </div>
+    <div class="grade2">
+      <div>
+        <div class="grafico"><canvas id="gPreco" role="img" aria-label="Preço mediano em cada coleta"></canvas></div>
+      </div>
+      <div>
+        <h3 style="font-size:15px;margin:0 0 10px;color:var(--texto2);font-weight:500">Quantas unidades em cada faixa de preço</h3>
+        <div class="grafico baixo"><canvas id="gFaixa" role="img" aria-label="Distribuição de preços"></canvas></div>
+        <div id="tiposTab" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloco revela" id="bairros">
+    <div class="bloco-cab">
+      <div>
+        <div class="eyebrow">Onde está a discrepância</div>
+        <h2>Bairros: preço × ocupação</h2>
+        <p>Cada bolha é um bairro (tamanho = nº de unidades). As linhas cruzam na mediana da cidade. <b style="color:var(--bom)">Barato e cheio</b> = demanda maior que o preço sugere. <b style="color:var(--ruim)">Caro e vazio</b> = preço acima do que o bairro sustenta.</p>
+      </div>
+    </div>
+    <div class="grade2">
+      <div class="grafico" style="height:420px"><canvas id="gBairros" role="img" aria-label="Dispersão de bairros por preço e ocupação"></canvas></div>
+      <div class="insights" id="insightsBairros"></div>
+    </div>
+    <div class="rolagem" style="margin-top:18px"><table class="tabela" id="tabBairros"></table></div>
+  </section>
+
+  <section class="bloco revela" id="unidades">
+    <div class="bloco-cab">
+      <div>
+        <div class="eyebrow">Todas as unidades com datas livres</div>
+        <h2 id="unTitulo">Unidades disponíveis</h2>
+        <p>Cada ponto é um anúncio com pelo menos uma noite livre nos próximos 12 meses. Filtre, ordene e abra direto no Airbnb.</p>
+      </div>
+      <button class="botao sec" id="baixarCsv">Baixar CSV</button>
+    </div>
+    <div class="filtros">
+      <input id="fTexto" placeholder="Nome contém…" style="flex:1 1 160px">
+      <select id="fBairro"><option value="">Todos os bairros</option></select>
+      <select id="fTipo"><option value="">Todos os tipos</option></select>
+      <input id="fMin" type="number" placeholder="Preço mín." min="0">
+      <input id="fMax" type="number" placeholder="Preço máx." min="0">
+      <label><input type="checkbox" id="f30" checked> livre nos próximos 30 dias</label>
+    </div>
+    <div id="mapa"></div>
+    <div class="rolagem"><table class="tabela" id="tabUn"></table></div>
+    <div class="pagina"><span id="pgInfo"></span><button class="botao sec" id="pgAnt">‹</button><button class="botao sec" id="pgProx">›</button></div>
+  </section>
+
+  <section class="bloco revela" id="comparar">
+    <div class="bloco-cab">
+      <div>
+        <div class="eyebrow">Hotéis, Booking, Vrbo, seu próprio imóvel</div>
+        <h2>Compare com outras plataformas</h2>
+        <p>Não existe fonte gratuita e legal com histórico de preço de hotéis e do Booking. Então o app aceita os seus números: exporte as tarifas do extranet do hotel, do Booking, de um channel manager ou de uma planilha e solte o CSV aqui. Ele entra no gráfico de preço × demanda como a linha amarela e é comparado mês a mês.</p>
+      </div>
+    </div>
+    <div class="grade2">
+      <div>
+        <div class="drop" id="drop">
+          <p style="margin:0 0 10px">Arraste um <b>.csv</b> aqui ou</p>
+          <button class="botao" id="escolherCsv">Escolher arquivo</button>
+          <input type="file" id="arquivoCsv" accept=".csv,text/csv" hidden>
+          <p style="margin:12px 0 0;font-size:12.5px">Colunas: <code>data</code> e <code>preco</code> (opcional: <code>plataforma</code>). Data em <code>2026-01-31</code> ou <code>31/01/2026</code>.</p>
+          <p style="margin:8px 0 0;font-size:12.5px"><a href="#" id="exemploCsv">baixar exemplo</a> · <a href="#" id="limparCsv">remover meus dados</a></p>
+        </div>
+        <p style="font-size:12.5px;color:var(--apagado);margin:10px 0 0">Seu arquivo é lido só no seu navegador — nada é enviado para servidor nenhum.</p>
+      </div>
+      <div id="compTab"><div class="vazio-msg">Nenhum dado importado ainda.</div></div>
+    </div>
+    <h3 style="font-size:17px;margin:28px 0 10px">Comparar cidades</h3>
+    <div class="seg" id="segRank" style="margin-bottom:12px">
+      <button data-v="ocup" class="ativo">Ocupação mediana</button>
+      <button data-v="anuncios">Nº de anúncios</button>
+    </div>
+    <div class="ranking" id="ranking"></div>
+  </section>
+
+  <section class="bloco revela metodo" id="metodo">
+    <div class="eyebrow">Transparência</div>
+    <h2 style="color:var(--texto)">Como funciona (e o que é estimativa)</h2>
+    <h3>De onde vêm os dados</h3>
+    <p>Da <a href="https://insideairbnb.com/get-the-data/" target="_blank" rel="noopener">Inside Airbnb</a>, projeto independente que coleta publicamente todos os anúncios de mais de 120 cidades e publica com licença aberta (CC BY 4.0). Nenhuma API paga, nenhuma chave, nenhum login. Um robô (GitHub Actions, gratuito) baixa as coletas todo mês, processa e salva aqui. <span id="fonteAtual"></span></p>
+    <h3>O que é medido e o que é estimado</h3>
+    <ul>
+      <li><span class="ok">Medido</span> — nº de unidades, preço anunciado, tipo, bairro, localização, calendário dos próximos 365 dias (livre / fechado), avaliações com data.</li>
+      <li><span class="ok">Medido</span> — preço em cada coleta (a atual + as trimestrais dos últimos 12 meses). A partir de agora o robô guarda cada coleta nova, então o histórico de preço só cresce.</li>
+      <li><span class="x">Estimado</span> — ocupação e estadias por mês. Usamos o modelo da própria Inside Airbnb: cerca de metade dos hóspedes avalia (taxa de 50%) e a estadia média é de 3 noites. Serve muito bem para comparar meses e anos entre si; o número absoluto é aproximado.</li>
+      <li><span class="x">Atenção</span> — o histórico de demanda considera os anúncios que ainda existem hoje (anúncios apagados levam junto as avaliações), por isso os anos mais antigos aparecem menores. A ocupação por unidade ativa compensa boa parte disso.</li>
+      <li><span class="x">Atenção</span> — no calendário, "indisponível" junta reservado e bloqueado pelo anfitrião. Anúncios fechados o ano inteiro e sem hóspede nos últimos 12 meses são ignorados nessa conta.</li>
+    </ul>
+    <h3>E os hotéis, Booking, Expedia?</h3>
+    <p>Essas plataformas não publicam dados abertos e proíbem coleta automática; as fontes de histórico de tarifa hoteleira (STR, AirDNA, OTA Insight) são pagas. Por isso o app traz os quartos de hotel que estão no próprio Airbnb (tipo "Quarto de hotel") e deixa você importar qualquer outra fonte em CSV na seção acima.</p>
+    <h3>Adicionar uma cidade</h3>
+    <p>Edite <code>radar/pipeline/cidades.txt</code> e rode o workflow <b>Radar de Hospedagem — dados</b> na aba Actions do GitHub (ou espere o dia 3 de cada mês). A lista completa de cidades aparece na busca lá em cima, marcadas como "ainda não processada".</p>
+  </section>
+</main>
+<footer>Radar de Hospedagem · dados <a href="https://insideairbnb.com" target="_blank" rel="noopener">Inside Airbnb</a> (CC BY 4.0) · mapa © OpenStreetMap</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+"use strict";
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const COR = { demanda: "#3987e5", preco: "#d95926", oferta: "#199e70", voce: "#c98500", texto: "#f0efec", texto2: "#c3c2b7", apagado: "#8a8d99", grade: "rgba(255,255,255,.06)", bom: "#34d399", ruim: "#fb7185" };
+const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+const MESES_L = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+const PAISES = { "Brazil": "Brasil", "Argentina": "Argentina", "Chile": "Chile", "Colombia": "Colômbia", "Mexico": "México", "Portugal": "Portugal", "Spain": "Espanha", "France": "França", "Italy": "Itália", "United Kingdom": "Reino Unido", "United States": "Estados Unidos", "Germany": "Alemanha", "Canada": "Canadá", "Australia": "Austrália", "Japan": "Japão", "Greece": "Grécia", "The Netherlands": "Holanda", "Belgium": "Bélgica", "Switzerland": "Suíça", "Ireland": "Irlanda", "Turkey": "Turquia", "Thailand": "Tailândia", "South Africa": "África do Sul", "Denmark": "Dinamarca", "Sweden": "Suécia", "Norway": "Noruega", "Austria": "Áustria", "Czech Republic": "República Tcheca", "Hungary": "Hungria", "New Zealand": "Nova Zelândia", "China": "China", "Singapore": "Singapura", "Taiwan": "Taiwan", "Kenya": "Quênia", "Latvia": "Letônia", "Malta": "Malta", "Belize": "Belize" };
+const pais = p => PAISES[p] || p || "";
+
+let INDICE = null, D = null, U = null, graficos = {}, mapa = null, camada = null;
+let estado = { medida: "ocup", periodo: 0, tipo: "Todos", rank: "ocup", ordUn: { col: 8, dir: -1 }, ordB: { col: "n", dir: -1 }, pg: 0 };
+
+const nf = (v, d = 0) => v == null || isNaN(v) ? "—" : v.toLocaleString("pt-BR", { maximumFractionDigits: d, minimumFractionDigits: d });
+const pct = (v, d = 0) => v == null ? "—" : nf(v, d) + "%";
+let moeda = v => v == null ? "—" : nf(v);
+function defMoeda(cod) {
+  let f;
+  try { f = new Intl.NumberFormat("pt-BR", { style: "currency", currency: cod, maximumFractionDigits: 0 }); } catch { f = null; }
+  moeda = v => v == null || isNaN(v) ? "—" : f ? f.format(v) : nf(v);
+}
+const dataBR = s => { const [a, m, d] = s.split("-"); return `${d}/${m}/${a}`; };
+const dataCurta = s => { const [a, m, d] = s.split("-"); return `${+d} ${MESES[+m - 1]}`; };
+const mesAno = s => `${MESES[+s.slice(5, 7) - 1]}/${s.slice(2, 4)}`;
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const media = a => { const v = a.filter(x => x != null && !isNaN(x)); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : null; };
+const mediana = a => { const v = a.filter(x => x != null).sort((x, y) => x - y); if (!v.length) return null; const m = v.length >> 1; return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
+
+// ---------- Chart.js: tema ----------
+Chart.defaults.color = COR.texto2;
+Chart.defaults.font.family = "Inter, system-ui, sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.borderColor = COR.grade;
+Chart.defaults.animation.duration = 700;
+Chart.defaults.plugins.legend.display = false;
+Object.assign(Chart.defaults.plugins.tooltip, {
+  backgroundColor: "rgba(21,27,42,.97)", borderColor: "rgba(255,255,255,.14)", borderWidth: 1, padding: 10, cornerRadius: 10,
+  titleColor: COR.texto, bodyColor: COR.texto2, titleFont: { weight: "600" }, boxPadding: 4, usePointStyle: true,
+});
+const escalaX = extra => Object.assign({ grid: { display: false }, ticks: { color: COR.apagado, maxRotation: 0, autoSkipPadding: 14 }, border: { color: "rgba(255,255,255,.12)" } }, extra);
+const escalaY = extra => Object.assign({ grid: { color: COR.grade }, ticks: { color: COR.apagado }, border: { display: false } }, extra);
+// linha vertical que acompanha o cursor
+const cruz = { id: "cruz", afterDatasetsDraw(c) { const a = c.tooltip?.getActiveElements?.(); if (!a?.length) return; const x = a[0].element.x, { top, bottom } = c.chartArea, g = c.ctx; g.save(); g.strokeStyle = "rgba(255,255,255,.25)"; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(x, top); g.lineTo(x, bottom); g.stroke(); g.restore(); } };
+function grafico(id, cfg) { graficos[id]?.destroy(); graficos[id] = new Chart($("#" + id), cfg); return graficos[id]; }
+function gradiente(ctx, area, cor, a1 = .35) {
+  if (!area) return cor + "33";
+  const g = ctx.createLinearGradient(0, area.top, 0, area.bottom);
+  g.addColorStop(0, cor + Math.round(a1 * 255).toString(16).padStart(2, "0")); g.addColorStop(1, cor + "00"); return g;
+}
+
+// ---------- carregar ----------
+async function json(url) { const r = await fetch(url, { cache: "no-cache" }); if (!r.ok) throw new Error(r.status + " " + url); return r.json(); }
+const carregando = on => $("#carregando").classList.toggle("some", !on);
+
+async function iniciar() {
+  try { INDICE = await json("data/index.json"); }
+  catch { carregando(false); $("#kpis").innerHTML = `<div class="vazio-msg">Os dados ainda não foram gerados. Rode o workflow “Radar de Hospedagem — dados”.</div>`; return; }
+  montarBusca();
+  const pedida = new URLSearchParams(location.search).get("cidade") || localStorage.getItem("radar.cidade");
+  const inicial = INDICE.prontas.find(c => c.arquivo === pedida || c.link === pedida) || INDICE.prontas.find(c => c.arquivo === "rio-de-janeiro") || INDICE.prontas[0];
+  if (inicial) abrirCidade(inicial.arquivo);
+  observarRevela();
+}
+
+function montarBusca() {
+  const chips = INDICE.prontas.slice().sort((a, b) => b.anuncios - a.anuncios).slice(0, 8);
+  $("#chipsCidades").innerHTML = chips.map(c => `<button class="chip" data-a="${c.arquivo}">${esc(c.cidade)}</button>`).join("");
+  $("#chipsCidades").onclick = e => { const b = e.target.closest(".chip"); if (b) abrirCidade(b.dataset.a); };
+  const inp = $("#busca"), lista = $("#listaCidades");
+  const prontas = new Set(INDICE.prontas.map(c => c.link));
+  const norm = s => (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const apelidos = { lisboa: "lisbon", roma: "rome", londres: "london", "nova york": "new-york-city", miami: "broward-county", "fort lauderdale": "broward-county", "las vegas": "clark-county-nv", "cidade do mexico": "mexico-city", havai: "hawaii", "sao paulo": "são-paulo" };
+  function desenhar() {
+    const q = norm(inp.value.trim());
+    const bate = c => !q || norm(c.cidade).includes(q) || norm(pais(c.pais)).includes(q) || norm(c.link).includes(q) || Object.entries(apelidos).some(([k, v]) => k.includes(q) && v === c.link);
+    const a = INDICE.prontas.filter(bate);
+    const b = INDICE.disponiveis.filter(c => !prontas.has(c.link) && bate(c)).slice(0, 40);
+    lista.innerHTML = (a.length ? `<div class="grupo">Prontas</div>` + a.map(c => `<button data-a="${c.arquivo}"><span>${esc(c.cidade)} <small>${esc(pais(c.pais))}</small></span><small>${nf(c.anuncios)} anúncios</small></button>`).join("") : "")
+      + (b.length ? `<div class="grupo">Disponíveis na fonte — ainda não processadas</div>` + b.map(c => `<button data-pendente="${esc(c.link)}"><span>${esc(c.cidade)} <small>${esc(pais(c.pais))}</small></span><small>adicionar</small></button>`).join("") : "")
+      || `<div class="vazio-msg">Nenhuma cidade encontrada</div>`;
+    lista.classList.add("aberta");
+  }
+  inp.addEventListener("focus", desenhar);
+  inp.addEventListener("input", desenhar);
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") { const b = $("button", lista); b?.click(); } if (e.key === "Escape") { lista.classList.remove("aberta"); inp.blur(); } });
+  document.addEventListener("click", e => { if (!e.target.closest(".busca")) lista.classList.remove("aberta"); });
+  lista.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    lista.classList.remove("aberta"); inp.value = "";
+    if (b.dataset.a) abrirCidade(b.dataset.a);
+    else alert(`“${b.dataset.pendente}” ainda não foi processada.\n\nAdicione esta linha em radar/pipeline/cidades.txt:\n\n${b.dataset.pendente}\n\ne rode o workflow “Radar de Hospedagem — dados” no GitHub (aba Actions).`);
+  });
+}
+
+async function abrirCidade(arquivo) {
+  carregando(true);
+  try { D = await json(`data/${arquivo}.json`); }
+  catch (e) { carregando(false); alert("Não consegui abrir esta cidade: " + e.message); return; }
+  U = null;
+  try { localStorage.setItem("radar.cidade", arquivo); } catch {}
+  history.replaceState(null, "", "?cidade=" + encodeURIComponent(arquivo));
+  defMoeda(D.meta.moeda);
+  $$("#chipsCidades .chip").forEach(b => b.classList.toggle("ativo", b.dataset.a === arquivo));
+  document.title = `Radar de Hospedagem · ${D.meta.cidade}`;
+  $("#seloTxt").textContent = `${D.meta.cidade} · coleta de ${dataBR(D.meta.coleta)} · dados públicos, sem API paga`;
+  $("#fonteAtual").innerHTML = `Coleta usada para ${esc(D.meta.cidade)}: <a href="${esc(D.meta.fonte)}" target="_blank" rel="noopener">${dataBR(D.meta.coleta)}</a>.`;
+  estado.tipo = "Todos"; estado.pg = 0;
+  desenharKpis(); desenharDiscrepancia(); desenharHistorico(); desenharCalor(); desenharFuturo(); desenharPrecos(); desenharBairros(); desenharRanking(); desenharComparacao();
+  carregando(false);
+  carregarUnidades(arquivo);
+}
+
+// ---------- KPIs ----------
+function desenharKpis() {
+  const k = D.kpi, saz = D.sazonalidade, top = saz.indexOf(Math.max(...saz.filter(v => v != null))), bx = saz.indexOf(Math.min(...saz.filter(v => v != null)));
+  const cards = [
+    ["Unidades anunciadas", nf(k.anuncios), `${nf(k.ativos)} receberam hóspedes nos últimos 12 meses`],
+    ["Com noites livres em 30 dias", nf(k.disp_30), `${pct(k.disp_30 / k.anuncios * 100)} do total`],
+    ["Diária mediana", moeda(k.preco_mediano), `anunciada · ${D.meta.moeda}`],
+    ["Ocupação mediana", pct(k.ocupacao_mediana), "unidades ativas, últimos 12 meses"],
+    ["Receita mediana/ano", moeda(k.receita_mediana), "por unidade ativa (estimada)"],
+    ["Mês mais forte", top >= 0 ? MESES_L[top] : "—", top >= 0 ? `${nf(saz[top] - 100)}% acima da média · mais fraco: ${MESES_L[bx]}` : ""],
+  ];
+  $("#kpis").innerHTML = cards.map(([r, v, d]) => `<div class="kpi"><div class="rot">${r}</div><div class="val">${v}</div><div class="det">${d}</div></div>`).join("");
+}
+
+// ---------- Preço × demanda ----------
+function indiceMeses(pares) { // [[mes(0-11), valor]] -> normaliza p/ média 100
+  const m = media(pares.map(p => p[1])); return pares.map(([i, v]) => [i, v / m * 100]);
+}
+function serieVoce() {
+  const dados = lerCsvSalvo(); if (!dados?.length) return null;
+  const por = Array.from({ length: 12 }, () => []);
+  dados.forEach(r => por[+r.data.slice(5, 7) - 1].push(r.preco));
+  const pares = por.map((v, i) => [i, media(v)]).filter(p => p[1] != null);
+  return pares.length >= 2 ? { pares, bruto: por.map(v => media(v)) } : null;
+}
+function desenharDiscrepancia() {
+  const saz = D.sazonalidade;
+  const dem = indiceMeses(saz.map((v, i) => [i, v]).filter(p => p[1] != null));
+  // preço: índice pareado de cada coleta, no mês em que a coleta foi feita
+  const col = D.coletas.filter(c => c.indice != null || c.mediana != null);
+  const pm = Array.from({ length: 12 }, () => []);
+  col.forEach(c => pm[+c.data.slice(5, 7) - 1].push(c.indice ?? c.mediana));
+  const pre = indiceMeses(pm.map((v, i) => [i, media(v)]).filter(p => p[1] != null));
+  const voce = serieVoce();
+
+  const linha = pares => { const a = Array(12).fill(null); pares.forEach(([i, v]) => a[i] = +v.toFixed(1)); return a; };
+  const ds = [
+    { label: "Demanda histórica (média dos anos)", data: linha(dem), borderColor: COR.demanda, backgroundColor: COR.demanda, borderWidth: 2.5, tension: .35, pointRadius: 4, pointHoverRadius: 6, fill: false },
+    { label: "Preço anunciado", data: linha(pre), borderColor: COR.preco, backgroundColor: COR.preco, borderWidth: 2, pointRadius: 7, pointHoverRadius: 9, pointBorderColor: "#0f1420", pointBorderWidth: 2, showLine: pre.length > 1, spanGaps: true, tension: .3 },
+  ];
+  if (voce) ds.push({ label: "Seus dados (CSV)", data: linha(indiceMeses(voce.pares)), borderColor: COR.voce, backgroundColor: COR.voce, borderWidth: 2, pointRadius: 5, spanGaps: true, tension: .3 });
+  $("#legDisc").innerHTML = ds.map(d => `<span><i class="${d.showLine === false ? "pt" : ""}" style="background:${d.borderColor}"></i>${d.label}</span>`).join("");
+  grafico("gDisc", {
+    type: "line", data: { labels: MESES.map(m => m[0].toUpperCase() + m.slice(1)), datasets: ds }, plugins: [cruz, linha100],
+    options: {
+      maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      scales: { x: escalaX(), y: escalaY({ suggestedMin: 60, suggestedMax: 140, ticks: { color: COR.apagado, callback: v => v } }) },
+      plugins: { tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${nf(c.raw)} (${c.raw >= 100 ? "+" : ""}${nf(c.raw - 100)}% vs média)` } } },
+    },
+  });
+
+  // insights
+  const ins = [];
+  const di = linha(dem), pi = linha(pre);
+  const gaps = pi.map((p, i) => p != null && di[i] != null ? [i, di[i] - p] : null).filter(Boolean).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+  gaps.slice(0, 3).forEach(([i, g]) => {
+    if (Math.abs(g) < 4) ins.push(`<div class="insight"><div class="tag neutro">● Alinhado</div>Em <b>${MESES_L[i]}</b> preço e demanda andam juntos (diferença de ${nf(Math.abs(g))} pts).</div>`);
+    else if (g > 0) ins.push(`<div class="insight"><div class="tag sobe">▲ Preço abaixo da demanda</div>Em <b>${MESES_L[i]}</b> a procura fica ${nf(g)} pts acima do preço. Espaço para subir a diária.</div>`);
+    else ins.push(`<div class="insight"><div class="tag desce">▼ Preço acima da demanda</div>Em <b>${MESES_L[i]}</b> o preço está ${nf(-g)} pts acima do que a procura sustenta. Risco de noites vazias.</div>`);
+  });
+  const ord = dem.slice().sort((a, b) => b[1] - a[1]);
+  if (ord.length) ins.push(`<div class="insight"><div class="tag info">◆ Sazonalidade</div>Alta: <b>${ord.slice(0, 3).map(p => MESES_L[p[0]]).join(", ")}</b>. Baixa: <b>${ord.slice(-3).reverse().map(p => MESES_L[p[0]]).join(", ")}</b>. Diferença entre o mês mais forte e o mais fraco: <b>${nf(ord[0][1] - ord.at(-1)[1])} pts</b>.</div>`);
+  const pc = picosFuturo().slice().sort((a, b) => b[1] - a[1])[0];
+  if (pc) ins.push(`<div class="insight"><div class="tag info">◆ Já reservado</div>No calendário, a noite que mais se destaca é <b>${new Date(pc[0][0] + "T12:00").toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" })}</b>: ${pct(pc[0][2])} do estoque já fechado, ${nf(pc[1])} pts acima das semanas vizinhas.</div>`);
+  if (pre.length < 3) ins.push(`<div class="insight"><div class="tag neutro">● Histórico de preço curto</div>Só ${col.length} coleta(s) pública(s) com preço até aqui. O robô salva uma nova por trimestre; os pontos laranja vão preenchendo o ano sozinhos.</div>`);
+  $("#insightsDisc").innerHTML = ins.join("");
+}
+const linha100 = { id: "linha100", beforeDatasetsDraw(c) { const y = c.scales.y?.getPixelForValue(100); if (y == null) return; const g = c.ctx, { left, right } = c.chartArea; g.save(); g.strokeStyle = "rgba(255,255,255,.28)"; g.setLineDash([2, 4]); g.beginPath(); g.moveTo(left, y); g.lineTo(right, y); g.stroke(); g.fillStyle = COR.apagado; g.font = "11px Inter"; g.fillText("média = 100", left + 6, y - 6); g.restore(); } };
+
+// ---------- histórico ----------
+function desenharHistorico() {
+  const i0 = Math.max(0, D.demanda.findIndex(r => r[2] >= 30));
+  let h = D.demanda.slice(i0);
+  if (estado.periodo) h = h.slice(-estado.periodo);
+  const cfg = { ocup: ["Ocupação estimada", 3, v => pct(v, 1), COR.demanda], rev: ["Estadias avaliadas no mês", 1, v => nf(v), COR.demanda], ativos: ["Unidades ativas", 2, v => nf(v), COR.oferta] }[estado.medida];
+  const ano0 = D.demanda[i0]?.[0].slice(0, 4);
+  $("#histSub").textContent = `Desde ${ano0}. Cada avaliação é uma estadia que aconteceu — convertemos em noites estimadas e dividimos pelas unidades ativas no mês.`;
+  grafico("gHist", {
+    type: "line", plugins: [cruz],
+    data: { labels: h.map(r => r[0]), datasets: [{ label: cfg[0], data: h.map(r => r[cfg[1]]), borderColor: cfg[3], borderWidth: 2, pointRadius: 0, pointHoverRadius: 5, tension: .25, fill: true,
+      backgroundColor: c => gradiente(c.chart.ctx, c.chart.chartArea, cfg[3]) }] },
+    options: {
+      maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      scales: { x: escalaX({ ticks: { color: COR.apagado, maxRotation: 0, autoSkipPadding: 24, callback(v) { const l = this.getLabelForValue(v); return h.length > 48 ? (l.endsWith("-01") ? l.slice(0, 4) : null) : mesAno(l); } } }), y: escalaY({ beginAtZero: true, ticks: { color: COR.apagado, callback: v => estado.medida === "ocup" ? v + "%" : nf(v) } }) },
+      plugins: { tooltip: { callbacks: { title: c => { const [a, m] = c[0].label.split("-"); return `${MESES_L[+m - 1]} de ${a}`; }, label: c => ` ${cfg[0]}: ${cfg[2](c.raw)}`, afterLabel: c => { const r = h[c.dataIndex]; return estado.medida === "ocup" ? ` ${nf(r[1])} estadias · ${nf(r[2])} unidades ativas` : ""; } } } },
+    },
+  });
+}
+$("#segMedida").onclick = e => { const b = e.target.closest("button"); if (!b) return; $$("#segMedida button").forEach(x => x.classList.toggle("ativo", x === b)); estado.medida = b.dataset.v; desenharHistorico(); };
+$("#segPeriodo").onclick = e => { const b = e.target.closest("button"); if (!b) return; $$("#segPeriodo button").forEach(x => x.classList.toggle("ativo", x === b)); estado.periodo = +b.dataset.v; desenharHistorico(); };
+
+function desenharCalor() {
+  const por = {}; D.demanda.forEach(([m, , at, oc]) => { if (at >= 20) (por[m.slice(0, 4)] ||= [])[+m.slice(5) - 1] = oc; });
+  const anos = Object.keys(por).sort().reverse();
+  const vals = anos.flatMap(a => por[a]).filter(v => v != null).sort((a, b) => a - b);
+  if (!vals.length) { $("#calor").innerHTML = `<div class="vazio-msg">Sem dados suficientes.</div>`; return; }
+  const q = p => vals[Math.floor(p * (vals.length - 1))];
+  const lo = q(.03), hi = q(.97);
+  const rampa = ["#104281", "#184f95", "#1c5cab", "#256abf", "#2a78d6", "#3987e5", "#5598e7", "#6da7ec", "#86b6ef", "#9ec5f4", "#b7d3f6"];
+  const cor = v => rampa[Math.max(0, Math.min(rampa.length - 1, Math.round((v - lo) / (hi - lo || 1) * (rampa.length - 1))))];
+  $("#calor").innerHTML = `<table><thead><tr><th></th>${MESES.map(m => `<th>${m}</th>`).join("")}</tr></thead><tbody>${anos.map(a => `<tr><th class="ano">${a}</th>${MESES.map((_, i) => { const v = por[a][i]; return v == null ? `<td class="vazio"></td>` : `<td style="background:${cor(v)};${v > (lo + hi) / 2 ? "--t:#0b0b0b" : ""}" data-tip="${MESES_L[i]} de ${a}: ${pct(v, 1)} de ocupação estimada">${Math.round(v)}</td>`; }).join("")}</tr>`).join("")}</tbody></table>`;
+}
+
+// ---------- próximos 365 dias ----------
+// picos: noites muito mais fechadas que as vizinhas (±15 dias) — feriados, eventos, Réveillon, Carnaval
+function picosFuturo() {
+  const f = D.futuro;
+  const exc = f.map((r, i) => { if (i < 10 || r[2] == null) return null; const viz = f.slice(Math.max(0, i - 15), i + 16).map(x => x[2]).filter(v => v != null); return [r, r[2] - mediana(viz)]; }).filter(Boolean).sort((a, b) => b[1] - a[1]);
+  const escolhidos = [];
+  for (const [r, e] of exc) { if (e < 4) break; if (escolhidos.every(x => Math.abs(new Date(x[0][0]) - new Date(r[0])) > 6 * 864e5)) escolhidos.push([r, e]); if (escolhidos.length === 6) break; }
+  return escolhidos;
+}
+function desenharFuturo() {
+  const f = D.futuro;
+  const comum = (id, idx, cor, fmt, yopt) => grafico(id, {
+    type: "line", plugins: [cruz],
+    data: { labels: f.map(r => r[0]), datasets: [{ data: f.map(r => r[idx]), borderColor: cor, borderWidth: 1.6, pointRadius: 0, pointHoverRadius: 4, tension: .15, fill: true, backgroundColor: c => gradiente(c.chart.ctx, c.chart.chartArea, cor, .28) }] },
+    options: {
+      maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      scales: { x: escalaX({ ticks: { color: COR.apagado, maxRotation: 0, autoSkip: false, callback(v) { const l = this.getLabelForValue(v); return l.endsWith("-01") ? mesAno(l) : null; } } }), y: escalaY(yopt) },
+      plugins: { tooltip: { callbacks: { title: c => { const d = new Date(c[0].label + "T12:00"); return d.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); }, label: c => " " + fmt(c.raw, c.dataIndex) } } },
+    },
+  });
+  comum("gFutDisp", 1, COR.oferta, v => `${nf(v)} unidades aceitando reserva`, { beginAtZero: true, ticks: { color: COR.apagado, callback: v => nf(v) } });
+  comum("gFutOcup", 2, COR.demanda, v => `${pct(v, 1)} do estoque ativo já fechado`, { suggestedMin: 0, max: 100, ticks: { color: COR.apagado, callback: v => v + "%" } });
+  const escolhidos = picosFuturo();
+  $("#picos").innerHTML = escolhidos.length ? `<div class="pico" style="border-color:transparent;background:none;padding-left:0"><small>datas que já se destacam</small><b>picos de procura</b></div>` + escolhidos.sort((a, b) => a[0][0] < b[0][0] ? -1 : 1).map(([r, e]) => `<div class="pico"><small>${new Date(r[0] + "T12:00").toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}</small><b>${pct(r[2])}</b> fechado · +${nf(e)} pts vs. semanas vizinhas</div>`).join("") : "";
+}
+
+// ---------- preços ----------
+function desenharPrecos() {
+  const col = D.coletas;
+  const tipos = ["Todos", ...new Set(col.flatMap(c => Object.keys(c.portipo || {})))];
+  $("#segTipo").innerHTML = tipos.map(t => `<button data-v="${esc(t)}" class="${t === estado.tipo ? "ativo" : ""}">${esc(t)}</button>`).join("");
+  const val = c => estado.tipo === "Todos" ? c.mediana : c.portipo?.[estado.tipo] ?? null;
+  const comPreco = col.filter(c => val(c) != null);
+  const semPreco = col.filter(c => c.mediana == null).map(c => dataBR(c.data));
+  $("#precoSub").textContent = `Mediana${estado.tipo === "Todos" ? " e faixa central (25%–75%)" : ""} dos preços anunciados em cada coleta pública (${col.length} coletas desde ${dataBR(col[0].data)}).${semPreco.length ? ` A coleta de ${semPreco.join(", ")} saiu sem preço na fonte.` : ""} O histórico cresce sozinho: o robô guarda cada coleta nova.`;
+  const ds = [];
+  if (estado.tipo === "Todos") ds.push({ type: "bar", label: "Faixa 25%–75%", data: comPreco.map(c => [c.p25, c.p75]), backgroundColor: "rgba(217,89,38,.22)", borderColor: "rgba(217,89,38,.5)", borderWidth: 1, borderRadius: 6, borderSkipped: false, barPercentage: .5, order: 2 });
+  ds.push({ type: "line", label: "Mediana", data: comPreco.map(val), borderColor: COR.preco, backgroundColor: COR.preco, borderWidth: 2.5, pointRadius: 6, pointHoverRadius: 8, pointBorderColor: "#0f1420", pointBorderWidth: 2, tension: .3, order: 1 });
+  grafico("gPreco", {
+    data: { labels: comPreco.map(c => dataBR(c.data)), datasets: ds }, plugins: [rotuloUltimo],
+    options: {
+      maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      scales: { x: escalaX(), y: escalaY({ beginAtZero: true, ticks: { color: COR.apagado, callback: v => moeda(v) } }) },
+      plugins: { tooltip: { callbacks: { label: c => c.dataset.type === "bar" ? ` 25%–75%: ${moeda(c.raw[0])} a ${moeda(c.raw[1])}` : ` Mediana: ${moeda(c.raw)}`, afterBody: c => { const k = comPreco[c[0].dataIndex]; return k.oferta ? [` ${nf(k.oferta)} anúncios na coleta`] : []; } } } },
+    },
+  });
+  grafico("gFaixa", {
+    type: "bar",
+    data: { labels: D.faixas.map((f, i) => i === D.faixas.length - 1 ? moeda(f[0]) + "+" : moeda(f[0])), datasets: [{ data: D.faixas.map(f => f[1]), backgroundColor: COR.preco, borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: "bottom", barPercentage: .9, categoryPercentage: .95 }] },
+    options: { maintainAspectRatio: false, scales: { x: escalaX({ ticks: { color: COR.apagado, maxRotation: 0, autoSkipPadding: 10 } }), y: escalaY({ ticks: { color: COR.apagado, callback: v => nf(v) } }) },
+      plugins: { tooltip: { callbacks: { title: c => { const i = c[0].dataIndex, f = D.faixas; return i === f.length - 1 ? `${moeda(f[i][0])} ou mais` : `${moeda(f[i][0])} a ${moeda(f[i + 1][0])}`; }, label: c => ` ${nf(c.raw)} unidades` } } } },
+  });
+  $("#tiposTab").innerHTML = `<div class="rolagem"><table class="tabela"><thead><tr><th>Tipo</th><th class="num">Unidades</th><th class="num">Diária mediana</th><th class="num">Ocupação</th></tr></thead><tbody>${D.tipos.map(t => `<tr><td>${esc(t.nome)}</td><td class="num">${nf(t.n)}</td><td class="num">${moeda(t.preco)}</td><td class="num">${pct(t.ocup, 1)}</td></tr>`).join("")}</tbody></table></div>`;
+}
+const rotuloUltimo = { id: "rotuloUltimo", afterDatasetsDraw(c) { const ds = c.data.datasets.findIndex(d => d.type === "line"); if (ds < 0) return; const m = c.getDatasetMeta(ds), p = m.data.at(-1); if (!p) return; const g = c.ctx; g.save(); g.fillStyle = COR.texto; g.font = "600 12px Inter"; g.textAlign = "right"; g.fillText(moeda(c.data.datasets[ds].data.at(-1)), p.x - 10, p.y - 12); g.restore(); } };
+$("#segTipo").onclick = e => { const b = e.target.closest("button"); if (!b) return; estado.tipo = b.dataset.v; desenharPrecos(); };
+
+// ---------- bairros ----------
+function desenharBairros() {
+  const bs = D.bairros.filter(b => b.preco != null && b.ocup != null && b.ativos >= 15);
+  const mp = mediana(bs.map(b => b.preco)), mo = mediana(bs.map(b => b.ocup));
+  const maxN = Math.max(...bs.map(b => b.n));
+  const quad = b => b.preco <= mp && b.ocup >= mo ? "bc" : b.preco > mp && b.ocup < mo ? "cv" : b.preco > mp ? "cc" : "bv";
+  const corQ = { bc: COR.bom, cv: COR.ruim, cc: COR.demanda, bv: "#8a8d99" };
+  grafico("gBairros", {
+    type: "bubble", plugins: [quadrantes(mp, mo)],
+    data: { datasets: [{ data: bs.map(b => ({ x: b.preco, y: b.ocup, r: 4 + Math.sqrt(b.n / maxN) * 22, b })), backgroundColor: bs.map(b => corQ[quad(b)] + "99"), borderColor: "#0f1420", borderWidth: 2, hoverBorderColor: "#fff" }] },
+    options: {
+      maintainAspectRatio: false,
+      scales: { x: escalaX({ type: "logarithmic", grid: { color: COR.grade }, title: { display: true, text: "Diária mediana (escala log)", color: COR.apagado }, ticks: { color: COR.apagado, callback: v => [50, 100, 200, 300, 500, 1000, 2000, 5000, 10000].includes(v) ? moeda(v) : null } }), y: escalaY({ title: { display: true, text: "Ocupação mediana", color: COR.apagado }, ticks: { color: COR.apagado, callback: v => v + "%" } }) },
+      plugins: { tooltip: { callbacks: { title: c => c[0].raw.b.nome, label: c => { const b = c.raw.b; return [` Diária: ${moeda(b.preco)}`, ` Ocupação: ${pct(b.ocup, 1)}`, ` ${nf(b.n)} unidades · receita mediana ${moeda(b.receita)}`]; } } } },
+    },
+  });
+  // insights: maior distância da diagonal (ranking de preço vs ranking de ocupação)
+  const rk = (arr, k) => { const s = arr.slice().sort((a, b) => a[k] - b[k]); return new Map(s.map((b, i) => [b.nome, i / (s.length - 1 || 1)])); };
+  const rp = rk(bs, "preco"), ro = rk(bs, "ocup");
+  const relev = bs.filter(b => b.n >= Math.max(30, maxN * .01));
+  const op = relev.map(b => [b, ro.get(b.nome) - rp.get(b.nome)]).sort((a, b) => b[1] - a[1]);
+  const fmtB = b => `<b>${esc(b.nome)}</b> — ${moeda(b.preco)}, ${pct(b.ocup, 0)} de ocupação`;
+  $("#insightsBairros").innerHTML =
+    `<div class="insight"><div class="tag sobe">▲ Demanda maior que o preço</div>${op.slice(0, 4).map(([b]) => fmtB(b)).join("<br>")}</div>` +
+    `<div class="insight"><div class="tag desce">▼ Preço maior que a demanda</div>${op.slice(-4).reverse().map(([b]) => fmtB(b)).join("<br>")}</div>` +
+    `<div class="insight"><div class="tag info">◆ Referência da cidade</div>Diária mediana dos bairros <b>${moeda(mp)}</b> · ocupação mediana <b>${pct(mo, 1)}</b>.</div>`;
+  desenharTabBairros();
+}
+const quadrantes = (mp, mo) => ({ id: "quad", beforeDatasetsDraw(c) {
+  const { x, y } = c.scales, g = c.ctx, a = c.chartArea, px = x.getPixelForValue(mp), py = y.getPixelForValue(mo);
+  g.save(); g.strokeStyle = "rgba(255,255,255,.22)"; g.setLineDash([4, 4]);
+  g.beginPath(); g.moveTo(px, a.top); g.lineTo(px, a.bottom); g.moveTo(a.left, py); g.lineTo(a.right, py); g.stroke();
+  g.font = "600 11px Inter"; g.setLineDash([]);
+  [["BARATO E CHEIO", COR.bom, a.left + 8, a.top + 16, "left"], ["CARO E CHEIO", COR.demanda, a.right - 8, a.top + 16, "right"], ["BARATO E VAZIO", COR.apagado, a.left + 8, a.bottom - 8, "left"], ["CARO E VAZIO", COR.ruim, a.right - 8, a.bottom - 8, "right"]]
+    .forEach(([t, cor, tx, ty, al]) => { g.fillStyle = cor; g.textAlign = al; g.fillText(t, tx, ty); });
+  g.restore();
+} });
+function desenharTabBairros() {
+  const cols = [["nome", "Bairro"], ["n", "Unidades", 1], ["preco", "Diária mediana", 1], ["ocup", "Ocupação", 1], ["receita", "Receita/ano", 1], ["disp30", "Noites livres (30d)", 1]];
+  const { col, dir } = estado.ordB;
+  const lin = D.bairros.slice().sort((a, b) => { const x = a[col], y = b[col]; if (x == null) return 1; if (y == null) return -1; return (typeof x === "string" ? x.localeCompare(y) : x - y) * dir; }).slice(0, estado.todosB ? undefined : 15);
+  const maxO = Math.max(...D.bairros.map(b => b.ocup || 0));
+  $("#tabBairros").innerHTML = `<thead><tr>${cols.map(([k, t, n]) => `<th data-ord="${k}" class="${n ? "num" : ""} ${col === k ? (dir > 0 ? "asc" : "desc") : ""}">${t}</th>`).join("")}</tr></thead><tbody>${lin.map(b => `<tr><td>${esc(b.nome)}</td><td class="num">${nf(b.n)}</td><td class="num">${moeda(b.preco)}</td><td class="num"><span class="barrinha" style="width:${(b.ocup || 0) / maxO * 60}px"></span>${pct(b.ocup, 1)}</td><td class="num">${moeda(b.receita)}</td><td class="num">${nf(b.disp30, 1)}</td></tr>`).join("")}</tbody>${D.bairros.length > 15 ? `<tfoot><tr><td colspan="6" style="text-align:center;border:0;padding-top:12px"><button class="botao sec" id="todosB">${estado.todosB ? "Mostrar menos" : `Ver todos os ${D.bairros.length} bairros`}</button></td></tr></tfoot>` : ""}`;
+}
+$("#tabBairros").onclick = e => { if (e.target.id === "todosB") { estado.todosB = !estado.todosB; desenharTabBairros(); return; } const th = e.target.closest("th[data-ord]"); if (!th) return; const k = th.dataset.ord; estado.ordB = { col: k, dir: estado.ordB.col === k ? -estado.ordB.dir : (k === "nome" ? 1 : -1) }; desenharTabBairros(); };
+
+// ---------- unidades ----------
+async function carregarUnidades(arquivo) {
+  $("#tabUn").innerHTML = `<tbody><tr><td class="vazio-msg">Carregando unidades…</td></tr></tbody>`;
+  try { const u = await json(`data/${arquivo}.units.json`); if (D.meta.arquivo !== arquivo) return; U = u; }
+  catch { $("#tabUn").innerHTML = `<tbody><tr><td class="vazio-msg">Não consegui carregar as unidades.</td></tr></tbody>`; return; }
+  $("#fBairro").innerHTML = `<option value="">Todos os bairros</option>` + U.bairros.map((b, i) => [b, i]).sort((a, b) => a[0].localeCompare(b[0])).map(([b, i]) => `<option value="${i}">${esc(b)}</option>`).join("");
+  $("#fTipo").innerHTML = `<option value="">Todos os tipos</option>` + U.tipos.map((t, i) => `<option value="${i}">${esc(t)}</option>`).join("");
+  $("#unTitulo").textContent = `${nf(U.unidades.length)} unidades com noites livres`;
+  estado.pg = 0; filtrarUnidades(true);
+}
+// colunas: 0 id,1 nome,2 bairro,3 tipo,4 preço,5 noites ocupadas/ano,6 livres 30d,7 livres 365d,8 avaliações 12m,9 nota,10 lat,11 lon,12 hóspedes,13 quartos,14 anúncios do anfitrião
+function unidadesFiltradas() {
+  if (!U) return [];
+  const t = $("#fTexto").value.trim().toLowerCase(), b = $("#fBairro").value, tp = $("#fTipo").value, mn = +$("#fMin").value || 0, mx = +$("#fMax").value || Infinity, s30 = $("#f30").checked;
+  return U.unidades.filter(u => (!t || u[1].toLowerCase().includes(t)) && (b === "" || u[2] === +b) && (tp === "" || u[3] === +tp) && (u[4] == null ? !(mn || mx < Infinity) : u[4] >= mn && u[4] <= mx) && (!s30 || u[6] > 0));
+}
+let filtradas = [];
+function filtrarUnidades(redesenharMapa) {
+  filtradas = unidadesFiltradas();
+  const { col, dir } = estado.ordUn;
+  filtradas.sort((a, b) => { const x = a[col], y = b[col]; if (x == null) return 1; if (y == null) return -1; return (typeof x === "string" ? x.localeCompare(y) : x - y) * dir; });
+  desenharTabUn();
+  if (redesenharMapa !== false) desenharMapa();
+}
+function desenharTabUn() {
+  const POR = 25, tot = filtradas.length, pg = Math.min(estado.pg, Math.max(0, Math.ceil(tot / POR) - 1)); estado.pg = pg;
+  const cols = [[1, "Unidade"], [2, "Bairro"], [3, "Tipo"], [4, "Diária", 1], [5, "Ocupação/ano", 1], [6, "Livres 30d", 1], [8, "Avaliações 12m", 1], [9, "Nota", 1]];
+  const { col, dir } = estado.ordUn;
+  $("#tabUn").innerHTML = `<thead><tr>${cols.map(([k, t, n]) => `<th data-ord="${k}" class="${n ? "num" : ""} ${col === k ? (dir > 0 ? "asc" : "desc") : ""}">${t}</th>`).join("")}</tr></thead><tbody>${filtradas.slice(pg * POR, pg * POR + POR).map(u => `<tr><td><a href="https://www.airbnb.com/rooms/${encodeURIComponent(u[0])}" target="_blank" rel="noopener">${esc(u[1] || "Sem nome")}</a></td><td>${esc(U.bairros[u[2]])}</td><td>${esc(U.tipos[u[3]])}</td><td class="num">${moeda(u[4])}</td><td class="num">${u[5] == null ? "—" : pct(u[5] / 365 * 100)}</td><td class="num">${u[6]}</td><td class="num">${u[8]}</td><td class="num">${u[9] == null ? "—" : nf(u[9], 2)}</td></tr>`).join("") || `<tr><td colspan="8" class="vazio-msg">Nenhuma unidade com esses filtros.</td></tr>`}</tbody>`;
+  $("#pgInfo").textContent = tot ? `${nf(pg * POR + 1)}–${nf(Math.min(tot, pg * POR + POR))} de ${nf(tot)}` : "0";
+}
+$("#tabUn").onclick = e => { const th = e.target.closest("th[data-ord]"); if (!th) return; const k = +th.dataset.ord; estado.ordUn = { col: k, dir: estado.ordUn.col === k ? -estado.ordUn.dir : (k <= 3 ? 1 : -1) }; filtrarUnidades(false); };
+$("#pgAnt").onclick = () => { estado.pg = Math.max(0, estado.pg - 1); desenharTabUn(); };
+$("#pgProx").onclick = () => { estado.pg++; desenharTabUn(); };
+let espera; ["#fTexto", "#fMin", "#fMax"].forEach(s => $(s).addEventListener("input", () => { clearTimeout(espera); espera = setTimeout(() => { estado.pg = 0; filtrarUnidades(); }, 250); }));
+["#fBairro", "#fTipo", "#f30"].forEach(s => $(s).addEventListener("change", () => { estado.pg = 0; filtrarUnidades(); }));
+
+function desenharMapa() {
+  if (!window.L) return;
+  if (!mapa) {
+    mapa = L.map("mapa", { preferCanvas: true, zoomControl: true, attributionControl: true });
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap</a>" }).addTo(mapa);
+  }
+  camada?.remove();
+  camada = L.layerGroup().addTo(mapa);
+  const pts = filtradas.filter(u => u[10] || u[11]);
+  const amostra = pts.length > 15000 ? pts.filter((_, i) => i % Math.ceil(pts.length / 15000) === 0) : pts;
+  const precos = amostra.map(u => u[4]).filter(v => v != null).sort((a, b) => a - b);
+  const q = p => precos[Math.floor(p * (precos.length - 1))] ?? 0;
+  const q1 = q(.33), q2 = q(.66);
+  const rend = L.canvas({ padding: .3 });
+  amostra.forEach(u => {
+    const cor = u[4] == null ? "#8a8d99" : u[4] <= q1 ? COR.oferta : u[4] <= q2 ? COR.demanda : COR.preco;
+    L.circleMarker([u[10], u[11]], { renderer: rend, radius: 3, color: cor, weight: 0, fillColor: cor, fillOpacity: .75 })
+      .bindPopup(() => `<b>${esc(u[1] || "Sem nome")}</b><br>${esc(U.bairros[u[2]])} · ${esc(U.tipos[u[3]])}<br>Diária ${moeda(u[4])} · ${u[6]} noites livres em 30 dias<br><a href="https://www.airbnb.com/rooms/${encodeURIComponent(u[0])}" target="_blank" rel="noopener">Abrir no Airbnb ↗</a>`)
+      .addTo(camada);
+  });
+  if (amostra.length) {
+    const lat = amostra.map(u => u[10]).sort((a, b) => a - b), lon = amostra.map(u => u[11]).sort((a, b) => a - b);
+    const c = p => Math.floor(p * (lat.length - 1));
+    mapa.fitBounds([[lat[c(.02)], lon[c(.02)]], [lat[c(.98)], lon[c(.98)]]], { padding: [20, 20] });
+  }
+  if (!$("#mapaLeg")) {
+    const leg = L.control({ position: "bottomleft" });
+    leg.onAdd = () => { const d = L.DomUtil.create("div"); d.id = "mapaLeg"; d.style.cssText = "background:rgba(15,20,32,.9);padding:8px 10px;border-radius:10px;font-size:12px;color:#c3c2b7;border:1px solid rgba(255,255,255,.12)"; return d; };
+    leg.addTo(mapa);
+  }
+  $("#mapaLeg").innerHTML = `<span style="color:${COR.oferta}">●</span> até ${moeda(q1)} &nbsp;<span style="color:${COR.demanda}">●</span> até ${moeda(q2)} &nbsp;<span style="color:${COR.preco}">●</span> acima`;
+  setTimeout(() => mapa.invalidateSize(), 50);
+}
+$("#baixarCsv").onclick = () => {
+  if (!U) return;
+  const cab = ["id", "url", "nome", "bairro", "tipo", "diaria", "noites_ocupadas_ano_est", "livres_30d", "livres_365d", "avaliacoes_12m", "nota", "lat", "lon", "hospedes", "quartos"];
+  const linhas = filtradas.map(u => [u[0], `https://www.airbnb.com/rooms/${u[0]}`, u[1], U.bairros[u[2]], U.tipos[u[3]], u[4], u[5], u[6], u[7], u[8], u[9], u[10], u[11], u[12], u[13]]);
+  baixar(`unidades-${D.meta.arquivo}.csv`, [cab, ...linhas].map(l => l.map(v => v == null ? "" : /[",;\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v).join(",")).join("\n"));
+};
+function baixar(nome, txt) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + txt], { type: "text/csv;charset=utf-8" })); a.download = nome; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
+
+// ---------- CSV de outras plataformas ----------
+const CHAVE_CSV = () => "radar.csv." + (D?.meta.arquivo || "");
+function lerCsvSalvo() { try { return JSON.parse(localStorage.getItem(CHAVE_CSV()) || "null"); } catch { return null; } }
+function parseCsv(txt) {
+  const sep = (txt.split("\n")[0].match(/;/g) || []).length > (txt.split("\n")[0].match(/,/g) || []).length ? ";" : ",";
+  const linhas = txt.replace(/\r/g, "").split("\n").filter(l => l.trim());
+  const cab = linhas.shift().split(sep).map(c => c.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/"/g, ""));
+  const iD = cab.findIndex(c => /^(data|date|dia|checkin)/.test(c)), iP = cab.findIndex(c => /(preco|price|diaria|tarifa|valor|rate)/.test(c)), iF = cab.findIndex(c => /(plataforma|platform|canal|fonte|source)/.test(c));
+  if (iD < 0 || iP < 0) throw new Error("Preciso das colunas “data” e “preco”.");
+  const out = [];
+  for (const l of linhas) {
+    const c = l.split(sep).map(x => x.trim().replace(/^"|"$/g, ""));
+    let d = c[iD], m;
+    if ((m = d.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/))) d = `${m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}`;
+    if (!/^\d{4}-\d{2}-\d{2}/.test(d)) continue;
+    let p = c[iP].replace(/[^\d.,-]/g, "");
+    if (/,\d{1,2}$/.test(p)) p = p.replace(/\./g, "").replace(",", "."); else p = p.replace(/,/g, "");
+    const v = parseFloat(p);
+    if (v > 0) out.push({ data: d.slice(0, 10), preco: v, plataforma: iF >= 0 ? c[iF] : "Seus dados" });
+  }
+  if (!out.length) throw new Error("Nenhuma linha válida encontrada.");
+  return out;
+}
+function importar(arquivo) {
+  const r = new FileReader();
+  r.onload = () => { try { const d = parseCsv(r.result); localStorage.setItem(CHAVE_CSV(), JSON.stringify(d)); desenharComparacao(); desenharDiscrepancia(); location.hash = "#discrepancia"; } catch (e) { alert(e.message); } };
+  r.readAsText(arquivo, "utf-8");
+}
+function desenharComparacao() {
+  const dados = lerCsvSalvo();
+  if (!dados?.length) { $("#compTab").innerHTML = `<div class="vazio-msg">Nenhum dado importado para ${esc(D.meta.cidade)} ainda.</div>`; return; }
+  const plat = [...new Set(dados.map(d => d.plataforma))];
+  const por = Array.from({ length: 12 }, () => ({}));
+  dados.forEach(d => { const m = +d.data.slice(5, 7) - 1; (por[m][d.plataforma] ||= []).push(d.preco); });
+  const ref = D.kpi.preco_mediano;
+  const saz = D.sazonalidade, ms = media(saz);
+  $("#compTab").innerHTML = `<div class="rolagem"><table class="tabela"><thead><tr><th>Mês</th>${plat.map(p => `<th class="num">${esc(p)}</th>`).join("")}<th class="num">Airbnb hoje (mediana)</th><th class="num">Demanda</th></tr></thead><tbody>${MESES_L.map((m, i) => `<tr><td>${m}</td>${plat.map(p => { const v = media(por[i][p] || []); const dif = v && ref ? (v / ref - 1) * 100 : null; return `<td class="num">${moeda(v)}${dif == null ? "" : ` <small style="color:${dif >= 0 ? COR.bom : COR.ruim}">${dif >= 0 ? "+" : ""}${nf(dif)}%</small>`}</td>`; }).join("")}<td class="num">${moeda(ref)}</td><td class="num">${saz[i] == null ? "—" : nf(saz[i] / ms * 100)}</td></tr>`).join("")}</tbody></table></div><p style="font-size:12.5px;color:var(--apagado)">${nf(dados.length)} linhas importadas. % = diferença para a diária mediana do Airbnb na cidade. Demanda: índice histórico do mês (média = 100).</p>`;
+}
+$("#escolherCsv").onclick = () => $("#arquivoCsv").click();
+$("#arquivoCsv").onchange = e => e.target.files[0] && importar(e.target.files[0]);
+const drop = $("#drop");
+["dragenter", "dragover"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add("sobre"); }));
+["dragleave", "drop"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove("sobre"); }));
+drop.addEventListener("drop", e => e.dataTransfer.files[0] && importar(e.dataTransfer.files[0]));
+$("#exemploCsv").onclick = e => { e.preventDefault(); const base = D?.kpi.preco_mediano || 400; const l = ["data,preco,plataforma"]; for (let m = 1; m <= 12; m++) { const s = (D?.sazonalidade[m - 1] || 100) / 100; l.push(`2026-${String(m).padStart(2, "0")}-15,${Math.round(base * 1.3 * (0.85 + 0.15 * s))},Hotel X (Booking)`); } baixar("exemplo-tarifas.csv", l.join("\n")); };
+$("#limparCsv").onclick = e => { e.preventDefault(); try { localStorage.removeItem(CHAVE_CSV()); } catch {} desenharComparacao(); desenharDiscrepancia(); };
+
+// ---------- ranking de cidades ----------
+function desenharRanking() {
+  const k = estado.rank, cs = INDICE.prontas.filter(c => c[k] != null).sort((a, b) => b[k] - a[k]);
+  const mx = Math.max(...cs.map(c => c[k]));
+  $("#ranking").innerHTML = cs.map(c => `<div class="rk ${c.arquivo === D.meta.arquivo ? "atual" : ""}" data-a="${c.arquivo}"><span class="nome">${esc(c.cidade)}</span><span class="trilho"><i style="width:${c[k] / mx * 100}%;${c.arquivo === D.meta.arquivo ? "background:var(--preco)" : ""}"></i></span><span class="v">${k === "ocup" ? pct(c[k], 1) : nf(c[k])}</span></div>`).join("");
+}
+$("#segRank").onclick = e => { const b = e.target.closest("button"); if (!b) return; $$("#segRank button").forEach(x => x.classList.toggle("ativo", x === b)); estado.rank = b.dataset.v; desenharRanking(); };
+$("#ranking").onclick = e => { const r = e.target.closest(".rk"); if (r) { abrirCidade(r.dataset.a); scrollTo({ top: 0, behavior: "smooth" }); } };
+
+// ---------- tooltip do mapa de calor ----------
+const tip = $("#tip");
+document.addEventListener("mouseover", e => { const t = e.target.closest("[data-tip]"); if (!t) { tip.style.display = "none"; return; } tip.textContent = t.dataset.tip; tip.style.display = "block"; });
+document.addEventListener("mousemove", e => { if (tip.style.display === "block") { tip.style.left = Math.min(innerWidth - tip.offsetWidth - 8, e.clientX + 14) + "px"; tip.style.top = (e.clientY + 14) + "px"; } });
+document.addEventListener("touchstart", e => { const t = e.target.closest("[data-tip]"); if (!t) { tip.style.display = "none"; return; } const r = t.getBoundingClientRect(); tip.textContent = t.dataset.tip; tip.style.display = "block"; tip.style.left = Math.max(8, Math.min(innerWidth - tip.offsetWidth - 8, r.left)) + "px"; tip.style.top = (r.bottom + 6) + "px"; }, { passive: true });
+
+function observarRevela() {
+  if (!("IntersectionObserver" in window)) { $$(".revela").forEach(s => s.classList.add("visto")); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visto"); io.unobserve(e.target); } }), { threshold: .08 });
+  $$(".revela").forEach(s => io.observe(s));
+}
+
+iniciar();
+</script>
+</body>
+</html>

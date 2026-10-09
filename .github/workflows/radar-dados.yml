@@ -1,0 +1,49 @@
+# Radar de Hospedagem — baixa as coletas públicas da Inside Airbnb, processa e
+# salva em radar/data/. Roda todo dia 3 e quando você manda (aba Actions → Run workflow).
+# Não usa nenhuma API paga nem segredo: só curl + Python.
+name: Radar de Hospedagem — dados
+
+on:
+  schedule:
+    - cron: "17 6 3 * *"
+  workflow_dispatch:
+    inputs:
+      cidades:
+        description: "Cidades separadas por espaço (vazio = todas de radar/pipeline/cidades.txt). Ex.: rio-de-janeiro lisbon"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-dados
+  cancel-in-progress: false
+
+jobs:
+  dados:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Processar cidades
+        env:
+          CIDADES: ${{ github.event.inputs.cidades }}
+        run: |
+          if [ -n "$CIDADES" ]; then
+            python3 radar/pipeline/build.py $CIDADES
+          else
+            python3 radar/pipeline/build.py --from-file radar/pipeline/cidades.txt
+          fi
+      - name: Salvar
+        run: |
+          git config user.name "radar-bot"
+          git config user.email "radar-bot@users.noreply.github.com"
+          git add radar/data
+          if git diff --cached --quiet; then echo "nada mudou"; exit 0; fi
+          git commit -m "Radar: dados atualizados ($(date -u +%Y-%m-%d))"
+          for i in 1 2 3 4; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0; sleep $((i*5)); done
+          exit 1

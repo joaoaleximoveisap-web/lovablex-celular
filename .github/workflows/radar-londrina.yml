@@ -1,13 +1,15 @@
 # Radar Londrina — coleta das páginas públicas de busca do Airbnb para Londrina (PR).
-# Roda sozinho toda segunda (coleta completa) e quando o app pede (botão "Atualizar" ou
-# "Consultar agora"): rápida = próximas semanas e feriados; datas = só as datas pesquisadas.
+# Roda sozinho: todo dia de manhã a rápida (próximas semanas e feriados, ~10 min) e toda
+# segunda a completa (catálogo + 12 meses + zonas, ~40 min). Também dá para rodar à mão
+# na aba Actions (modos completa, rapida ou datas).
 # Sem API paga, sem segredo: só curl + Python.
 name: Radar Londrina — coleta
-run-name: "Radar Londrina — ${{ inputs.modo || 'completa' }} ${{ inputs.datas }}"
+run-name: "Radar Londrina — ${{ inputs.modo || (github.event.schedule == '11 9 * * 0,2-6' && 'rapida') || 'completa' }} ${{ inputs.datas }}"
 
 on:
   schedule:
-    - cron: "23 7 * * 1"
+    - cron: "23 7 * * 1"         # segunda 4h23 (Brasília): completa
+    - cron: "11 9 * * 0,2-6"     # demais dias 6h11 (Brasília): rápida
   workflow_dispatch:
     inputs:
       modo:
@@ -38,7 +40,7 @@ jobs:
           python-version: "3.12"
       - name: Coletar Londrina
         env:
-          MODO: ${{ inputs.modo || 'completa' }}
+          MODO: ${{ inputs.modo || (github.event.schedule == '11 9 * * 0,2-6' && 'rapida') || 'completa' }}
           DATAS: ${{ inputs.datas }}
         run: |
           case "$MODO" in
@@ -47,11 +49,13 @@ jobs:
             *)      python3 radar/pipeline/londrina.py ;;
           esac
       - name: Salvar
+        env:
+          MODO: ${{ inputs.modo || (github.event.schedule == '11 9 * * 0,2-6' && 'rapida') || 'completa' }}
         run: |
           git config user.name "radar-bot"
           git config user.email "radar-bot@users.noreply.github.com"
           git add radar/data
           if git diff --cached --quiet; then echo "nada mudou"; exit 0; fi
-          git commit -m "Radar Londrina: coleta ${{ inputs.modo || 'completa' }} de $(date -u +%Y-%m-%d)"
+          git commit -m "Radar Londrina: coleta $MODO de $(date -u +%Y-%m-%d)"
           for i in 1 2 3 4; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0; sleep $((i*5)); done
           exit 1

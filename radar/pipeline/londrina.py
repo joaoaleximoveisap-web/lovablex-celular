@@ -150,7 +150,7 @@ def unidade(x, noites_busca=None):
         return None
     coord = ((dsl.get("location") or {}).get("coordinate")) or {}
     titulo = x.get("title") or ""
-    tipo, _, bairro = titulo.partition("⋅")
+    tipo, _, bairro = re.sub(r"\s*[⋅·•]\s*", "⋅", titulo, count=1).partition("⋅")
     nome = ((x.get("nameLocalized") or {}).get("localizedStringWithTranslationPreference")) or x.get("subtitle") or ""
     nota, n_aval = None, 0
     m = re.match(r"([\d,]+)\s*\((\d+)\)", x.get("avgRatingLocalized") or "")

@@ -233,8 +233,8 @@
     <div class="bloco-cab">
       <div>
         <div class="eyebrow">O ponto central</div>
-        <h2>Preço × procura nos próximos 12 meses</h2>
-        <p>Para cada data: quanto do estoque de Londrina já está fechado (reservado ou bloqueado) e a diária mediana de quem ainda está livre. Os dois em índice (média = 100) para caber num eixo só. <b style="color:#86b6ef">Azul acima do laranja</b> = muita procura e preço que não acompanhou. <b style="color:#f08a5d">Laranja acima do azul</b> = preço alto para a procura que existe.</p>
+        <h2>Preço × procura nos próximos 8 meses</h2>
+        <p>Para cada data dos próximos 8 meses: quanto do estoque de Londrina já está fechado (reservado ou bloqueado) e a diária mediana de quem ainda está livre. Os dois em índice (data típica = 100) para caber num eixo só. <b style="color:#86b6ef">Azul acima do laranja</b> = muita procura e preço que não acompanhou. <b style="color:#f08a5d">Laranja acima do azul</b> = preço alto para a procura que existe.</p>
       </div>
       <div class="seg" id="segTipo">
         <button data-v="fds" class="ativo">Fins de semana</button>
@@ -281,7 +281,7 @@
       <div>
         <div class="eyebrow">Regiões da cidade</div>
         <h2>Zonas: oferta, procura e preço</h2>
-        <p>Londrina dividida em 5 zonas. Unidades = catálogo completo da zona. Fechado = média dos fins de semana consultados (um por mês). Diária = mediana das unidades mostradas na busca para essas datas.</p>
+        <p>Londrina dividida em 5 zonas. Unidades = catálogo completo da zona. Fechado = mediana dos fins de semana consultados (um por mês, próximos 8 meses). Diária = mediana das unidades mostradas na busca para essas datas.</p>
       </div>
     </div>
     <div class="zonas" id="cardsZonas"></div>
@@ -321,7 +321,7 @@
     </div>
     <div class="filtros">
       <input id="fTexto" placeholder="Nome contém…" style="flex:1 1 160px">
-      <select id="fBairro"><option value="">Todos os bairros</option></select>
+      <select id="fBairro"><option value="">Todas as zonas</option></select>
       <select id="fTipo"><option value="">Todos os tipos</option></select>
       <input id="fMin" type="number" placeholder="Diária mín." min="0">
       <input id="fMax" type="number" placeholder="Diária máx." min="0">
@@ -416,7 +416,10 @@ Object.assign(Chart.defaults.plugins.tooltip, {
 const escalaX = extra => Object.assign({ grid: { display: false }, ticks: { color: COR.apagado, maxRotation: 0, autoSkipPadding: 14 }, border: { color: "rgba(255,255,255,.12)" } }, extra);
 const escalaY = extra => Object.assign({ grid: { color: COR.grade }, ticks: { color: COR.apagado }, border: { display: false } }, extra);
 const cruz = { id: "cruz", afterDatasetsDraw(c) { const a = c.tooltip?.getActiveElements?.(); if (!a?.length) return; const x = a[0].element.x, { top, bottom } = c.chartArea, g = c.ctx; g.save(); g.strokeStyle = "rgba(255,255,255,.25)"; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(x, top); g.lineTo(x, bottom); g.stroke(); g.restore(); } };
-const linha100 = { id: "linha100", beforeDatasetsDraw(c) { const y = c.scales.y?.getPixelForValue(100); if (y == null) return; const g = c.ctx, { left, right } = c.chartArea; g.save(); g.strokeStyle = "rgba(255,255,255,.28)"; g.setLineDash([2, 4]); g.beginPath(); g.moveTo(left, y); g.lineTo(right, y); g.stroke(); g.fillStyle = COR.apagado; g.font = "11px Inter"; g.fillText("média = 100", left + 6, y - 6); g.restore(); } };
+// pontos acima do teto do gráfico ficam presos no topo com o valor escrito
+const teto = { id: "teto", afterDatasetsDraw(c) { const y = c.scales.y; if (!y || y.max == null) return; const g = c.ctx; g.save(); g.font = "600 11px Inter"; g.textAlign = "left";
+  c.data.datasets.forEach((ds, k) => ds.data.forEach((v, i) => { if (v != null && v > y.max) { const x = c.getDatasetMeta(k).data[i]?.x; if (x == null) return; g.fillStyle = ds.borderColor; g.beginPath(); g.moveTo(x, c.chartArea.top + 2); g.lineTo(x - 5, c.chartArea.top + 10); g.lineTo(x + 5, c.chartArea.top + 10); g.fill(); g.fillText("▲ " + nf(v), x + 8, c.chartArea.top + 12); } })); g.restore(); } };
+const linha100 = { id: "linha100", beforeDatasetsDraw(c) { const y = c.scales.y?.getPixelForValue(100); if (y == null) return; const g = c.ctx, { left, right } = c.chartArea; g.save(); g.strokeStyle = "rgba(255,255,255,.28)"; g.setLineDash([2, 4]); g.beginPath(); g.moveTo(left, y); g.lineTo(right, y); g.stroke(); g.fillStyle = COR.apagado; g.font = "11px Inter"; g.fillText("data típica = 100", left + 6, y - 6); g.restore(); } };
 function grafico(id, cfg) { graficos[id]?.destroy(); graficos[id] = new Chart($("#" + id), cfg); return graficos[id]; }
 function gradiente(ctx, area, cor, a1 = .35) {
   if (!area) return cor + "33";
@@ -429,11 +432,14 @@ const tituloData = c => { const a = AM()[c[0].dataIndex]; return a ? `${dataLong
 async function json(url) { const r = await fetch(url, { cache: "no-cache" }); if (!r.ok) throw new Error(r.status + " " + url); return r.json(); }
 const carregando = on => $("#carregando").classList.toggle("some", !on);
 let TOTAL = 0;
+const HORIZONTE = 240; // dias — além disso muitos anfitriões ainda não abriram a agenda
 // fechado (%) e diária de cada data consultada, já corrigidos para só Londrina
 function prepara() {
   TOTAL = D.unidades.length;
   const f = D.meta.fator_londrina || 1;
+  const hoje = new Date(D.meta.coleta);
   D.amostras.forEach(a => {
+    a.longe = (dt(a.checkin) - hoje) / 864e5 > HORIZONTE;
     a.livresL = a.livres == null ? null : Math.round(a.livres * f);
     a.fechado = a.livresL == null ? null : Math.max(0, Math.min(100, (1 - a.livresL / TOTAL) * 100));
   });
@@ -442,7 +448,7 @@ let filtroAtual = [];
 const AM = () => filtroAtual;
 function filtrar() {
   const t = estado.tipo;
-  filtroAtual = D.amostras.filter(a => a.fechado != null && (t === "todos" || a.tipo === t || (t === "fds" && a.tipo === "feriado")));
+  filtroAtual = D.amostras.filter(a => a.fechado != null && !a.longe && (t === "todos" || a.tipo === t || (t === "fds" && a.tipo === "feriado")));
 }
 
 async function iniciar() {
@@ -458,7 +464,7 @@ async function iniciar() {
 
 // ---------- KPIs ----------
 function desenharKpis() {
-  const am = D.amostras.filter(a => a.fechado != null);
+  const am = D.amostras.filter(a => a.fechado != null && !a.longe);
   const fds = am.filter(a => a.tipo === "fds");
   const prox = fds[0];
   const top = am.slice().sort((a, b) => b.fechado - a.fechado)[0];
@@ -483,7 +489,7 @@ function serieVoce() {
   const porMes = {}; dados.forEach(r => (porMes[r.data.slice(0, 7)] ||= []).push(r.preco));
   return am => am.map(a => media(por[a.checkin] || por[a.checkout] || porMes[a.checkin.slice(0, 7)] || []));
 }
-function indice(v) { const m = media(v); return v.map(x => x == null || !m ? null : +(x / m * 100).toFixed(1)); }
+function indice(v) { const m = mediana(v); return v.map(x => x == null || !m ? null : +(x / m * 100).toFixed(1)); }
 function desenharDiscrepancia() {
   const am = AM();
   const labels = am.map(a => dataCurta(a.checkin));
@@ -496,10 +502,10 @@ function desenharDiscrepancia() {
   if (voce) { const v = indice(voce(am)); if (v.some(x => x != null)) ds.push({ label: "Seus dados (CSV)", data: v, borderColor: COR.voce, backgroundColor: COR.voce, borderWidth: 2, pointRadius: 4, spanGaps: true, tension: .3 }); }
   $("#legDisc").innerHTML = ds.map(d => `<span><i style="background:${d.borderColor}"></i>${d.label}</span>`).join("") + `<span><i class="pt" style="background:#fff"></i>ponto grande = feriado</span>`;
   grafico("gDisc", {
-    type: "line", data: { labels, datasets: ds }, plugins: [cruz, linha100],
+    type: "line", data: { labels, datasets: ds }, plugins: [cruz, linha100, teto],
     options: {
       maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
-      scales: { x: escalaX({ ticks: { color: COR.apagado, maxRotation: 0, autoSkipPadding: 18 } }), y: escalaY({ suggestedMin: 60, suggestedMax: 140 }) },
+      scales: { x: escalaX({ ticks: { color: COR.apagado, maxRotation: 0, autoSkipPadding: 18 } }), y: escalaY({ suggestedMin: 40, suggestedMax: 160, max: 220 }) },
       plugins: { tooltip: { callbacks: { title: tituloData, label: c => { const a = am[c.dataIndex]; if (c.datasetIndex === 0) return ` Procura: ${nf(c.raw)} · ${pct(a.fechado)} fechado (${nf(a.livresL)} livres)`; if (c.datasetIndex === 1) return ` Diária: ${nf(c.raw)} · ${moeda(a.mediana)}`; return ` Seus dados: ${nf(c.raw)}`; } } } },
     },
   });
@@ -511,7 +517,7 @@ function desenharDiscrepancia() {
   });
   grafico("gPreco", {
     data: { labels, datasets: [
-      { type: "bar", data: am.map(a => [a.p25, a.p75]), backgroundColor: "rgba(217,89,38,.22)", borderColor: "rgba(217,89,38,.45)", borderWidth: 1, borderRadius: 4, borderSkipped: false, barPercentage: .7, order: 2 },
+      { type: "bar", data: am.map(a => a.p25 != null && a.p75 != null ? [a.p25, a.p75] : null), backgroundColor: "rgba(217,89,38,.22)", borderColor: "rgba(217,89,38,.45)", borderWidth: 1, borderRadius: 4, borderSkipped: false, barPercentage: .7, order: 2 },
       { type: "line", data: am.map(a => a.mediana), borderColor: COR.preco, backgroundColor: COR.preco, borderWidth: 2, pointRadius: am.map(a => a.tipo === "feriado" ? 5 : 2), tension: .3, spanGaps: true, order: 1 },
     ] },
     options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false }, scales: { x: escalaX({ ticks: { color: COR.apagado, maxRotation: 0, autoSkipPadding: 18 } }), y: escalaY({ beginAtZero: true, ticks: { color: COR.apagado, callback: v => moeda(v) } }) },
@@ -526,25 +532,25 @@ function desenharDiscrepancia() {
   const ins = [];
   if (sub.length) ins.push(`<div class="insight"><div class="tag sobe">▲ Preço abaixo da procura — dá pra subir</div>${sub.map(lin).join("<br>")}</div>`);
   if (sob.length) ins.push(`<div class="insight"><div class="tag desce">▼ Preço acima da procura — risco de ficar vazio</div>${sob.map(lin).join("<br>")}</div>`);
-  const fds = D.amostras.filter(a => a.tipo === "fds" && a.fechado != null), ut = D.amostras.filter(a => a.tipo === "util" && a.fechado != null);
+  const fds = D.amostras.filter(a => a.tipo === "fds" && a.fechado != null && !a.longe), ut = D.amostras.filter(a => a.tipo === "util" && a.fechado != null && !a.longe);
   if (fds.length && ut.length) ins.push(`<div class="insight"><div class="tag info">◆ Fim de semana × dia útil</div>Fim de semana: <b>${pct(mediana(fds.map(a => a.fechado)))}</b> fechado, diária <b>${moeda(mediana(fds.map(a => a.mediana)))}</b>.<br>Dia útil: <b>${pct(mediana(ut.map(a => a.fechado)))}</b> fechado, diária <b>${moeda(mediana(ut.map(a => a.mediana)))}</b>.</div>`);
-  const meses = {}; D.amostras.filter(a => a.fechado != null).forEach(a => (meses[a.checkin.slice(0, 7)] ||= []).push(a.fechado));
+  const meses = {}; D.amostras.filter(a => a.fechado != null && !a.longe).forEach(a => (meses[a.checkin.slice(0, 7)] ||= []).push(a.fechado));
   const ordM = Object.entries(meses).map(([m, v]) => [m, media(v)]).sort((a, b) => b[1] - a[1]);
-  if (ordM.length > 2) ins.push(`<div class="insight"><div class="tag info">◆ Meses</div>Mais fechado até agora: <b>${MESES_L[+ordM[0][0].slice(5) - 1]}</b> (${pct(ordM[0][1])}). Mais aberto: <b>${MESES_L[+ordM.at(-1)[0].slice(5) - 1]}</b> (${pct(ordM.at(-1)[1])}). Datas distantes ainda vão fechar mais — reservas chegam perto da data.</div>`);
+  if (ordM.length > 2) ins.push(`<div class="insight"><div class="tag info">◆ Meses</div>Mais fechado até agora: <b>${MESES_L[+ordM[0][0].slice(5) - 1]}</b> (${pct(ordM[0][1])}). Mais aberto: <b>${MESES_L[+ordM.at(-1)[0].slice(5) - 1]}</b> (${pct(ordM.at(-1)[1])}). Datas distantes ainda vão fechar mais — reservas chegam perto da data. Datas a mais de 8 meses ficam só na tabela, porque muitos anfitriões ainda não abriram a agenda.</div>`);
   $("#insightsDisc").innerHTML = ins.join("") || `<div class="insight">Sem dados suficientes.</div>`;
 }
 $("#segTipo").onclick = e => { const b = e.target.closest("button"); if (!b) return; $$("#segTipo button").forEach(x => x.classList.toggle("ativo", x === b)); estado.tipo = b.dataset.v; filtrar(); desenharDiscrepancia(); };
 
 // ---------- datas-chave ----------
 function desenharDatas() {
-  const am = D.amostras.filter(a => a.fechado != null);
-  const fdsTip = mediana(am.filter(a => a.tipo === "fds").map(a => a.fechado)), fdsPreco = mediana(am.filter(a => a.tipo === "fds").map(a => a.mediana));
-  let lin = am;
-  if (estado.datas === "chave") { const top = am.slice().sort((a, b) => b.fechado - a.fechado).slice(0, 8); lin = am.filter(a => a.tipo === "feriado" || top.includes(a)); }
+  const am = D.amostras.filter(a => a.fechado != null && (estado.datas === "todas" || !a.longe));
+  const fdsTip = mediana(am.filter(a => a.tipo === "fds" && !a.longe).map(a => a.fechado)), fdsPreco = mediana(am.filter(a => a.tipo === "fds").map(a => a.mediana));
   const max = Math.max(...am.map(a => a.fechado));
+  const top = am.filter(a => !a.longe).sort((a, b) => b.fechado - a.fechado).slice(0, 8);
+  const lin = estado.datas === "chave" ? am.filter(a => a.tipo === "feriado" || top.includes(a)) : am;
   $("#tabDatas").innerHTML = `<thead><tr><th>Estadia (2 noites)</th><th>Tipo</th><th>Já fechado</th><th class="num">Livres</th><th class="num">Diária mediana</th><th class="num">vs. fim de semana típico</th></tr></thead><tbody>${lin.map(a => {
     const dp = a.mediana && fdsPreco ? (a.mediana / fdsPreco - 1) * 100 : null, df = a.fechado - fdsTip;
-    return `<tr><td class="data">${dataLonga(a.checkin)}</td><td><span class="pill ${a.tipo}">${esc(a.rotulo)}</span></td><td><div style="display:flex;align-items:center;gap:8px"><div class="barra-h" style="flex:1"><i style="width:${a.fechado / max * 100}%;${a.tipo === "feriado" ? "background:#c98500" : ""}"></i></div><span style="width:44px;text-align:right">${pct(a.fechado)}</span></div></td><td class="num">${nf(a.livresL)}</td><td class="num">${moeda(a.mediana)}</td><td class="num"><span style="color:${df >= 0 ? COR.texto2 : COR.apagado}">${df >= 0 ? "+" : ""}${nf(df)} pts fechado</span> · <span style="color:${dp == null ? COR.apagado : dp >= 0 ? COR.bom : COR.ruim}">${dp == null ? "—" : (dp >= 0 ? "+" : "") + nf(dp) + "% diária"}</span></td></tr>`;
+    return `<tr><td class="data">${dataLonga(a.checkin)}</td><td><span class="pill ${a.tipo}">${esc(a.rotulo)}</span>${a.longe ? ` <span class="pill" title="Muitos anfitriões ainda não abriram a agenda para esta data">agenda abrindo</span>` : ""}</td><td><div style="display:flex;align-items:center;gap:8px"><div class="barra-h" style="flex:1"><i style="width:${a.fechado / max * 100}%;${a.tipo === "feriado" ? "background:#c98500" : ""}"></i></div><span style="width:44px;text-align:right">${pct(a.fechado)}</span></div></td><td class="num">${nf(a.livresL)}</td><td class="num">${moeda(a.mediana)}</td><td class="num"><span style="color:${df >= 0 ? COR.texto2 : COR.apagado}">${df >= 0 ? "+" : ""}${nf(df)} pts fechado</span> · <span style="color:${dp == null ? COR.apagado : dp >= 0 ? COR.bom : COR.ruim}">${dp == null ? "—" : (dp >= 0 ? "+" : "") + nf(dp) + "% diária"}</span></td></tr>`;
   }).join("")}</tbody>`;
 }
 $("#segDatas").onclick = e => { const b = e.target.closest("button"); if (!b) return; $$("#segDatas button").forEach(x => x.classList.toggle("ativo", x === b)); estado.datas = b.dataset.v; desenharDatas(); };
@@ -552,7 +558,8 @@ $("#segDatas").onclick = e => { const b = e.target.closest("button"); if (!b) re
 // ---------- zonas ----------
 function desenharZonas() {
   const cards = D.zonas.map(z => {
-    const fech = media(z.datas.map(d => d.livres == null || !z.unidades ? null : Math.max(0, Math.min(100, (1 - d.livres / z.unidades) * 100))));
+    const lim = new Date(D.meta.coleta).getTime() + HORIZONTE * 864e5;
+    const fech = mediana(z.datas.filter(d => dt(d.checkin).getTime() <= lim).map(d => d.livres == null || !z.unidades ? null : Math.max(0, Math.min(100, (1 - d.livres / z.unidades) * 100))));
     const diaria = mediana(z.datas.flatMap(d => d.amostra || []));
     return { ...z, fech, diaria };
   });
@@ -613,11 +620,12 @@ $("#selRitmo").onchange = desenharRitmo;
 
 // ---------- unidades ----------
 // colunas: 0 id,1 nome,2 tipo,3 bairro,4 lat,5 lon,6 nota,7 avaliações,8 diária ref,9 ano de entrada,10 preferido
+function zonaDe(u) { const z = D.zonas.find(z => u[4] >= z.area.sw_lat && u[4] < z.area.ne_lat && u[5] >= z.area.sw_lng && u[5] < z.area.ne_lng); return z ? z.nome : "Outras"; }
 function montarUnidades() {
-  U = D.unidades;
-  const bairros = [...new Set(U.map(u => u[3]))].sort((a, b) => a.localeCompare(b));
+  U = D.unidades.map(u => { const v = u.slice(); v[11] = zonaDe(u); if (v[3] === "Londrina") v[3] = "—"; return v; });
+  const bairros = [...new Set(U.map(u => u[11]))].sort((a, b) => a.localeCompare(b));
   const tipos = Object.entries(U.reduce((m, u) => (m[u[2]] = (m[u[2]] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1]).map(t => t[0]);
-  $("#fBairro").innerHTML = `<option value="">Todos os bairros</option>` + bairros.map(b => `<option>${esc(b)}</option>`).join("");
+  $("#fBairro").innerHTML = `<option value="">Todas as zonas</option>` + bairros.map(b => `<option>${esc(b)}</option>`).join("");
   $("#fTipo").innerHTML = `<option value="">Todos os tipos</option>` + tipos.map(t => `<option>${esc(t)}</option>`).join("");
   $("#unTitulo").textContent = `${nf(U.length)} hospedagens em Londrina`;
   filtrarUnidades(true);
@@ -625,7 +633,7 @@ function montarUnidades() {
 let filtradas = [];
 function filtrarUnidades(redesenharMapa) {
   const t = $("#fTexto").value.trim().toLowerCase(), b = $("#fBairro").value, tp = $("#fTipo").value, mn = +$("#fMin").value || 0, mx = +$("#fMax").value || Infinity, pref = $("#fPref").checked;
-  filtradas = U.filter(u => (!t || u[1].toLowerCase().includes(t)) && (!b || u[3] === b) && (!tp || u[2] === tp) && ((mn || mx < Infinity) ? (u[8] != null && u[8] >= mn && u[8] <= mx) : true) && (!pref || u[10]));
+  filtradas = U.filter(u => (!t || u[1].toLowerCase().includes(t)) && (!b || u[11] === b) && (!tp || u[2] === tp) && ((mn || mx < Infinity) ? (u[8] != null && u[8] >= mn && u[8] <= mx) : true) && (!pref || u[10]));
   const { col, dir } = estado.ordUn;
   filtradas.sort((a, b) => { const x = a[col], y = b[col]; if (x == null) return 1; if (y == null) return -1; return (typeof x === "string" ? x.localeCompare(y) : x - y) * dir; });
   desenharTabUn();
@@ -633,12 +641,12 @@ function filtrarUnidades(redesenharMapa) {
 }
 function desenharTabUn() {
   const POR = 25, tot = filtradas.length, pg = Math.min(estado.pg, Math.max(0, Math.ceil(tot / POR) - 1)); estado.pg = pg;
-  const cols = [[1, "Hospedagem"], [2, "Tipo"], [3, "Bairro"], [8, "Diária ref.", 1], [6, "Nota", 1], [7, "Avaliações", 1], [9, "Entrou", 1]];
+  const cols = [[1, "Hospedagem"], [2, "Tipo"], [11, "Zona"], [3, "Bairro"], [8, "Diária ref.", 1], [6, "Nota", 1], [7, "Avaliações", 1], [9, "Entrou", 1]];
   const { col, dir } = estado.ordUn;
-  $("#tabUn").innerHTML = `<thead><tr>${cols.map(([k, t, n]) => `<th data-ord="${k}" class="${n ? "num" : ""} ${col === k ? (dir > 0 ? "asc" : "desc") : ""}">${t}</th>`).join("")}</tr></thead><tbody>${filtradas.slice(pg * POR, pg * POR + POR).map(u => `<tr><td><a href="https://www.airbnb.com.br/rooms/${encodeURIComponent(u[0])}" target="_blank" rel="noopener">${esc(u[1] || "Sem nome")}</a>${u[10] ? ` <span class="pill fds">Preferido</span>` : ""}</td><td>${esc(u[2])}</td><td>${esc(u[3])}</td><td class="num">${moeda(u[8])}</td><td class="num">${u[6] == null ? "—" : nf(u[6], 2)}</td><td class="num">${nf(u[7])}</td><td class="num">${u[9] == null ? "—" : "~" + Math.floor(u[9])}</td></tr>`).join("") || `<tr><td colspan="7" class="vazio-msg">Nenhuma hospedagem com esses filtros.</td></tr>`}</tbody>`;
+  $("#tabUn").innerHTML = `<thead><tr>${cols.map(([k, t, n]) => `<th data-ord="${k}" class="${n ? "num" : ""} ${col === k ? (dir > 0 ? "asc" : "desc") : ""}">${t}</th>`).join("")}</tr></thead><tbody>${filtradas.slice(pg * POR, pg * POR + POR).map(u => `<tr><td><a href="https://www.airbnb.com.br/rooms/${encodeURIComponent(u[0])}" target="_blank" rel="noopener">${esc(u[1] || "Sem nome")}</a>${u[10] ? ` <span class="pill fds">Preferido</span>` : ""}</td><td>${esc(u[2])}</td><td>${esc(u[11])}</td><td>${esc(u[3])}</td><td class="num">${moeda(u[8])}</td><td class="num">${u[6] == null ? "—" : nf(u[6], 2)}</td><td class="num">${nf(u[7])}</td><td class="num">${u[9] == null ? "—" : "~" + Math.floor(u[9])}</td></tr>`).join("") || `<tr><td colspan="8" class="vazio-msg">Nenhuma hospedagem com esses filtros.</td></tr>`}</tbody>`;
   $("#pgInfo").textContent = tot ? `${nf(pg * POR + 1)}–${nf(Math.min(tot, pg * POR + POR))} de ${nf(tot)}` : "0";
 }
-$("#tabUn").onclick = e => { const th = e.target.closest("th[data-ord]"); if (!th) return; const k = +th.dataset.ord; estado.ordUn = { col: k, dir: estado.ordUn.col === k ? -estado.ordUn.dir : (k <= 3 ? 1 : -1) }; filtrarUnidades(false); };
+$("#tabUn").onclick = e => { const th = e.target.closest("th[data-ord]"); if (!th) return; const k = +th.dataset.ord; estado.ordUn = { col: k, dir: estado.ordUn.col === k ? -estado.ordUn.dir : (k <= 3 || k === 11 ? 1 : -1) }; filtrarUnidades(false); };
 $("#pgAnt").onclick = () => { estado.pg = Math.max(0, estado.pg - 1); desenharTabUn(); };
 $("#pgProx").onclick = () => { estado.pg++; desenharTabUn(); };
 let espera; ["#fTexto", "#fMin", "#fMax"].forEach(s => $(s).addEventListener("input", () => { clearTimeout(espera); espera = setTimeout(() => { estado.pg = 0; filtrarUnidades(); }, 250); }));
@@ -662,7 +670,7 @@ function desenharMapa() {
   filtradas.forEach(u => {
     const cor = u[8] == null ? "#8a8d99" : u[8] <= q1 ? COR.oferta : u[8] <= q2 ? COR.demanda : COR.preco;
     L.circleMarker([u[4], u[5]], { renderer: rend, radius: 4.5, color: "#0f1420", weight: 1, fillColor: cor, fillOpacity: .9 })
-      .bindPopup(() => `<b>${esc(u[1] || "Sem nome")}</b><br>${esc(u[2])} · ${esc(u[3])}<br>Diária ref. ${moeda(u[8])} · nota ${u[6] == null ? "—" : nf(u[6], 2)} (${nf(u[7])})<br><a href="https://www.airbnb.com.br/rooms/${encodeURIComponent(u[0])}" target="_blank" rel="noopener">Abrir no Airbnb ↗</a>`)
+      .bindPopup(() => `<b>${esc(u[1] || "Sem nome")}</b><br>${esc(u[2])} · ${esc(u[11])}${u[3] !== "—" ? " · " + esc(u[3]) : ""}<br>Diária ref. ${moeda(u[8])} · nota ${u[6] == null ? "—" : nf(u[6], 2)} (${nf(u[7])})<br><a href="https://www.airbnb.com.br/rooms/${encodeURIComponent(u[0])}" target="_blank" rel="noopener">Abrir no Airbnb ↗</a>`)
       .addTo(camada);
   });
   if (filtradas.length) {
@@ -673,8 +681,8 @@ function desenharMapa() {
   setTimeout(() => mapa.invalidateSize(), 50);
 }
 $("#baixarCsv").onclick = () => {
-  const cab = ["id", "url", "nome", "tipo", "bairro", "lat", "lon", "nota", "avaliacoes", "diaria_referencia", "ano_entrada_estimado", "preferido_dos_hospedes"];
-  const linhas = filtradas.map(u => [u[0], `https://www.airbnb.com.br/rooms/${u[0]}`, u[1], u[2], u[3], u[4], u[5], u[6], u[7], u[8], u[9] == null ? "" : Math.floor(u[9]), u[10] ? "sim" : "não"]);
+  const cab = ["id", "url", "nome", "tipo", "zona", "bairro", "lat", "lon", "nota", "avaliacoes", "diaria_referencia", "ano_entrada_estimado", "preferido_dos_hospedes"];
+  const linhas = filtradas.map(u => [u[0], `https://www.airbnb.com.br/rooms/${u[0]}`, u[1], u[2], u[11], u[3], u[4], u[5], u[6], u[7], u[8], u[9] == null ? "" : Math.floor(u[9]), u[10] ? "sim" : "não"]);
   baixar("hospedagens-londrina.csv", [cab, ...linhas].map(l => l.map(v => v == null ? "" : /[",;\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v).join(",")).join("\n"));
 };
 function baixar(nome, txt) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["﻿" + txt], { type: "text/csv;charset=utf-8" })); a.download = nome; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }

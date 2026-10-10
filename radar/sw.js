@@ -1,7 +1,7 @@
 // DEMANDA X: abre rápido e funciona sem internet com os últimos dados vistos.
 // Rede primeiro — dado novo aparece na hora; sem internet, usa a cópia guardada.
-const CACHE = "radar-demandax-v2";
-const CASCA = ["./", "./index.html", "./manifest.webmanifest", "./marca/icone.svg", "./marca/icone-192.png", "./data/londrina.json", "./data/londrina-historico.json"];
+const CACHE = "radar-demandax-v3";
+const CASCA = ["./", "./index.html", "./apresentacao.html", "./manifest.webmanifest", "./marca/icone.svg", "./marca/icone-192.png", "./data/londrina.json", "./data/londrina-historico.json"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CASCA)).then(() => self.skipWaiting()));

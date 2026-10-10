@@ -1,0 +1,57 @@
+# Radar Londrina — coleta das páginas públicas de busca do Airbnb para Londrina (PR).
+# Roda sozinho toda segunda (coleta completa) e quando o app pede (botão "Atualizar" ou
+# "Consultar agora"): rápida = próximas semanas e feriados; datas = só as datas pesquisadas.
+# Sem API paga, sem segredo: só curl + Python.
+name: Radar Londrina — coleta
+run-name: "Radar Londrina — ${{ inputs.modo || 'completa' }} ${{ inputs.datas }}"
+
+on:
+  schedule:
+    - cron: "23 7 * * 1"
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: "completa (~40 min), rapida (~10 min) ou datas (~1 min por data)"
+        type: choice
+        options: [completa, rapida, datas]
+        default: completa
+      datas:
+        description: "Para o modo datas: 2026-12-24 ou 2026-12-24:2026-12-27, separadas por vírgula"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-londrina
+  cancel-in-progress: false
+
+jobs:
+  coleta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Coletar Londrina
+        env:
+          MODO: ${{ inputs.modo || 'completa' }}
+          DATAS: ${{ inputs.datas }}
+        run: |
+          case "$MODO" in
+            rapida) python3 radar/pipeline/londrina.py --rapido ;;
+            datas)  python3 radar/pipeline/londrina.py --datas "$DATAS" ;;
+            *)      python3 radar/pipeline/londrina.py ;;
+          esac
+      - name: Salvar
+        run: |
+          git config user.name "radar-bot"
+          git config user.email "radar-bot@users.noreply.github.com"
+          git add radar/data
+          if git diff --cached --quiet; then echo "nada mudou"; exit 0; fi
+          git commit -m "Radar Londrina: coleta ${{ inputs.modo || 'completa' }} de $(date -u +%Y-%m-%d)"
+          for i in 1 2 3 4; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0; sleep $((i*5)); done
+          exit 1

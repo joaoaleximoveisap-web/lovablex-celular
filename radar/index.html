@@ -310,6 +310,23 @@
   .tabbar button.ativo { color: #fff; background: rgba(57,135,229,.16); }
   .tabbar button.ativo svg { stroke: #86b6ef; }
   .instalar { bottom: calc(84px + env(safe-area-inset-bottom)); }
+  .kpis-4 { grid-template-columns: repeat(4, 1fr); margin: 16px 0 6px; }
+  @media (max-width: 760px) { .kpis-4 { grid-template-columns: 1fr 1fr; gap: 8px; } }
+  .leg-sec { color: var(--texto2); font-size: 13.5px; margin: -4px 0 12px; max-width: 760px; }
+  .tabela tr.longe td { opacity: .5; }
+  .tabela .sub { display: block; font-weight: 500; font-size: 11.5px; color: var(--apagado); }
+  .tabela tfoot td { font-weight: 700; border-top: 1px solid var(--linha2); }
+  .barra-dupla { display: grid; gap: 3px; min-width: 110px; }
+  /* computador: abas no topo, conteúdo mais largo — bom para apresentar */
+  @media (min-width: 900px) {
+    body { padding-bottom: 0; }
+    .tabbar { top: 58px; bottom: auto; border-top: 0; border-bottom: 1px solid var(--linha); padding: 6px 16px; }
+    .tabbar button { flex-direction: row; gap: 8px; font-size: 14px; max-width: 190px; padding: 9px 14px; }
+    .tabbar svg { width: 20px; height: 20px; }
+    main.wrap { max-width: 1180px; padding-top: 62px; }
+    .instalar { bottom: 16px; }
+    .ola h1 { font-size: 42px; }
+  }
   .indice-analises { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
   .indice-analises a { text-decoration: none; color: var(--texto); font-size: 13.5px; background: var(--superficie); border: 1px solid var(--linha); border-radius: 999px; padding: 8px 12px; }
   #unidades { margin-top: 18px; }
@@ -366,6 +383,25 @@
     <div class="ola"><h1>Calendário</h1><p class="atual">Cada dia mostra como está a procura para quem chega naquele dia e fica 2 noites. Toque num dia para ver os detalhes.</p></div>
     <div class="legenda-niveis" id="legNiveis2"></div>
     <div id="calendario"></div>
+  </section>
+
+  <section class="view" id="v-predio">
+    <div class="ola">
+      <div class="cidade-tag">🏢 Gleba Palhano · Londrina</div>
+      <h1 id="prNome">JH Palhano</h1>
+      <p class="atual" id="prSub"></p>
+    </div>
+    <div class="kpis kpis-4" id="prKpis"></div>
+    <div class="sec-cab"><h2>Acumulado por mês</h2></div>
+    <p class="leg-sec">Para cada mês: quanto das unidades do prédio já está ocupado (reservado ou bloqueado) nas datas consultadas, a diária média, e quanto isso dá em noites e receita por unidade. Comparado com Londrina inteira.</p>
+    <div class="legenda" id="legPredio"></div>
+    <div class="grafico"><canvas id="gPredioMes" role="img" aria-label="Ocupação por mês: JH Palhano e Londrina"></canvas></div>
+    <div class="rolagem" style="margin-top:14px"><table class="tabela" id="tabPredioMes"></table></div>
+    <div class="sec-cab"><h2>Próximas datas no prédio</h2></div>
+    <div class="lista-datas" id="listaPredio"></div>
+    <div class="sec-cab"><h2 id="prTitUn">Unidades</h2></div>
+    <div class="rolagem"><table class="tabela" id="tabPredioUn"></table></div>
+    <div class="aviso" style="margin-top:16px" id="prAviso"></div>
   </section>
 
   <section class="view" id="v-unidades">
@@ -528,6 +564,7 @@
 <nav class="tabbar" id="tabbar">
   <button data-ir="inicio" class="ativo"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Início</span></button>
   <button data-ir="calendario"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Calendário</span></button>
+  <button data-ir="predio"><svg viewBox="0 0 24 24"><path d="M5 21V4.5A1.5 1.5 0 0 1 6.5 3h7A1.5 1.5 0 0 1 15 4.5V21M15 9h3.5A1.5 1.5 0 0 1 20 10.5V21M3 21h18M8.5 7h3M8.5 11h3M8.5 15h3"/></svg><span>JH Palhano</span></button>
   <button data-ir="unidades"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Hospedagens</span></button>
   <button data-ir="analises"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Análises</span></button>
 </nav>
@@ -627,7 +664,7 @@ function desenharTudo() {
   $("#seloTxt").innerHTML = `<span style="color:var(--bom)">●</span> Atualizado ${new Date(quando).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })} · ${nf(TOTAL)} hospedagens acompanhadas`;
   $("#fonteAtual").textContent = `Última coleta completa: ${new Date(D.meta.coleta).toLocaleString("pt-BR")} (${nf(D.meta.pedidos)} páginas consultadas).${D.meta.atualizado ? ` Última atualização: ${new Date(D.meta.atualizado).toLocaleString("pt-BR")}.` : ""}`;
   desenharKpis(); desenharDiscrepancia(); desenharDatas(); desenharZonas(); desenharHistorico(); montarUnidades(); desenharComparacao();
-  montarPesquisa(); desenharInicio(); desenharCalendario();
+  montarPesquisa(); desenharInicio(); desenharCalendario(); desenharPredio();
 }
 
 // ---------- KPIs ----------
@@ -959,8 +996,89 @@ function abrirData(ci, co) {
   $("#verNaPesquisa", m).onclick = () => { fecharModal(); ir("inicio"); $("#pqData").value = ci; $("#pqNoites").value = String(n); mostrarPesquisa(); $("#pesquisa").scrollIntoView({ behavior: "smooth", block: "start" }); };
 }
 
+// ---------- prédio (JH Palhano) ----------
+// ocupação estimada pelo ritmo de avaliações (modelo da Inside Airbnb: ~50% dos hóspedes avaliam,
+// estadia média de 3 noites) e uma versão conservadora (72% avaliam, 2,5 noites)
+function ocupHistorico(u) {
+  if (u[9] == null || !u[7]) return null;
+  const agora = new Date().getFullYear() + new Date().getMonth() / 12;
+  const anos = Math.max(.25, agora - u[9]);
+  if (anos < .75) return null;   // anúncio novo demais para estimar
+  const porAno = u[7] / anos;
+  return { padrao: Math.min(100, porAno / .5 * 3 / 365 * 100), conservador: Math.min(100, porAno / .72 * 2.5 / 365 * 100), anos };
+}
+function desenharPredio() {
+  const P = (D.predios || [])[0];
+  if (!P || !P.datas?.length) { $("#prSub").textContent = "O acompanhamento do prédio começa na próxima atualização."; return; }
+  const N = P.ids.length, ids = new Set(P.ids);
+  const un = D.unidades.filter(u => ids.has(u[0]));
+  const hojeMs = new Date(D.meta.coleta).getTime();
+  const porData = {}; D.amostras.forEach(a => porData[a.checkin + ":" + a.checkout] = a);
+  const datas = P.datas.map(d => {
+    const a = porData[d.checkin + ":" + d.checkout];
+    const precos = Object.values(d.precos || {}).filter(v => v);
+    return { ...d, n: d.livres.length, ocup: (1 - d.livres.length / N) * 100, diaria: media(precos), londrina: a?.fechado ?? null, diariaL: a?.mediana ?? null, tipo: a?.tipo, rotulo: a?.rotulo, longe: (dt(d.checkin) - hojeMs) / 864e5 > HORIZONTE };
+  });
+  $("#prNome").textContent = P.nome;
+  $("#prSub").textContent = `${N} apartamentos do prédio no Airbnb · ${datas.length} datas consultadas · atualizado ${quandoTxt(D.meta.atualizado || D.meta.coleta)}`;
+  // KPIs
+  const prox = datas.filter(d => (dt(d.checkin) - hojeMs) / 864e5 <= 30);
+  const perto = datas.filter(d => !d.longe);
+  const hist = un.map(ocupHistorico).filter(Boolean);
+  const medPad = mediana(hist.map(h => h.padrao)), medCons = mediana(hist.map(h => h.conservador));
+  const acima80 = hist.filter(h => h.padrao >= 80).length;
+  $("#prKpis").innerHTML = [
+    ["Ocupado nos próximos 30 dias", pct(media(prox.map(d => d.ocup))), `Londrina: ${pct(media(prox.map(d => d.londrina)))}`],
+    ["Diária média no prédio", moeda(media(perto.map(d => d.diaria))), `Londrina: ${moeda(media(perto.map(d => d.diariaL)))}`],
+    ["Ocupação pelo histórico", medPad == null ? "—" : `${nf(medCons)}–${nf(medPad)}%`, `mediana das ${hist.length} unidades com 9+ meses de Airbnb`],
+    ["Unidades com 80%+", `${acima80} de ${hist.length}`, "no modelo padrão de avaliações"],
+  ].map(([r, v, d]) => `<div class="kpi"><div class="rot">${r}</div><div class="val">${v}</div><div class="det">${d}</div></div>`).join("");
+
+  // acumulado por mês
+  const meses = {};
+  datas.forEach(d => { const m = d.checkin.slice(0, 7); (meses[m] ||= []).push(d); });
+  const linhas = Object.entries(meses).map(([m, ds]) => {
+    const [a, mm] = m.split("-").map(Number), dias = new Date(a, mm, 0).getDate();
+    const ocup = media(ds.map(d => d.ocup)), diaria = media(ds.map(d => d.diaria).filter(Boolean));
+    const noites = ocup / 100 * dias, receita = diaria ? noites * diaria : null;
+    return { m, a, mm, dias, n: ds.length, ocup, londrina: media(ds.map(d => d.londrina)), diaria, diariaL: media(ds.map(d => d.diariaL)), noites, receita, longe: ds.every(d => d.longe) };
+  });
+  const nomeMes = l => `${MESES[l.mm - 1]}/${String(l.a).slice(2)}`;
+  $("#legPredio").innerHTML = `<span><i style="background:${COR.preco};height:10px;width:14px;border-radius:3px"></i>${esc(P.nome)}</span><span><i style="background:${COR.demanda};height:10px;width:14px;border-radius:3px"></i>Londrina inteira</span>`;
+  grafico("gPredioMes", {
+    type: "bar",
+    data: { labels: linhas.map(nomeMes), datasets: [
+      { label: P.nome, data: linhas.map(l => l.ocup), backgroundColor: linhas.map(l => l.longe ? "rgba(217,89,38,.35)" : COR.preco), borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: "bottom", barPercentage: .8, categoryPercentage: .7 },
+      { label: "Londrina", data: linhas.map(l => l.londrina), backgroundColor: linhas.map(l => l.longe ? "rgba(57,135,229,.35)" : COR.demanda), borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: "bottom", barPercentage: .8, categoryPercentage: .7 },
+    ] },
+    options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      scales: { x: escalaX(), y: escalaY({ min: 0, max: 100, ticks: { color: COR.apagado, callback: v => v + "%" } }) },
+      plugins: { tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${pct(c.raw)} ocupado`, afterBody: c => { const l = linhas[c[0].dataIndex]; return [` ${l.n} datas consultadas no mês`, l.longe ? " mês distante: reservas ainda vão chegar" : ""]; } } } } },
+  });
+  const tot = linhas.filter(l => !l.longe);
+  const somaRec = tot.reduce((t, l) => t + (l.receita || 0), 0), somaNoites = tot.reduce((t, l) => t + l.noites, 0), somaDias = tot.reduce((t, l) => t + l.dias, 0);
+  $("#tabPredioMes").innerHTML = `<thead><tr><th>Mês</th><th class="num">Ocupado no prédio</th><th class="num">Londrina</th><th class="num">Diária média</th><th class="num">Noites ocupadas<span class="sub">por unidade</span></th><th class="num">Receita estimada<span class="sub">por unidade</span></th><th class="num">Receita estimada<span class="sub">prédio (${N} un.)</span></th></tr></thead>
+    <tbody>${linhas.map(l => `<tr class="${l.longe ? "longe" : ""}"><td>${MESES_L[l.mm - 1]} ${l.a}${l.longe ? `<span class="sub">agenda ainda abrindo</span>` : `<span class="sub">${l.n} datas</span>`}</td><td class="num"><b>${pct(l.ocup)}</b></td><td class="num">${pct(l.londrina)}</td><td class="num">${moeda(l.diaria)}<span class="sub">Londrina ${moeda(l.diariaL)}</span></td><td class="num">${nf(l.noites, 1)} de ${l.dias}</td><td class="num">${moeda(l.receita)}</td><td class="num">${moeda(l.receita == null ? null : l.receita * N)}</td></tr>`).join("")}</tbody>
+    <tfoot><tr><td>Próximos 8 meses</td><td class="num">${pct(somaNoites / somaDias * 100)}</td><td class="num">${pct(media(tot.map(l => l.londrina)))}</td><td class="num">${moeda(media(tot.map(l => l.diaria)))}</td><td class="num">${nf(somaNoites, 0)} de ${somaDias}</td><td class="num">${moeda(somaRec)}</td><td class="num">${moeda(somaRec * N)}</td></tr></tfoot>`;
+
+  // próximas datas
+  $("#listaPredio").innerHTML = perto.slice(0, 8).map(d => { const x = dt(d.checkin); return `<button class="item-data" data-ci="${d.checkin}" data-co="${d.checkout}">
+      <span class="dia"><small>${SEMANA[x.getDay()]}</small><b>${x.getDate()}</b><small>${MESES_ABR[x.getMonth()]}</small></span>
+      <span class="meio"><span class="t">${d.tipo === "feriado" ? "🎉 " + esc(d.rotulo) : d.tipo === "util" ? "Dia útil" : "Fim de semana"}</span>
+        <span class="s">${selo(d.ocup)}<span>${N - d.n} de ${N} ocupados</span></span></span>
+      <span class="preco">${moeda(d.diaria)}<small>diária média</small></span></button>`; }).join("");
+
+  // unidades
+  const ocupData = {}; P.ids.forEach(id => ocupData[id] = { tot: 0, fech: 0, precos: [] });
+  perto.forEach(d => P.ids.forEach(id => { const o = ocupData[id]; o.tot++; if (!d.precos?.[id]) o.fech++; else o.precos.push(d.precos[id]); }));
+  $("#prTitUn").textContent = `As ${N} unidades`;
+  $("#tabPredioUn").innerHTML = `<thead><tr><th>Unidade</th><th class="num">Avaliações</th><th class="num">No Airbnb há</th><th class="num">Ocupação pelo histórico</th><th class="num">Ocupado nas próximas datas</th><th class="num">Diária média</th></tr></thead><tbody>${un.map(u => ({ u, h: ocupHistorico(u), o: ocupData[u[0]] })).sort((a, b) => (b.h?.padrao ?? -1) - (a.h?.padrao ?? -1)).map(({ u, h, o }) => `<tr><td><a href="https://www.airbnb.com.br/rooms/${encodeURIComponent(u[0])}" target="_blank" rel="noopener">${esc(u[1])}</a></td><td class="num">${nf(u[7])}${u[6] ? `<span class="sub">nota ${nf(u[6], 2)}</span>` : ""}</td><td class="num">${u[9] == null ? "—" : (h?.anos ?? 0) >= 1 ? nf(h.anos, 1) + " anos" : "menos de 1 ano"}</td><td class="num">${h ? `<b>${nf(h.conservador)}–${nf(h.padrao)}%</b>` : `<span class="sub">novo demais</span>`}</td><td class="num">${o.tot ? pct(o.fech / o.tot * 100) : "—"}<span class="sub">${o.fech} de ${o.tot} datas</span></td><td class="num">${moeda(media(o.precos))}</td></tr>`).join("")}</tbody>`;
+  $("#prAviso").innerHTML = `<b>Como ler.</b> “Ocupado” = a unidade não aparece livre na busca do Airbnb para aquela estadia de 2 noites (reservada <i>ou</i> bloqueada pelo dono, ou com estadia mínima maior). Meses distantes ainda vão encher, porque as reservas chegam perto da data — a ocupação real do mês tende a ser maior que a medida hoje. “Ocupação pelo histórico” estima o passado pelo ritmo de avaliações: o número da direita é o modelo padrão do mercado (metade dos hóspedes avalia, estadia de 3 noites); o da esquerda, uma hipótese conservadora. Receita = diária anunciada × noites ocupadas, antes de taxas do Airbnb, limpeza e impostos.`;
+}
+$("#listaPredio").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
+
 // ---------- abas ----------
-const VIEWS = ["inicio", "calendario", "unidades", "analises"];
+const VIEWS = ["inicio", "calendario", "predio", "unidades", "analises"];
 function ir(v, rolar = true) {
   if (!VIEWS.includes(v)) v = "inicio";
   $$(".view").forEach(x => x.classList.toggle("ativa", x.id === "v-" + v));

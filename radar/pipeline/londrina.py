@@ -40,6 +40,12 @@ ZONAS = {
     "Leste":            dict(sw_lat=-23.43,  sw_lng=-51.13,  ne_lat=-23.295, ne_lng=-51.06),
 }
 
+# Prédios acompanhados unidade por unidade: quais estão livres e quanto cada uma cobra em cada data.
+# padrao = como os anfitriões escrevem o nome do prédio no anúncio; centro/raio = onde ele fica.
+PREDIOS = {
+    "JH Palhano": dict(padrao=r"\bJ\.?\s?H(?![a-z])", centro=(-23.3282, -51.1803), raio=0.0018),
+}
+
 # Número do anúncio → quando ele entrou no Airbnb (calibrado com ~44 mil anúncios do Rio
 # com data da primeira avaliação, dados Inside Airbnb). Serve para reconstruir a oferta desde 2012.
 CALIBRACAO = [
@@ -316,6 +322,54 @@ def consulta_data(area, ci, co, com_preco=True):
     return out
 
 
+# ---------------- prédios ----------------
+def ids_predio(unidades, cfg):
+    """unidades: linhas do londrina.json ([id, nome, tipo, bairro, lat, lon, ...])."""
+    lat0, lon0 = cfg["centro"]
+    r = cfg["raio"]
+    return sorted(u[0] for u in unidades
+                  if re.search(cfg["padrao"], u[1] or "", re.I) and abs(u[4] - lat0) <= r and abs(u[5] - lon0) <= r)
+
+
+def consulta_predio(cfg, ids, ci, co):
+    """Uma busca num retângulo pequeno em volta do prédio: lista as unidades livres e o preço de cada uma."""
+    lat0, lon0 = cfg["centro"]
+    r = cfg["raio"] * 1.4
+    area = dict(sw_lat=lat0 - r, sw_lng=lon0 - r, ne_lat=lat0 + r, ne_lng=lon0 + r)
+    noites = (co - ci).days
+    alvo = set(ids)
+    precos = {}
+    pg = ler(baixar(params(area, ci.isoformat(), co.isoformat())), noites)
+    paginas = min(5, max(1, math.ceil((pg["total"] or 0) / POR_PAGINA)))
+    itens = list(pg["itens"])
+    for i in range(1, paginas):
+        itens += ler(baixar(params(area, ci.isoformat(), co.isoformat(), cursor=i * POR_PAGINA)), noites)["itens"]
+    for u in itens:
+        if u["id"] in alvo:
+            precos[u["id"]] = u["diaria"]
+    return dict(checkin=ci.isoformat(), checkout=co.isoformat(), livres=sorted(precos), precos=precos)
+
+
+def atualizar_predios(saida, estadias):
+    """Consulta os prédios nas estadias dadas e junta em saida["predios"] (substitui a mesma estadia)."""
+    antigos = {p["nome"]: p for p in saida.get("predios", [])}
+    novos = []
+    for nome, cfg in PREDIOS.items():
+        ids = ids_predio(saida["unidades"], cfg)
+        if not ids:
+            continue
+        datas = {d["checkin"] + ":" + d["checkout"]: d for d in antigos.get(nome, {}).get("datas", [])}
+        for ci, co in estadias:
+            d = consulta_predio(cfg, ids, ci, co)
+            datas[d["checkin"] + ":" + d["checkout"]] = d
+            print(f"  {nome} {ci}: {len(d['livres'])}/{len(ids)} livres", flush=True)
+        hoje = date.today().isoformat()
+        novos.append(dict(nome=nome, centro=cfg["centro"], ids=ids,
+                          datas=sorted((d for d in datas.values() if d["checkin"] > hoje), key=lambda d: d["checkin"])))
+    saida["predios"] = novos
+    return novos
+
+
 # ---------------- polígono ----------------
 def dentro(lat, lon, poligono):
     if lat is None or lon is None:
@@ -369,6 +423,7 @@ def atualizar_datas(estadias, origem):
         por_data[chave(a)] = a
         novas.append(a)
         print(f"  {ci} {rot:24s} livres={r['livres']} mediana={r['mediana']}", flush=True)
+    atualizar_predios(saida, [(ci, co) for ci, co, _, _ in estadias])
     hoje = date.today().isoformat()
     saida["amostras"] = sorted((a for a in por_data.values() if a["checkin"] > hoje), key=lambda a: a["checkin"])
     agora = datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -396,6 +451,11 @@ def atualizar_datas(estadias, origem):
         r = linha(a)
         linhas[r[0] + ":" + (r[4] if len(r) > 4 else "")] = r
     reg["datas"] = sorted(linhas.values())
+    for pr in saida.get("predios", []):
+        atual = {x[0]: x for x in reg.setdefault("predios", {}).get(pr["nome"], [])}
+        for d in pr["datas"]:
+            atual[d["checkin"]] = [d["checkin"], len(d["livres"]), len(pr["ids"])]
+        reg["predios"][pr["nome"]] = sorted(atual.values())
     hist["coletas"].sort(key=lambda c: c["data"])
     with open(hpath, "w", encoding="utf-8") as f:
         json.dump(hist, f, ensure_ascii=False, separators=(",", ":"))
@@ -427,7 +487,21 @@ def ler_datas(txt):
     return out[:10]
 
 
+def so_predios():
+    caminho = os.path.join(DADOS, "londrina.json")
+    with open(caminho, encoding="utf-8") as f:
+        saida = json.load(f)
+    estadias = [(date.fromisoformat(a["checkin"]), date.fromisoformat(a["checkout"])) for a in saida["amostras"]
+                if (date.fromisoformat(a["checkout"]) - date.fromisoformat(a["checkin"])).days == 2]
+    atualizar_predios(saida, estadias)
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(saida, f, ensure_ascii=False, separators=(",", ":"))
+    print(f"ok: prédios em {len(estadias)} datas, {_pedidos} páginas consultadas", flush=True)
+
+
 def main(args):
+    if "--predios" in args:
+        return so_predios()
     if "--datas" in args:
         return atualizar_datas(ler_datas(args[args.index("--datas") + 1]), "pesquisa")
     if "--rapido" in args:
@@ -481,6 +555,8 @@ def main(args):
         amostras=amostras,
         zonas=[dict(nome=z, unidades=em_zona[z], area=ZONAS[z], datas=zonas[z]) for z in ZONAS],
     )
+    print("prédios acompanhados…", flush=True)
+    atualizar_predios(saida, [(date.fromisoformat(a["checkin"]), date.fromisoformat(a["checkout"])) for a in amostras])
     with open(os.path.join(DADOS, "londrina.json"), "w", encoding="utf-8") as f:
         json.dump(saida, f, ensure_ascii=False, separators=(",", ":"))
 
@@ -493,6 +569,7 @@ def main(args):
     dia = agora.date().isoformat()
     hist["coletas"] = [c for c in hist["coletas"] if c["data"] != dia]
     hist["coletas"].append(dict(data=dia, unidades=len(unidades), avaliacoes=sum(u["aval"] for u in unidades),
+                                predios={p["nome"]: [[d["checkin"], len(d["livres"]), len(p["ids"])] for d in p["datas"]] for p in saida.get("predios", [])},
                                 fator=round(fator, 4),
                                 datas=[[a["checkin"], a["livres"], a["mediana"], a["tipo"]] for a in amostras]))
     hist["coletas"].sort(key=lambda c: c["data"])

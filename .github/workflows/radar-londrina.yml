@@ -1,0 +1,38 @@
+# Radar Londrina — coleta semanal das páginas públicas de busca do Airbnb para Londrina (PR).
+# Roda toda segunda de madrugada e quando você manda (aba Actions → Run workflow).
+# Sem API paga, sem segredo: só curl + Python. Cada execução acrescenta uma coleta ao
+# histórico (radar/data/londrina-historico.json), que vai crescendo semana a semana.
+name: Radar Londrina — coleta
+
+on:
+  schedule:
+    - cron: "23 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-londrina
+  cancel-in-progress: false
+
+jobs:
+  coleta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Coletar Londrina
+        run: python3 radar/pipeline/londrina.py
+      - name: Salvar
+        run: |
+          git config user.name "radar-bot"
+          git config user.email "radar-bot@users.noreply.github.com"
+          git add radar/data
+          if git diff --cached --quiet; then echo "nada mudou"; exit 0; fi
+          git commit -m "Radar Londrina: coleta de $(date -u +%Y-%m-%d)"
+          for i in 1 2 3 4; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0; sleep $((i*5)); done
+          exit 1

@@ -3,16 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Radar Londrina</title>
+<title>DEMANDA X</title>
 <meta name="description" content="Todas as hospedagens de temporada de Londrina: oferta, procura e preço de cada data dos próximos 12 meses.">
 <meta name="theme-color" content="#080b12">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icone-180.png">
+<link rel="apple-touch-icon" href="marca/icone-180.png">
+<meta property="og:title" content="DEMANDA X — Londrina">
+<meta property="og:description" content="Quantas hospedagens estão livres — e por quanto — em cada data.">
+<meta property="og:image" content="https://joaoaleximoveisap-web.github.io/lovablex-celular/radar/marca/compartilhar.png">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Radar Londrina">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233987e5'/%3E%3Cstop offset='1' stop-color='%23d95926'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%23080b12'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='url(%23g)' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='9' fill='url(%23g)'/%3E%3C/svg%3E">
+<meta name="apple-mobile-web-app-title" content="DEMANDA X">
+<link rel="icon" href="marca/icone.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -217,7 +221,9 @@
   .pesq-linha label { display: grid; gap: 4px; font-size: 12px; color: var(--texto2); }
   .pesq-linha input, .pesq-linha select { font: 600 16px Inter; color: var(--texto); background: var(--superficie); border: 1px solid var(--linha2); border-radius: 12px; padding: 11px 12px; min-width: 0; color-scheme: dark; }
   .pesq-linha .botao { padding: 13px 18px; font-size: 15px; border-radius: 12px; }
-  .atalhos-datas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .atalhos-datas { display: flex; gap: 6px; margin: 10px -18px 0; padding: 0 18px 2px; overflow-x: auto; scrollbar-width: none; }
+  .atalhos-datas::-webkit-scrollbar { display: none; }
+  .atalhos-datas .chip { white-space: nowrap; flex: none; }
   .resultado { margin-top: 14px; }
   .res-card { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
   .res-card .kpi .val { font-size: 26px; }
@@ -241,6 +247,76 @@
   .instalar span { flex: 1; } .instalar b { color: var(--texto); }
   .instalar .fechar { float: none; }
   header.topo { padding-top: env(safe-area-inset-top); }
+  /* ---------- DEMANDA X: app em abas ---------- */
+  body { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+  header.topo .wrap { height: 58px; }
+  .marca { text-decoration: none; color: var(--texto); gap: 9px; letter-spacing: .01em; }
+  .marca b { background: var(--acento); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .botao-atualizar { margin-left: auto; }
+  main.wrap { max-width: 980px; }
+  .view { display: none; animation: entra .25s ease; }
+  .view.ativa { display: block; }
+  @keyframes entra { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .ola { padding: 22px 0 6px; }
+  .ola h1 { font-size: clamp(26px, 6.4vw, 40px); line-height: 1.08; margin: 6px 0 6px; }
+  .cidade-tag { font-size: 13px; color: var(--texto2); font-weight: 600; letter-spacing: .02em; }
+  .atual { color: var(--apagado); font-size: 13.5px; margin: 0; }
+  .pesquisa { margin-top: 14px; }
+  .pesquisa h2 { font-size: 18px; margin-bottom: 12px; }
+  .kpis-3 { grid-template-columns: repeat(3, 1fr); margin: 16px 0 6px; }
+  .kpis-3 .kpi .val { font-size: clamp(20px, 5.5vw, 28px); }
+  @media (max-width: 640px) { .kpis-3 { grid-template-columns: 1fr 1fr 1fr; gap: 8px; } .kpis-3 .kpi { padding: 12px 10px; } .kpis-3 .kpi .rot { font-size: 11.5px; } .kpis-3 .kpi .det { display: none; } }
+  .sec-cab { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 26px 0 10px; }
+  .sec-cab h2 { font-size: 19px; }
+  .sec-cab a { font-size: 13.5px; text-decoration: none; white-space: nowrap; }
+  .legenda-niveis { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 12px; color: var(--texto2); margin-bottom: 10px; }
+  .legenda-niveis span { display: inline-flex; align-items: center; gap: 5px; }
+  .nv { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .nv.n0 { color: #34d399; background: rgba(52,211,153,.12); }
+  .nv.n1 { color: #86b6ef; background: rgba(57,135,229,.14); }
+  .nv.n2 { color: #fbbf24; background: rgba(251,191,36,.13); }
+  .nv.n3 { color: #fb7185; background: rgba(251,113,133,.14); }
+  .lista-datas { display: grid; gap: 8px; }
+  .item-data { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 12px; width: 100%; text-align: left; font: inherit; color: var(--texto); background: var(--superficie); border: 1px solid var(--linha); border-radius: 16px; padding: 10px 12px; cursor: pointer; }
+  .item-data:active { transform: scale(.99); }
+  .item-data .dia { text-align: center; line-height: 1.05; border-radius: 12px; padding: 7px 0; background: rgba(255,255,255,.04); }
+  .item-data .dia b { display: block; font: 700 21px "Space Grotesk"; }
+  .item-data .dia small { font-size: 11px; color: var(--apagado); text-transform: uppercase; letter-spacing: .04em; }
+  .item-data .meio { min-width: 0; }
+  .item-data .meio .t { font-weight: 600; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-data .meio .s { display: flex; gap: 8px; align-items: center; margin-top: 4px; font-size: 12.5px; color: var(--texto2); flex-wrap: wrap; }
+  .item-data .preco { text-align: right; font: 700 17px "Space Grotesk"; }
+  .item-data .preco small { display: block; font: 500 11px Inter; color: var(--apagado); }
+  .oport { border: 1px solid rgba(52,211,153,.35); background: rgba(52,211,153,.06); border-radius: 16px; padding: 12px 14px; margin-bottom: 8px; font-size: 14px; color: var(--texto2); cursor: pointer; }
+  .oport b { color: var(--texto); }
+  .oport.neutra { border-color: var(--linha); background: var(--superficie); cursor: default; }
+  .mes { margin-bottom: 20px; }
+  .mes h3 { font-size: 17px; margin: 0 0 8px; text-transform: capitalize; }
+  .grade-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .grade-cal .sem { text-align: center; font-size: 11px; color: var(--apagado); padding-bottom: 2px; }
+  .dia-cal { aspect-ratio: 1 / 1.08; border-radius: 10px; background: rgba(255,255,255,.025); display: flex; flex-direction: column; align-items: center; justify-content: center; font: 600 14px Inter; color: var(--apagado); border: 0; padding: 0; }
+  .dia-cal small { font: 600 9.5px Inter; margin-top: 2px; }
+  .dia-cal.dado { cursor: pointer; color: var(--texto); }
+  .dia-cal.n0 { background: rgba(52,211,153,.16); } .dia-cal.n0 small { color: #34d399; }
+  .dia-cal.n1 { background: rgba(57,135,229,.18); } .dia-cal.n1 small { color: #86b6ef; }
+  .dia-cal.n2 { background: rgba(251,191,36,.2); } .dia-cal.n2 small { color: #fbbf24; }
+  .dia-cal.n3 { background: rgba(251,113,133,.24); } .dia-cal.n3 small { color: #fb7185; }
+  .dia-cal.longe { opacity: .45; }
+  .dia-cal.hoje { outline: 2px solid rgba(255,255,255,.5); }
+  .dia-cal.fer::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #c98500; margin-top: 2px; }
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 3000; display: flex; justify-content: center; gap: 4px; padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); background: rgba(10,13,21,.94); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-top: 1px solid var(--linha); }
+  .tabbar button { flex: 1; max-width: 140px; display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: 0; color: var(--apagado); font: 600 11px Inter; padding: 6px 0; border-radius: 12px; cursor: pointer; }
+  .tabbar svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .tabbar button.ativo { color: #fff; background: rgba(57,135,229,.16); }
+  .tabbar button.ativo svg { stroke: #86b6ef; }
+  .instalar { bottom: calc(84px + env(safe-area-inset-bottom)); }
+  .indice-analises { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+  .indice-analises a { text-decoration: none; color: var(--texto); font-size: 13.5px; background: var(--superficie); border: 1px solid var(--linha); border-radius: 999px; padding: 8px 12px; }
+  #unidades { margin-top: 18px; }
+  .rodape { color: var(--apagado); font-size: 12px; text-align: center; padding: 10px 0 20px; }
+  .folha .modal { align-self: end; border-radius: 22px 22px 0 0; width: min(560px, 100%); padding-bottom: calc(20px + env(safe-area-inset-bottom)); animation: sobe .25s ease; }
+  .folha { place-items: end center; padding: 0; }
+  @keyframes sobe { from { transform: translateY(40px); opacity: .4; } to { transform: none; opacity: 1; } }
   @media (max-width: 640px) { .botao-atualizar { margin-left: auto; } .pesq-linha > * { flex: 1 1 140px; } }
 </style>
 </head>
@@ -250,34 +326,26 @@
 
 <header class="topo">
   <div class="wrap">
-    <div class="marca"><div class="radar" aria-hidden="true"></div>Radar Londrina</div>
-    <nav class="atalhos">
-      <a href="#discrepancia">Preço × procura</a>
-      <a href="#datas">Datas-chave</a>
-      <a href="#zonas">Zonas</a>
-      <a href="#historico">Histórico</a>
-      <a href="#unidades">Unidades</a>
-      <a href="#comparar">Hotéis e outros</a>
-      <a href="#metodo">Como funciona</a>
-    </nav>
+    <a class="marca" href="#inicio" data-ir="inicio"><img src="marca/icone.svg" alt="" width="32" height="32"><span>DEMANDA <b>X</b></span></a>
     <button class="botao-atualizar" id="btAtualizar" title="Buscar os dados mais novos"><span class="ponto"></span><span id="btAtualizarTxt">Atualizar</span></button>
   </div>
 </header>
 
 <div class="instalar" id="instalar" hidden>
-  <img src="icone-192.png" alt="" width="40" height="40">
+  <img src="marca/icone-192.png" alt="" width="40" height="40">
   <span id="instalarTxt"></span>
   <button class="botao" id="instalarBt">Instalar</button>
   <button class="fechar" id="instalarX" aria-label="Fechar">×</button>
 </div>
 <main class="wrap">
-  <section class="heroi">
-    <span class="selo"><i></i><span id="seloTxt">Dados públicos · sem API paga</span></span>
-    <h1><span class="cidade">LONDRINA · PR</span>Onde está a <span class="grad">procura</span>, <br>quanto custa — e quando o preço erra.</h1>
-    <p class="sub">Todas as hospedagens de temporada de Londrina no Airbnb e o que acontece com cada data dos próximos 12 meses: quantas ainda estão livres, quanto custam e onde o preço está descolado da procura.</p>
+  <section class="view ativa" id="v-inicio">
+    <div class="ola">
+      <div class="cidade-tag">📍 Londrina · PR</div>
+      <h1>Como está a procura por hospedagem?</h1>
+      <p class="atual" id="seloTxt"></p>
+    </div>
     <div class="pesquisa" id="pesquisa">
-      <h2>Pesquise uma data</h2>
-      <p class="leg">Escolha o dia de chegada e quantas noites. O app mostra quantas hospedagens de Londrina ainda estão livres e quanto estão cobrando.</p>
+      <h2>🔎 Pesquisar uma data</h2>
       <div class="pesq-linha">
         <label>Chegada<input type="date" id="pqData"></label>
         <label>Noites<select id="pqNoites"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>7</option></select></label>
@@ -286,9 +354,50 @@
       <div class="atalhos-datas" id="pqAtalhos"></div>
       <div class="resultado" id="pqResultado"></div>
     </div>
-    <div class="kpis" id="kpis"></div>
+    <div class="kpis kpis-3" id="kpis"></div>
+    <div class="sec-cab"><h2>Próximas datas</h2><a href="#calendario" data-ir="calendario">calendário completo →</a></div>
+    <div class="legenda-niveis" id="legNiveis1"></div>
+    <div class="lista-datas" id="listaDatas"></div>
+    <div class="sec-cab"><h2>💰 Oportunidades</h2></div>
+    <div id="oportunidades"></div>
   </section>
 
+  <section class="view" id="v-calendario">
+    <div class="ola"><h1>Calendário</h1><p class="atual">Cada dia mostra como está a procura para quem chega naquele dia e fica 2 noites. Toque num dia para ver os detalhes.</p></div>
+    <div class="legenda-niveis" id="legNiveis2"></div>
+    <div id="calendario"></div>
+  </section>
+
+  <section class="view" id="v-unidades">
+
+  <div class="bloco" id="unidades">
+    <div class="bloco-cab">
+      <div>
+        <h2 id="unTitulo">Hospedagens</h2>
+        <p>Toque num ponto do mapa ou num nome para abrir no Airbnb.</p>
+      </div>
+      <button class="botao sec" id="baixarCsv">Baixar CSV</button>
+    </div>
+    <div class="filtros">
+      <input id="fTexto" placeholder="Nome contém…" style="flex:1 1 160px">
+      <select id="fBairro"><option value="">Todas as zonas</option></select>
+      <select id="fTipo"><option value="">Todos os tipos</option></select>
+      <input id="fMin" type="number" placeholder="Diária mín." min="0">
+      <input id="fMax" type="number" placeholder="Diária máx." min="0">
+      <label><input type="checkbox" id="fPref"> só “Preferido dos hóspedes”</label>
+    </div>
+    <div id="mapa"></div>
+    <div class="rolagem"><table class="tabela" id="tabUn"></table></div>
+    <div class="pagina"><span id="pgInfo"></span><button class="botao sec" id="pgAnt">‹</button><button class="botao sec" id="pgProx">›</button></div>
+  </div>
+  </section>
+
+  <section class="view" id="v-analises">
+    <div class="ola"><h1>Análises</h1><p class="atual">Para quem quer ir fundo: gráficos de preço × procura, zonas da cidade, histórico e comparação com hotéis.</p></div>
+    <div class="indice-analises">
+      <a href="#discrepancia">📈 Preço × procura</a><a href="#datas">📅 Datas-chave</a><a href="#zonas">🗺️ Zonas</a>
+      <a href="#historico">⏳ Histórico</a><a href="#comparar">🏨 Hotéis</a><a href="#metodo">ℹ️ Como funciona</a>
+    </div>
   <section class="bloco revela" id="discrepancia">
     <div class="bloco-cab">
       <div>
@@ -370,27 +479,6 @@
     </div>
   </section>
 
-  <section class="bloco revela" id="unidades">
-    <div class="bloco-cab">
-      <div>
-        <div class="eyebrow">Catálogo completo</div>
-        <h2 id="unTitulo">Unidades</h2>
-        <p>Todas as hospedagens de temporada de Londrina encontradas no Airbnb nesta coleta. Diária de referência = preço da estadia padrão que o próprio site sugere (quando a unidade estava livre).</p>
-      </div>
-      <button class="botao sec" id="baixarCsv">Baixar CSV</button>
-    </div>
-    <div class="filtros">
-      <input id="fTexto" placeholder="Nome contém…" style="flex:1 1 160px">
-      <select id="fBairro"><option value="">Todas as zonas</option></select>
-      <select id="fTipo"><option value="">Todos os tipos</option></select>
-      <input id="fMin" type="number" placeholder="Diária mín." min="0">
-      <input id="fMax" type="number" placeholder="Diária máx." min="0">
-      <label><input type="checkbox" id="fPref"> só “Preferido dos hóspedes”</label>
-    </div>
-    <div id="mapa"></div>
-    <div class="rolagem"><table class="tabela" id="tabUn"></table></div>
-    <div class="pagina"><span id="pgInfo"></span><button class="botao sec" id="pgAnt">‹</button><button class="botao sec" id="pgProx">›</button></div>
-  </section>
 
   <section class="bloco revela" id="comparar">
     <div class="bloco-cab">
@@ -434,9 +522,16 @@
     <p>Ninguém precisa fazer nada: o robô busca no Airbnb <b>todo dia de manhã</b> (próximas semanas e feriados) e <b>toda segunda</b> faz a varredura completa. O app pega os dados novos sozinho quando você abre; o botão <b>Atualizar</b> confere na hora se já saiu coisa nova.</p>
     <h3>Termos de uso</h3>
     <p>Os termos do Airbnb proíbem coleta automatizada. O coletor lê só páginas públicas, em volume baixo (~400 páginas por semana, espaçadas), sem login e sem burlar bloqueios — se o site recusar, ele para. Ainda assim, é decisão e responsabilidade do dono do app.</p>
+  <p class="rodape">DEMANDA X · dados: páginas públicas do Airbnb · contorno e mapa © OpenStreetMap</p>
   </section>
 </main>
-<footer>Radar Londrina · dados: páginas públicas do Airbnb · contorno e mapa © OpenStreetMap</footer>
+<nav class="tabbar" id="tabbar">
+  <button data-ir="inicio" class="ativo"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Início</span></button>
+  <button data-ir="calendario"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Calendário</span></button>
+  <button data-ir="unidades"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Hospedagens</span></button>
+  <button data-ir="analises"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Análises</span></button>
+</nav>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -524,32 +619,26 @@ async function iniciar() {
   desenharTudo();
   carregando(false);
   observarRevela();
+  ir(location.hash.slice(1) || "inicio", false);
 }
 function desenharTudo() {
   prepara(); filtrar();
   const quando = D.meta.atualizado || D.meta.coleta;
-  $("#seloTxt").textContent = `Atualizado em ${new Date(quando).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })} · ${nf(D.amostras.length)} datas consultadas · dados públicos, sem API paga`;
+  $("#seloTxt").innerHTML = `<span style="color:var(--bom)">●</span> Atualizado ${new Date(quando).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })} · ${nf(TOTAL)} hospedagens acompanhadas`;
   $("#fonteAtual").textContent = `Última coleta completa: ${new Date(D.meta.coleta).toLocaleString("pt-BR")} (${nf(D.meta.pedidos)} páginas consultadas).${D.meta.atualizado ? ` Última atualização: ${new Date(D.meta.atualizado).toLocaleString("pt-BR")}.` : ""}`;
   desenharKpis(); desenharDiscrepancia(); desenharDatas(); desenharZonas(); desenharHistorico(); montarUnidades(); desenharComparacao();
-  montarPesquisa();
+  montarPesquisa(); desenharInicio(); desenharCalendario();
 }
 
 // ---------- KPIs ----------
 function desenharKpis() {
   const am = D.amostras.filter(a => a.fechado != null && !a.longe);
-  const fds = am.filter(a => a.tipo === "fds");
-  const prox = fds[0];
-  const top = am.slice().sort((a, b) => b.fechado - a.fechado)[0];
+  const prox = am.find(a => a.tipo === "fds");
   const diaria = mediana(am.slice(0, 12).map(a => a.mediana));
-  const anoAtual = new Date().getFullYear();
-  const novas = D.unidades.filter(u => u[9] != null && u[9] >= anoAtual - 1 + new Date().getMonth() / 12).length;
   const cards = [
-    ["Hospedagens no Airbnb", nf(TOTAL), `${nf(D.unidades.filter(u => u[7] > 0).length)} já receberam hóspedes`],
-    ["Diária mediana", moeda(diaria), "próximas datas consultadas"],
-    ["Próximo fim de semana", pct(prox?.fechado), prox ? `fechado · ${dataCurta(prox.checkin)} a ${dataCurta(prox.checkout)}` : ""],
-    ["Data mais disputada", top ? dataCurta(top.checkin) : "—", top ? `${pct(top.fechado)} fechado${top.tipo === "feriado" ? " · " + top.rotulo : ""}` : ""],
-    ["Entraram nos últimos 12 meses", nf(novas), `${pct(novas / TOTAL * 100)} da oferta atual`],
-    ["Avaliações acumuladas", nf(D.unidades.reduce((s, u) => s + (u[7] || 0), 0)), "estadias que já aconteceram"],
+    ["Hospedagens", nf(TOTAL), "no Airbnb em Londrina"],
+    ["Diária típica", moeda(diaria), "próximas semanas"],
+    ["Próx. fim de semana", pct(prox?.fechado), prox ? `já fechado · ${dataCurta(prox.checkin)}` : ""],
   ];
   $("#kpis").innerHTML = cards.map(([r, v, d]) => `<div class="kpi"><div class="rot">${r}</div><div class="val">${v}</div><div class="det">${d}</div></div>`).join("");
 }
@@ -745,6 +834,7 @@ function desenharMapa() {
       .bindPopup(() => `<b>${esc(u[1] || "Sem nome")}</b><br>${esc(u[2])} · ${esc(u[11])}${u[3] !== "—" ? " · " + esc(u[3]) : ""}<br>Diária ref. ${moeda(u[8])} · nota ${u[6] == null ? "—" : nf(u[6], 2)} (${nf(u[7])})<br><a href="https://www.airbnb.com.br/rooms/${encodeURIComponent(u[0])}" target="_blank" rel="noopener">Abrir no Airbnb ↗</a>`)
       .addTo(camada);
   });
+  mapa.invalidateSize();
   if (filtradas.length) {
     const lat = filtradas.map(u => u[4]).sort((a, b) => a - b), lon = filtradas.map(u => u[5]).sort((a, b) => a - b), c = p => Math.floor(p * (lat.length - 1));
     mapa.fitBounds([[lat[c(.02)], lon[c(.02)]], [lat[c(.98)], lon[c(.98)]]], { padding: [20, 20], maxZoom: 15 });
@@ -806,6 +896,84 @@ drop.addEventListener("drop", e => e.dataTransfer.files[0] && importar(e.dataTra
 $("#exemploCsv").onclick = e => { e.preventDefault(); const l = ["data,preco,plataforma"]; D.amostras.filter(a => a.mediana).forEach(a => l.push(`${a.checkin},${Math.round(a.mediana * 1.25 * (a.tipo === "util" ? 1.1 : .95))},Hotel Exemplo (Booking)`)); baixar("exemplo-tarifas-londrina.csv", l.join("\n")); };
 $("#limparCsv").onclick = e => { e.preventDefault(); try { localStorage.removeItem(CHAVE_CSV); } catch {} desenharComparacao(); desenharDiscrepancia(); };
 
+// ---------- níveis de procura (semáforo) ----------
+const NIVEIS = [
+  { c: "n0", ic: "●", nome: "Bem livre", max: 20 },
+  { c: "n1", ic: "●", nome: "Normal", max: 35 },
+  { c: "n2", ic: "▲", nome: "Disputada", max: 60 },
+  { c: "n3", ic: "▲▲", nome: "Lotando", max: 101 },
+];
+const nivel = f => NIVEIS.find(n => f < n.max) || NIVEIS[3];
+const selo = f => { const n = nivel(f); return `<span class="nv ${n.c}">${n.ic} ${n.nome}</span>`; };
+const legendaNiveis = () => NIVEIS.map((n, i) => `<span>${selo(i === 0 ? 0 : NIVEIS[i - 1].max)} ${i === 0 ? "até 20% fechado" : i === 3 ? "60%+ fechado" : `${NIVEIS[i - 1].max}–${n.max}%`}</span>`).join("");
+const MESES_ABR = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+
+function desenharInicio() {
+  $("#legNiveis1").innerHTML = legendaNiveis();
+  const prox = D.amostras.filter(a => a.fechado != null && !a.longe).slice(0, 10);
+  $("#listaDatas").innerHTML = prox.map(a => {
+    const d = dt(a.checkin);
+    return `<button class="item-data" data-ci="${a.checkin}" data-co="${a.checkout}">
+      <span class="dia"><small>${SEMANA[d.getDay()]}</small><b>${d.getDate()}</b><small>${MESES_ABR[d.getMonth()]}</small></span>
+      <span class="meio"><span class="t">${a.tipo === "feriado" ? "🎉 " + esc(a.rotulo) : a.tipo === "fds" ? "Fim de semana" : "Dia útil"}</span>
+        <span class="s">${selo(a.fechado)}<span>${nf(a.livresL)} livres</span></span></span>
+      <span class="preco">${moeda(a.mediana)}<small>diária</small></span></button>`;
+  }).join("");
+  // oportunidades: procura bem acima do fim de semana típico e diária que não acompanhou
+  const grupo = a => a.tipo === "util" ? "util" : "fds";   // feriado compara com fim de semana
+  const tipo = {}; ["fds", "util"].forEach(g => { const v = D.amostras.filter(x => grupo(x) === g && x.tipo !== "feriado" && !x.longe && x.fechado != null); tipo[g] = { f: mediana(v.map(x => x.fechado)), p: mediana(v.map(x => x.mediana)) }; });
+  const ops = D.amostras.filter(a => { const t = tipo[grupo(a)]; return !a.longe && a.fechado != null && a.mediana && t.f != null && a.fechado - t.f > 8 && (a.mediana / t.p - 1) * 100 < (a.fechado - t.f) / 2; })
+    .sort((a, b) => b.fechado - a.fechado).slice(0, 3);
+  const nomeG = a => a.tipo === "util" ? "um dia útil comum" : "um fim de semana comum";
+  $("#oportunidades").innerHTML = ops.length
+    ? ops.map(a => { const t = tipo[grupo(a)], dp = (a.mediana / t.p - 1) * 100; return `<div class="oport" data-ci="${a.checkin}" data-co="${a.checkout}">📈 <b>${dataLonga(a.checkin)}${a.tipo === "feriado" ? " · " + esc(a.rotulo) : ""}</b><br>${pct(a.fechado)} já fechado (${nomeG(a)}: ${pct(t.f)}), mas a diária está em ${moeda(a.mediana)} — ${dp >= 1 ? `só ${nf(dp)}% acima` : dp <= -1 ? `${nf(-dp)}% abaixo` : "igual"} do normal. <b style="color:var(--bom)">Dá pra cobrar mais.</b></div>`; }).join("")
+    : `<div class="oport neutra">Nenhuma data com preço abaixo da procura agora. Quando aparecer, ela fica aqui.</div>`;
+}
+$("#listaDatas").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
+$("#oportunidades").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
+
+function desenharCalendario() {
+  $("#legNiveis2").innerHTML = legendaNiveis() + `<span><span class="nv" style="color:#fbbf24">●</span> feriado</span>`;
+  const por = {}; D.amostras.forEach(a => { if (a.fechado != null) por[a.checkin] = a; });
+  const hoje = dt(isoHoje()), fim = dt(D.amostras.at(-1)?.checkin || isoHoje());
+  let html = "";
+  for (let m = new Date(hoje.getFullYear(), hoje.getMonth(), 1); m <= fim; m.setMonth(m.getMonth() + 1)) {
+    const ano = m.getFullYear(), mes = m.getMonth(), dias = new Date(ano, mes + 1, 0).getDate();
+    let cel = SEMANA.map(s => `<div class="sem">${s[0].toUpperCase()}</div>`).join("") + "<div></div>".repeat(new Date(ano, mes, 1).getDay());
+    for (let d = 1; d <= dias; d++) {
+      const iso = `${ano}-${String(mes + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`, a = por[iso];
+      const cls = ["dia-cal", a && "dado", a && nivel(a.fechado).c, a?.longe && "longe", a?.tipo === "feriado" && "fer", iso === isoHoje() && "hoje"].filter(Boolean).join(" ");
+      cel += a ? `<button class="${cls}" data-ci="${a.checkin}" data-co="${a.checkout}" aria-label="${dataLonga(iso)}: ${nivel(a.fechado).nome}, diária ${moeda(a.mediana)}">${d}<small>${a.mediana ? "R$" + Math.round(a.mediana) : ""}</small></button>`
+             : `<div class="${cls}">${d}</div>`;
+    }
+    html += `<div class="mes"><h3>${MESES_L[mes]} ${ano}</h3><div class="grade-cal">${cel}</div></div>`;
+  }
+  $("#calendario").innerHTML = html + `<p style="font-size:12.5px;color:var(--apagado)">Dias sem cor ainda não entram no levantamento. Dias apagados estão a mais de 8 meses — muitos anfitriões ainda não abriram a agenda.</p>`;
+}
+$("#calendario").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
+
+function abrirData(ci, co) {
+  const n = Math.round((dt(co) - dt(ci)) / 864e5);
+  const m = modal(`<h3>${dataLonga(ci)}</h3>${htmlResultado(ci, n)}<button class="botao sec" id="verNaPesquisa" style="margin-top:14px">Mudar nº de noites</button>`);
+  m.classList.add("folha");
+  $("#verNaPesquisa", m).onclick = () => { fecharModal(); ir("inicio"); $("#pqData").value = ci; $("#pqNoites").value = String(n); mostrarPesquisa(); $("#pesquisa").scrollIntoView({ behavior: "smooth", block: "start" }); };
+}
+
+// ---------- abas ----------
+const VIEWS = ["inicio", "calendario", "unidades", "analises"];
+function ir(v, rolar = true) {
+  if (!VIEWS.includes(v)) v = "inicio";
+  $$(".view").forEach(x => x.classList.toggle("ativa", x.id === "v-" + v));
+  $$("#tabbar button").forEach(b => b.classList.toggle("ativo", b.dataset.ir === v));
+  if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v);
+  if (rolar) scrollTo({ top: 0 });
+  if (v === "unidades" && D) setTimeout(() => desenharMapa(), 30);
+  $$(".revela").forEach(x => x.classList.add("visto"));
+}
+document.addEventListener("click", e => { const a = e.target.closest("[data-ir]"); if (!a) return; e.preventDefault(); ir(a.dataset.ir); });
+// links internos da aba Análises (#discrepancia etc.) continuam rolando até a seção
+window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (VIEWS.includes(h)) ir(h); else if (h && $("#v-analises #" + CSS.escape(h))) { ir("analises", false); $("#" + CSS.escape(h)).scrollIntoView({ behavior: "smooth" }); } });
+
 // ---------- pesquisa de uma data ----------
 const isoHoje = () => new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
 const somaDias = (iso, n) => { const d = dt(iso); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
@@ -828,6 +996,9 @@ function mostrarPesquisa() {
   alvo.dataset.feito = "1";
   if (!ci) return;
   if (ci <= isoHoje()) { alvo.innerHTML = `<p class="res-frase">Escolha uma data a partir de amanhã.</p>`; return; }
+  alvo.innerHTML = htmlResultado(ci, n);
+}
+function htmlResultado(ci, n) {
   const co = somaDias(ci, n);
   const a = [...D.amostras, ...D.outras].find(x => x.checkin === ci && x.checkout === co);
   const fdsTip = mediana(D.amostras.filter(x => x.tipo === "fds" && !x.longe && x.fechado != null).map(x => x.fechado));
@@ -835,7 +1006,7 @@ function mostrarPesquisa() {
   const periodo = `${dataLonga(ci)} → ${dataCurta(co)} (${n} ${n === 1 ? "noite" : "noites"})`;
   if (!a || a.fechado == null) {
     const viz = D.amostras.filter(x => x.fechado != null && Math.abs(dt(x.checkin) - dt(ci)) <= 4 * 864e5).sort((x, y) => Math.abs(dt(x.checkin) - dt(ci)) - Math.abs(dt(y.checkin) - dt(ci)))[0];
-    alvo.innerHTML = `<p class="res-frase"><b>${periodo}</b> ainda não está no levantamento.${viz ? ` A data mais próxima com dados é <b>${dataLonga(viz.checkin)}</b> (2 noites): <b>${pct(viz.fechado)}</b> fechado, <b>${nf(viz.livresL)}</b> livres, diária <b>${moeda(viz.mediana)}</b>.` : ""}</p><p style="font-size:12.5px;color:var(--apagado);margin:6px 0 0">O robô levanta todo fim de semana dos próximos 6 meses, dias úteis a cada 2 semanas e todos os feriados — os toques acima mostram as datas com dados.</p>`;
+    return `<p class="res-frase"><b>${periodo}</b> ainda não está no levantamento.${viz ? ` A data mais próxima com dados é <b>${dataLonga(viz.checkin)}</b> (2 noites): <b>${pct(viz.fechado)}</b> fechado, <b>${nf(viz.livresL)}</b> livres, diária <b>${moeda(viz.mediana)}</b>.` : ""}</p><p style="font-size:12.5px;color:var(--apagado);margin:6px 0 0">O robô levanta todo fim de semana dos próximos 6 meses, dias úteis a cada 2 semanas e todos os feriados — os toques acima mostram as datas com dados.</p>`;
   } else {
     const df = a.fechado - fdsTip, dp = a.mediana && fdsPreco ? (a.mediana / fdsPreco - 1) * 100 : null;
     let frase;
@@ -849,12 +1020,12 @@ function mostrarPesquisa() {
     const ult = D.meta.ultima_atualizacao;
     const quando = ult && (ult.datas?.includes(`${ci}:${co}`) || ult.datas?.includes(ci)) ? ult.quando : D.meta.coleta;
     const horas = Math.round((Date.now() - new Date(quando)) / 36e5);
-    alvo.innerHTML = `<div class="res-card">
+    return `<div class="res-card">
       <div class="kpi"><div class="rot">Já fechado</div><div class="val">${pct(a.fechado)}</div><div class="det">${a.tipo === "feriado" ? esc(a.rotulo) + " · " : ""}${n === 2 ? "fim de semana típico: " + pct(fdsTip) : "inclui quem exige mais noites"}</div></div>
       <div class="kpi"><div class="rot">Hospedagens livres</div><div class="val">${nf(a.livresL)}</div><div class="det">de ${nf(TOTAL)} em Londrina</div></div>
-      <div class="kpi"><div class="rot">Diária mediana</div><div class="val">${moeda(a.mediana)}</div><div class="det">metade entre ${moeda(a.p25)} e ${moeda(a.p75)}</div></div>
+      <div class="kpi"><div class="rot">Diária mediana</div><div class="val">${moeda(a.mediana)}</div><div class="det">${a.p25 != null && a.p75 != null ? `metade entre ${moeda(a.p25)} e ${moeda(a.p75)}` : a.p25 != null ? `a maioria a partir de ${moeda(a.p25)}` : ""}</div></div>
     </div><p class="res-frase"><b>${periodo}</b> — ${frase}</p>
-    <p style="font-size:12.5px;color:var(--apagado);margin:6px 0 0">Dado de ${horas < 1 ? "menos de 1 hora" : horas < 48 ? horas + " h" : Math.round(horas / 24) + " dias"} atrás.${a.longe ? " Data distante: muitos anfitriões ainda não abriram a agenda." : ""}</p>`;
+    <p style="font-size:12.5px;color:var(--apagado);margin:6px 0 0">${n === 2 ? selo(a.fechado) + " · " : ""}Dado de ${horas < 1 ? "menos de 1 hora" : horas < 48 ? horas + " h" : Math.round(horas / 24) + " dias"} atrás.${a.longe ? " Data distante: muitos anfitriões ainda não abriram a agenda." : ""}</p>`;
   }
 }
 
@@ -902,7 +1073,7 @@ function mostrarInstalar() {
   const b = $("#instalar"); b.hidden = false;
   $("#instalarTxt").innerHTML = ios
     ? `Para usar como app: toque em <b>Compartilhar</b> <span aria-hidden="true">⬆︎</span> e depois em <b>Adicionar à Tela de Início</b>.`
-    : `Coloque o Radar na tela de início do celular, como um app.`;
+    : `Coloque o DEMANDA X na tela de início do celular, como um app.`;
   $("#instalarBt").hidden = ios;
 }
 $("#instalarBt").onclick = async () => { if (!pedidoInstalar) return; pedidoInstalar.prompt(); await pedidoInstalar.userChoice.catch(() => {}); pedidoInstalar = null; $("#instalar").hidden = true; };

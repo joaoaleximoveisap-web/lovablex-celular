@@ -14,8 +14,9 @@ O que cada execução faz:
   4. Histórico: acrescenta tudo em radar/data/londrina-historico.json. Como roda toda
      semana, o histórico de preço e de procura de cada data vai crescendo sozinho.
 
-Uso:  python3 radar/pipeline/londrina.py            (coleta completa, ~15 min)
-      python3 radar/pipeline/londrina.py --rapido   (menos datas, para testar)
+Uso:  python3 radar/pipeline/londrina.py                       coleta completa (~40 min)
+      python3 radar/pipeline/londrina.py --rapido              próximas semanas e feriados (~10 min)
+      python3 radar/pipeline/londrina.py --datas 2026-12-24    só estas datas (~1 min cada)
 """
 import base64, hashlib, json, math, os, random, re, subprocess, sys, time
 from datetime import date, datetime, timedelta, timezone
@@ -329,8 +330,109 @@ def dentro(lat, lon, poligono):
     return False
 
 
+def classifica(ci):
+    """Rótulo e tipo de uma estadia que começa em ci (feriado no dia seguinte, fim de semana ou dia útil)."""
+    for f, nome in {**feriados(ci.year), **feriados(ci.year + 1)}.items():
+        if ci <= f <= ci + timedelta(days=1):
+            return nome, "feriado"
+    return ("Fim de semana", "fds") if ci.weekday() in (4, 5) else ("Dia útil", "util")
+
+
+def atualizar_datas(estadias, origem):
+    """Consulta só algumas datas e junta no londrina.json que já existe (sem refazer o catálogo).
+
+    estadias: [(checkin, checkout, rotulo|None, tipo|None)]. Usado pela pesquisa de uma data no app
+    ("--datas") e pela atualização rápida ("--rapido").
+    """
+    caminho = os.path.join(DADOS, "londrina.json")
+    if not os.path.exists(caminho):
+        raise SystemExit("ainda não há coleta completa — rode sem --datas/--rapido primeiro")
+    with open(caminho, encoding="utf-8") as f:
+        saida = json.load(f)
+    if saida["amostras"]:
+        medianas = [a["mediana"] * 2 for a in saida["amostras"][:6] if a.get("mediana")]
+        if medianas:
+            _chute["valor"] = sorted(medianas)[len(medianas) // 2]
+    chave = lambda a: a["checkin"] + ":" + a["checkout"]   # 1 noite e 2 noites na mesma data são estadias diferentes
+    por_data = {chave(a): a for a in saida["amostras"]}
+    novas = []
+    for ci, co, rot, tp in estadias:
+        if not rot:
+            rot, tp = classifica(ci)
+        r = consulta_data(AREA, ci, co)
+        a = dict(checkin=ci.isoformat(), checkout=co.isoformat(), rotulo=rot, tipo=tp, **r)
+        if origem == "pesquisa":
+            a["pesquisa"] = True
+        antiga = por_data.get(chave(a))
+        if antiga and antiga.get("pesquisa") and origem != "pesquisa":
+            a["pesquisa"] = True
+        por_data[chave(a)] = a
+        novas.append(a)
+        print(f"  {ci} {rot:24s} livres={r['livres']} mediana={r['mediana']}", flush=True)
+    hoje = date.today().isoformat()
+    saida["amostras"] = sorted((a for a in por_data.values() if a["checkin"] > hoje), key=lambda a: a["checkin"])
+    agora = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    saida["meta"]["atualizado"] = agora
+    saida["meta"]["ultima_atualizacao"] = dict(tipo=origem, quando=agora, datas=[chave(a) for a in novas], pedidos=_pedidos)
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(saida, f, ensure_ascii=False, separators=(",", ":"))
+
+    hpath = os.path.join(DADOS, "londrina-historico.json")
+    hist = dict(coletas=[], avaliacoes={})
+    if os.path.exists(hpath):
+        with open(hpath, encoding="utf-8") as f:
+            hist = json.load(f)
+    dia = agora[:10]
+    reg = next((c for c in hist["coletas"] if c["data"] == dia), None)
+    if not reg:
+        reg = dict(data=dia, unidades=len(saida["unidades"]), avaliacoes=sum(u[7] or 0 for u in saida["unidades"]),
+                   fator=saida["meta"].get("fator_londrina", 1), datas=[], parcial=True)
+        hist["coletas"].append(reg)
+    def linha(a):   # 5ª coluna só quando a estadia não é de 2 noites
+        r = [a["checkin"], a["livres"], a["mediana"], a["tipo"]]
+        return r if (date.fromisoformat(a["checkout"]) - date.fromisoformat(a["checkin"])).days == 2 else r + [a["checkout"]]
+    linhas = {d[0] + ":" + (d[4] if len(d) > 4 else ""): d for d in reg["datas"]}
+    for a in novas:
+        r = linha(a)
+        linhas[r[0] + ":" + (r[4] if len(r) > 4 else "")] = r
+    reg["datas"] = sorted(linhas.values())
+    hist["coletas"].sort(key=lambda c: c["data"])
+    with open(hpath, "w", encoding="utf-8") as f:
+        json.dump(hist, f, ensure_ascii=False, separators=(",", ":"))
+    print(f"ok: {len(novas)} datas atualizadas, {_pedidos} páginas consultadas", flush=True)
+
+
+def plano_rapido(hoje):
+    """Próximos 8 fins de semana, 4 dias úteis e os feriados dos próximos 4 meses."""
+    return [e for e in plano(hoje, rapido=True) if e[3] != "feriado" or e[0] <= hoje + timedelta(days=120)]
+
+
+def ler_datas(txt):
+    """'2026-12-24' ou '2026-12-24:2026-12-27' ou '24/12/2026', separados por vírgula ou espaço."""
+    out = []
+    for parte in re.split(r"[,\s;]+", txt.strip()):
+        if not parte:
+            continue
+        ini, _, fim = parte.partition(":")
+        def d(x):
+            m = re.match(r"^(\d{1,2})/(\d{1,2})/(\d{4})$", x)
+            return date(int(m.group(3)), int(m.group(2)), int(m.group(1))) if m else date.fromisoformat(x)
+        ci = d(ini)
+        co = d(fim) if fim else ci + timedelta(days=2)
+        if co <= ci or (co - ci).days > 30:
+            raise SystemExit(f"período inválido: {parte}")
+        if ci <= date.today():
+            raise SystemExit(f"a data {parte} já passou")
+        out.append((ci, co, None, None))
+    return out[:10]
+
+
 def main(args):
-    rapido = "--rapido" in args
+    if "--datas" in args:
+        return atualizar_datas(ler_datas(args[args.index("--datas") + 1]), "pesquisa")
+    if "--rapido" in args:
+        return atualizar_datas(plano_rapido(date.today()), "rapida")
+    rapido = False
     hoje = date.today()
     with open(os.path.join(os.path.dirname(__file__), "londrina.geojson"), encoding="utf-8") as f:
         geo = json.load(f)["geometry"]

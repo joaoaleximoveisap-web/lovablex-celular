@@ -200,6 +200,36 @@
   .zona h3 { font-size: 16px; margin-bottom: 8px; }
   .zona .lin { display: flex; justify-content: space-between; font-size: 13px; color: var(--texto2); padding: 3px 0; }
   .zona .lin b { color: var(--texto); font-variant-numeric: tabular-nums; }
+  .botao-atualizar { margin-left: 10px; display: inline-flex; align-items: center; gap: 7px; font: 600 13px Inter; color: #fff; background: linear-gradient(120deg, #2a78d6, #6250d6); border: 0; border-radius: 999px; padding: 8px 14px; cursor: pointer; white-space: nowrap; }
+  .botao-atualizar .ponto { width: 8px; height: 8px; border-radius: 50%; background: #fff; opacity: .9; }
+  .botao-atualizar.rodando .ponto { animation: pisca 1s infinite; background: #fbbf24; }
+  @keyframes pisca { 50% { opacity: .2; } }
+  .pesquisa { margin: 26px 0 6px; padding: 18px; border-radius: 20px; border: 1px solid rgba(57,135,229,.35); background: linear-gradient(180deg, rgba(57,135,229,.10), rgba(57,135,229,.03)); }
+  .pesquisa h2 { font-size: 19px; margin-bottom: 4px; }
+  .pesquisa p.leg { margin: 0 0 12px; color: var(--texto2); font-size: 13.5px; }
+  .pesq-linha { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+  .pesq-linha label { display: grid; gap: 4px; font-size: 12px; color: var(--texto2); }
+  .pesq-linha input, .pesq-linha select { font: 600 16px Inter; color: var(--texto); background: var(--superficie); border: 1px solid var(--linha2); border-radius: 12px; padding: 11px 12px; min-width: 0; color-scheme: dark; }
+  .pesq-linha .botao { padding: 13px 18px; font-size: 15px; border-radius: 12px; }
+  .atalhos-datas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .resultado { margin-top: 14px; }
+  .res-card { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .res-card .kpi .val { font-size: 26px; }
+  .res-frase { margin: 12px 0 0; font-size: 15px; color: var(--texto2); }
+  .res-frase b { color: var(--texto); }
+  .modal-fundo { position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(4px); z-index: 5000; display: grid; place-items: center; padding: 16px; }
+  .modal { width: min(460px, 100%); background: var(--superficie2); border: 1px solid var(--linha2); border-radius: 20px; padding: 20px; box-shadow: 0 30px 80px rgba(0,0,0,.6); max-height: 90vh; overflow: auto; }
+  .modal h3 { font-size: 19px; margin-bottom: 6px; }
+  .modal p { color: var(--texto2); font-size: 14px; margin: 6px 0 12px; }
+  .opcao { display: block; width: 100%; text-align: left; font: inherit; color: var(--texto); background: var(--superficie); border: 1px solid var(--linha2); border-radius: 14px; padding: 13px 14px; margin-bottom: 8px; cursor: pointer; }
+  .opcao:hover { border-color: #3987e5; }
+  .opcao b { display: block; font-size: 15px; } .opcao small { color: var(--apagado); }
+  .modal input { width: 100%; font: 14px Inter; color: var(--texto); background: var(--superficie); border: 1px solid var(--linha2); border-radius: 12px; padding: 11px 12px; margin: 6px 0 10px; }
+  .progresso { height: 8px; border-radius: 4px; background: rgba(255,255,255,.06); overflow: hidden; margin: 10px 0 6px; }
+  .progresso i { display: block; height: 100%; background: linear-gradient(90deg, #3987e5, #9085e9); transition: width .8s; }
+  .fechar { float: right; background: none; border: 0; color: var(--apagado); font-size: 22px; cursor: pointer; line-height: 1; }
+  .erro-txt { color: var(--ruim); font-size: 13px; }
+  @media (max-width: 640px) { .botao-atualizar { margin-left: auto; } .pesq-linha > * { flex: 1 1 140px; } }
 </style>
 </head>
 <body>
@@ -218,6 +248,7 @@
       <a href="#comparar">Hotéis e outros</a>
       <a href="#metodo">Como funciona</a>
     </nav>
+    <button class="botao-atualizar" id="btAtualizar" title="Buscar dados novos no Airbnb agora"><span class="ponto"></span><span id="btAtualizarTxt">Atualizar</span></button>
   </div>
 </header>
 
@@ -226,6 +257,17 @@
     <span class="selo"><i></i><span id="seloTxt">Dados públicos · sem API paga</span></span>
     <h1><span class="cidade">LONDRINA · PR</span>Onde está a <span class="grad">procura</span>,<br>quanto custa — e quando o preço erra.</h1>
     <p class="sub">Todas as hospedagens de temporada de Londrina no Airbnb e o que acontece com cada data dos próximos 12 meses: quantas ainda estão livres, quanto custam e onde o preço está descolado da procura.</p>
+    <div class="pesquisa" id="pesquisa">
+      <h2>Pesquise uma data</h2>
+      <p class="leg">Escolha o dia de chegada e quantas noites. O app mostra quantas hospedagens de Londrina ainda estão livres e quanto estão cobrando.</p>
+      <div class="pesq-linha">
+        <label>Chegada<input type="date" id="pqData"></label>
+        <label>Noites<select id="pqNoites"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>7</option></select></label>
+        <button class="botao" id="pqVer">Ver</button>
+      </div>
+      <div class="atalhos-datas" id="pqAtalhos"></div>
+      <div class="resultado" id="pqResultado"></div>
+    </div>
     <div class="kpis" id="kpis"></div>
   </section>
 
@@ -370,6 +412,8 @@
     </ul>
     <h3>Histórico</h3>
     <p>O Airbnb não mostra preços passados para ninguém. Por isso o histórico de preço e procura de Londrina começa na primeira coleta e cresce a cada semana: o robô guarda o que viu para cada data, então dá pra acompanhar o ritmo de reservas do Réveillon, do Carnaval etc. e comparar ano contra ano a partir do 2º ano.</p>
+    <h3>Atualizar quando quiser</h3>
+    <p>O botão <b>Atualizar</b> (lá em cima) liga o robô na hora: <b>rápida</b> (~10 min, próximas semanas e feriados) ou <b>completa</b> (~40 min, tudo). Na caixa <b>Pesquise uma data</b>, qualquer data dos próximos 12 meses pode ser consultada no Airbnb em ~2 minutos. Na primeira vez o app pede uma chave de acesso do GitHub, que fica guardada só no seu aparelho.</p>
     <h3>Termos de uso</h3>
     <p>Os termos do Airbnb proíbem coleta automatizada. O coletor lê só páginas públicas, em volume baixo (~400 páginas por semana, espaçadas), sem login e sem burlar bloqueios — se o site recusar, ele para. Ainda assim, é decisão e responsabilidade do dono do app.</p>
   </section>
@@ -436,9 +480,14 @@ const HORIZONTE = 240; // dias — além disso muitos anfitriões ainda não abr
 // fechado (%) e diária de cada data consultada, já corrigidos para só Londrina
 function prepara() {
   TOTAL = D.unidades.length;
+  // estadias pesquisadas com outro nº de noites ficam à parte: só as de 2 noites entram nos gráficos
+  const todas = (D._todas ||= D.amostras);
+  const noites = a => Math.round((dt(a.checkout) - dt(a.checkin)) / 864e5);
+  D.amostras = todas.filter(a => noites(a) === 2);
+  D.outras = todas.filter(a => noites(a) !== 2);
   const f = D.meta.fator_londrina || 1;
   const hoje = new Date(D.meta.coleta);
-  D.amostras.forEach(a => {
+  todas.forEach(a => {
     a.longe = (dt(a.checkin) - hoje) / 864e5 > HORIZONTE;
     a.livresL = a.livres == null ? null : Math.round(a.livres * f);
     a.fechado = a.livresL == null ? null : Math.max(0, Math.min(100, (1 - a.livresL / TOTAL) * 100));
@@ -453,13 +502,19 @@ function filtrar() {
 
 async function iniciar() {
   try { [D, H] = await Promise.all([json("data/londrina.json"), json("data/londrina-historico.json").catch(() => null)]); }
-  catch { carregando(false); $("#kpis").innerHTML = `<div class="vazio-msg">Os dados ainda não foram coletados. Rode o workflow “Radar Londrina — coleta” na aba Actions do GitHub.</div>`; return; }
-  prepara(); filtrar();
-  $("#seloTxt").textContent = `Coleta de ${dataBR(D.meta.coleta)} · ${nf(D.amostras.length)} datas consultadas · dados públicos, sem API paga`;
-  $("#fonteAtual").textContent = `Última coleta: ${new Date(D.meta.coleta).toLocaleString("pt-BR")} (${nf(D.meta.pedidos)} páginas consultadas).`;
-  desenharKpis(); desenharDiscrepancia(); desenharDatas(); desenharZonas(); desenharHistorico(); montarUnidades(); desenharComparacao();
+  catch { carregando(false); $("#kpis").innerHTML = `<div class="vazio-msg">Os dados ainda não foram coletados. Toque em “Atualizar” lá em cima.</div>`; return; }
+  desenharTudo();
   carregando(false);
   observarRevela();
+  acompanhar();
+}
+function desenharTudo() {
+  prepara(); filtrar();
+  const quando = D.meta.atualizado || D.meta.coleta;
+  $("#seloTxt").textContent = `Atualizado em ${new Date(quando).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })} · ${nf(D.amostras.length)} datas consultadas · dados públicos, sem API paga`;
+  $("#fonteAtual").textContent = `Última coleta completa: ${new Date(D.meta.coleta).toLocaleString("pt-BR")} (${nf(D.meta.pedidos)} páginas consultadas).${D.meta.atualizado ? ` Última atualização: ${new Date(D.meta.atualizado).toLocaleString("pt-BR")}.` : ""}`;
+  desenharKpis(); desenharDiscrepancia(); desenharDatas(); desenharZonas(); desenharHistorico(); montarUnidades(); desenharComparacao();
+  montarPesquisa();
 }
 
 // ---------- KPIs ----------
@@ -608,7 +663,7 @@ function desenharHistorico() {
 }
 function desenharRitmo() {
   const d = $("#selRitmo").value, cs = H?.coletas || [];
-  const pts = cs.map(c => { const r = c.datas.find(x => x[0] === d); return r && r[1] != null ? [c.data, Math.max(0, Math.min(100, (1 - r[1] * (c.fator || 1) / c.unidades) * 100)), r[2]] : null; }).filter(Boolean);
+  const pts = cs.map(c => { const r = c.datas.find(x => x[0] === d && x.length < 5); return r && r[1] != null ? [c.data, Math.max(0, Math.min(100, (1 - r[1] * (c.fator || 1) / c.unidades) * 100)), r[2]] : null; }).filter(Boolean);
   grafico("gRitmo", {
     type: "line", plugins: [cruz],
     data: { labels: pts.map(p => dataBR(p[0])), datasets: [{ data: pts.map(p => p[1]), borderColor: COR.demanda, backgroundColor: COR.demanda, borderWidth: 2, pointRadius: 5, tension: .3 }] },
@@ -733,6 +788,178 @@ const drop = $("#drop");
 drop.addEventListener("drop", e => e.dataTransfer.files[0] && importar(e.dataTransfer.files[0]));
 $("#exemploCsv").onclick = e => { e.preventDefault(); const l = ["data,preco,plataforma"]; D.amostras.filter(a => a.mediana).forEach(a => l.push(`${a.checkin},${Math.round(a.mediana * 1.25 * (a.tipo === "util" ? 1.1 : .95))},Hotel Exemplo (Booking)`)); baixar("exemplo-tarifas-londrina.csv", l.join("\n")); };
 $("#limparCsv").onclick = e => { e.preventDefault(); try { localStorage.removeItem(CHAVE_CSV); } catch {} desenharComparacao(); desenharDiscrepancia(); };
+
+// ---------- pesquisa de uma data ----------
+const isoHoje = () => new Date(Date.now() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+const somaDias = (iso, n) => { const d = dt(iso); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+function montarPesquisa() {
+  const inp = $("#pqData");
+  inp.min = somaDias(isoHoje(), 1); inp.max = somaDias(isoHoje(), 364);
+  if (!inp.value) inp.value = (D.amostras.find(a => a.tipo === "fds" && !a.longe) || D.amostras[0])?.checkin || inp.min;
+  const fer = D.amostras.filter(a => a.tipo === "feriado" && !a.longe).slice(0, 5);
+  const fds = D.amostras.find(a => a.tipo === "fds");
+  $("#pqAtalhos").innerHTML = [fds && [fds.checkin, "Próximo fim de semana"], ...fer.map(a => [a.checkin, a.rotulo])].filter(Boolean)
+    .map(([d, r]) => `<button class="chip" data-d="${d}">${esc(r)} · ${dataCurta(d)}</button>`).join("");
+  if ($("#pqResultado").dataset.feito) mostrarPesquisa();
+}
+$("#pqAtalhos").onclick = e => { const b = e.target.closest("[data-d]"); if (!b) return; $("#pqData").value = b.dataset.d; $("#pqNoites").value = "2"; mostrarPesquisa(); };
+$("#pqVer").onclick = () => mostrarPesquisa();
+$("#pqData").addEventListener("change", () => mostrarPesquisa());
+$("#pqNoites").addEventListener("change", () => mostrarPesquisa());
+function mostrarPesquisa() {
+  const ci = $("#pqData").value, n = +$("#pqNoites").value, alvo = $("#pqResultado");
+  alvo.dataset.feito = "1";
+  if (!ci) return;
+  if (ci <= isoHoje()) { alvo.innerHTML = `<p class="res-frase">Escolha uma data a partir de amanhã.</p>`; return; }
+  const co = somaDias(ci, n);
+  const a = [...D.amostras, ...D.outras].find(x => x.checkin === ci && x.checkout === co);
+  const fdsTip = mediana(D.amostras.filter(x => x.tipo === "fds" && !x.longe && x.fechado != null).map(x => x.fechado));
+  const fdsPreco = mediana(D.amostras.filter(x => x.tipo === "fds" && !x.longe).map(x => x.mediana));
+  const periodo = `${dataLonga(ci)} → ${dataCurta(co)} (${n} ${n === 1 ? "noite" : "noites"})`;
+  const botaoAgora = txt => `<button class="botao" id="pqAgora" style="margin-top:12px">${txt}</button> <small style="color:var(--apagado)">consulta o Airbnb agora · leva ~2 min</small>`;
+  if (!a || a.fechado == null) {
+    const viz = D.amostras.filter(x => x.fechado != null && Math.abs(dt(x.checkin) - dt(ci)) <= 4 * 864e5).sort((x, y) => Math.abs(dt(x.checkin) - dt(ci)) - Math.abs(dt(y.checkin) - dt(ci)))[0];
+    alvo.innerHTML = `<p class="res-frase"><b>${periodo}</b> ainda não foi consultado.${viz ? ` A data consultada mais próxima é ${dataLonga(viz.checkin)}: <b>${pct(viz.fechado)}</b> fechado, diária <b>${moeda(viz.mediana)}</b>.` : ""}</p>${botaoAgora("Consultar esta data agora")}`;
+  } else {
+    const df = a.fechado - fdsTip, dp = a.mediana && fdsPreco ? (a.mediana / fdsPreco - 1) * 100 : null;
+    let frase;
+    if (n !== 2) frase = `Estadia de ${n} ${n === 1 ? "noite" : "noites"}: ${nf(a.livresL)} hospedagens aceitam essa reserva, diária mediana ${moeda(a.mediana)}. <small>A comparação com o fim de semana típico só vale para 2 noites — muitos anfitriões exigem mínimo de 2 noites, então 1 noite sempre parece mais fechado.</small>`;
+    else if (a.fechado >= 60) frase = `Data <b>muito disputada</b>: só ${nf(a.livresL)} hospedagens livres.`;
+    else if (df > 8) frase = `Mais procurada que um fim de semana típico (+${nf(df)} pts fechado).`;
+    else if (df < -8) frase = `Menos procurada que um fim de semana típico (${nf(df)} pts).`;
+    else frase = `Procura parecida com um fim de semana típico.`;
+    if (n === 2 && dp != null) frase += dp > 8 ? ` Diárias ${nf(dp)}% acima do normal.` : dp < -8 ? ` Diárias ${nf(-dp)}% abaixo do normal.` : ` Diárias no nível normal.`;
+    if (n === 2 && df > 8 && (dp ?? 0) < df / 2) frase += ` <b style="color:var(--bom)">Preço abaixo da procura — dá pra cobrar mais.</b>`;
+    const ult = D.meta.ultima_atualizacao;
+    const quando = ult && (ult.datas?.includes(`${ci}:${co}`) || ult.datas?.includes(ci)) ? ult.quando : D.meta.coleta;
+    const horas = Math.round((Date.now() - new Date(quando)) / 36e5);
+    alvo.innerHTML = `<div class="res-card">
+      <div class="kpi"><div class="rot">Já fechado</div><div class="val">${pct(a.fechado)}</div><div class="det">${a.tipo === "feriado" ? esc(a.rotulo) + " · " : ""}${n === 2 ? "fim de semana típico: " + pct(fdsTip) : "inclui quem exige mais noites"}</div></div>
+      <div class="kpi"><div class="rot">Hospedagens livres</div><div class="val">${nf(a.livresL)}</div><div class="det">de ${nf(TOTAL)} em Londrina</div></div>
+      <div class="kpi"><div class="rot">Diária mediana</div><div class="val">${moeda(a.mediana)}</div><div class="det">metade entre ${moeda(a.p25)} e ${moeda(a.p75)}</div></div>
+    </div><p class="res-frase"><b>${periodo}</b> — ${frase}</p>
+    <p style="font-size:12.5px;color:var(--apagado);margin:6px 0 0">Dado de ${horas < 1 ? "menos de 1 hora" : horas < 48 ? horas + " h" : Math.round(horas / 24) + " dias"} atrás.${a.longe ? " Data distante: muitos anfitriões ainda não abriram a agenda." : ""}</p>${botaoAgora("Atualizar esta data agora")}`;
+  }
+  $("#pqAgora").onclick = () => disparar("datas", `${ci}:${co}`, periodo);
+}
+
+// ---------- atualizar agora (liga o robô do GitHub Actions deste repositório) ----------
+const REPO = location.hostname.endsWith("github.io") ? `${location.hostname.split(".")[0]}/${location.pathname.split("/")[1]}` : "joaoaleximoveisap-web/lovablex-celular";
+const WF = "radar-londrina.yml";
+const CHAVE_TOKEN = "radar.github";   // chave de acesso que o próprio usuário cola no Radar; fica só neste navegador
+const LINK_TOKEN = "https://github.com/settings/tokens/new?scopes=repo,workflow&description=" + encodeURIComponent("Radar Londrina " + new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }));
+const lerLS = k => { try { return localStorage.getItem(k); } catch { return null; } };
+const gravarLS = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} };
+const token = () => lerLS(CHAVE_TOKEN) || "";
+async function gh(caminho, opts = {}) {
+  const cab = { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...(opts.headers || {}) };
+  if (token()) cab.Authorization = `Bearer ${token()}`;
+  const r = await fetch("https://api.github.com" + caminho, { ...opts, cache: "no-store", headers: cab });
+  if (!r.ok) { const e = new Error((await r.json().catch(() => ({}))).message || r.status); e.status = r.status; throw e; }
+  return r.status === 204 ? null : r.json();
+}
+function modal(html) {
+  fecharModal();
+  const f = document.createElement("div"); f.className = "modal-fundo"; f.id = "modal";
+  f.innerHTML = `<div class="modal"><button class="fechar" aria-label="Fechar">×</button>${html}</div>`;
+  f.addEventListener("click", e => { if (e.target === f || e.target.closest(".fechar")) fecharModal(); });
+  document.body.appendChild(f); return f;
+}
+const fecharModal = () => $("#modal")?.remove();
+function pedirToken(depois) {
+  const m = modal(`<h3>Conectar ao GitHub (uma vez só)</h3>
+    <p>O botão de atualizar liga o robô que mora no seu GitHub. Para isso o Radar precisa de uma chave de acesso sua, que fica guardada só neste aparelho.</p>
+    <p>1. <a href="${LINK_TOKEN}" target="_blank" rel="noopener">Abrir o GitHub já preenchido ↗</a> → lá embaixo toque em <b>Generate token</b> e copie.<br>2. Cole aqui:</p>
+    <input id="tkIn" placeholder="ghp_…" autocomplete="off"><div class="erro-txt" id="tkErro"></div>
+    <button class="botao" id="tkOk">Conectar</button>`);
+  $("#tkOk", m).onclick = async () => {
+    const t = $("#tkIn", m).value.trim();
+    if (!/^(ghp_|github_pat_)/.test(t)) { $("#tkErro", m).textContent = "Isso não parece um token do GitHub (começa com ghp_)."; return; }
+    gravarLS(CHAVE_TOKEN, t);
+    try { await gh(`/repos/${REPO}`); fecharModal(); depois(); }
+    catch (e) { gravarLS(CHAVE_TOKEN, null); $("#tkErro", m).textContent = e.status === 401 ? "O GitHub recusou esse token. Gere outro." : "Não consegui acessar o repositório: " + e.message; }
+  };
+}
+$("#btAtualizar").onclick = () => {
+  if (lerPendente()) return mostrarProgresso();
+  const ult = D?.meta.ultima_atualizacao;
+  const m = modal(`<h3>Atualizar dados de Londrina</h3>
+    <p>Busca dados novos direto no Airbnb. Pode fechar o app; quando terminar, os números novos aparecem.${ult ? `<br><small>Última atualização: ${new Date(ult.quando).toLocaleString("pt-BR")}</small>` : ""}</p>
+    <button class="opcao" data-m="rapida"><b>⚡ Rápida — próximas semanas e feriados</b><small>~10 minutos · 19 datas</small></button>
+    <button class="opcao" data-m="completa"><b>🔄 Completa — tudo de novo</b><small>~40 minutos · catálogo inteiro, 12 meses de datas e zonas</small></button>
+    <button class="opcao" data-m="pesquisa"><b>📅 Só uma data</b><small>use a caixa “Pesquise uma data” no topo</small></button>
+    ${token() ? `<p style="font-size:12px;margin:10px 0 0"><a href="#" id="esquecer">desconectar o GitHub deste aparelho</a></p>` : ""}`);
+  m.addEventListener("click", e => {
+    if (e.target.id === "esquecer") { e.preventDefault(); gravarLS(CHAVE_TOKEN, null); fecharModal(); return; }
+    const b = e.target.closest(".opcao"); if (!b) return;
+    if (b.dataset.m === "pesquisa") { fecharModal(); $("#pesquisa").scrollIntoView({ behavior: "smooth", block: "center" }); $("#pqData").focus(); return; }
+    disparar(b.dataset.m, "", b.dataset.m === "rapida" ? "Atualização rápida" : "Atualização completa");
+  });
+};
+const DURACAO = { datas: 2.5, rapida: 10, completa: 40 };
+const lerPendente = () => { try { return JSON.parse(lerLS("radar.pendente") || "null"); } catch { return null; } };
+async function disparar(modo, datas, descricao) {
+  if (!token()) return pedirToken(() => disparar(modo, datas, descricao));
+  modal(`<h3>Ligando o robô…</h3><p>${esc(descricao)}</p>`);
+  try {
+    await gh(`/repos/${REPO}/actions/workflows/${WF}/dispatches`, { method: "POST", body: JSON.stringify({ ref: "main", inputs: { modo, datas } }) });
+  } catch (e) {
+    if (e.status === 401) { gravarLS(CHAVE_TOKEN, null); return pedirToken(() => disparar(modo, datas, descricao)); }
+    modal(`<h3>Não deu para ligar o robô</h3><p class="erro-txt">${esc(e.message)}</p><p>Confira se a chave tem a permissão <b>workflow</b>. Também dá para rodar pelo GitHub: <a href="https://github.com/${REPO}/actions/workflows/${WF}" target="_blank" rel="noopener">abrir ↗</a></p>`);
+    return;
+  }
+  gravarLS("radar.pendente", JSON.stringify({ modo, datas, descricao, desde: Date.now(), run: null }));
+  mostrarProgresso(); acompanhar();
+}
+let timerAcomp = null, statusRun = null;
+function mostrarProgresso() {
+  const p = lerPendente(); if (!p) return;
+  const min = (Date.now() - p.desde) / 6e4, tot = DURACAO[p.modo] || 10;
+  const fila = statusRun === "queued" || statusRun === "waiting" || statusRun === "pending";
+  modal(`<h3>${fila ? "Na fila…" : "Buscando no Airbnb…"}</h3><p>${esc(p.descricao)}</p>
+    <div class="progresso"><i style="width:${Math.min(95, min / tot * 100)}%"></i></div>
+    <p style="font-size:13px">${nf(min, 0)} de ~${tot} min${fila ? " · esperando outra atualização terminar" : ""}. Pode fechar esta janela: o botão lá em cima fica piscando e os números mudam sozinhos no fim.</p>
+    ${p.run ? `<p style="font-size:12.5px"><a href="https://github.com/${REPO}/actions/runs/${p.run}" target="_blank" rel="noopener">ver no GitHub ↗</a></p>` : ""}`);
+}
+async function acompanhar() {
+  clearTimeout(timerAcomp);
+  const p = lerPendente();
+  if (!p) { $("#btAtualizar").classList.remove("rodando"); $("#btAtualizarTxt").textContent = "Atualizar"; return; }
+  $("#btAtualizar").classList.add("rodando"); $("#btAtualizarTxt").textContent = "Atualizando…";
+  try {
+    let run = null;
+    if (p.run) run = await gh(`/repos/${REPO}/actions/runs/${p.run}`);
+    else {
+      const r = await gh(`/repos/${REPO}/actions/workflows/${WF}/runs?event=workflow_dispatch&per_page=10`);
+      run = (r.workflow_runs || []).filter(x => new Date(x.created_at).getTime() >= p.desde - 120e3).sort((a, b) => new Date(a.created_at) - new Date(b.created_at))[0] || null;
+      if (run) { p.run = run.id; gravarLS("radar.pendente", JSON.stringify(p)); }
+    }
+    statusRun = run?.status || null;
+    if ($("#modal .progresso")) mostrarProgresso();
+    if (run && run.status === "completed") {
+      gravarLS("radar.pendente", null);
+      $("#btAtualizar").classList.remove("rodando"); $("#btAtualizarTxt").textContent = "Atualizar";
+      if (run.conclusion === "success") {
+        await recarregar();
+        const m = modal(`<h3>Pronto ✓</h3><p>${esc(p.descricao)} — números atualizados.</p><button class="botao" id="okFim">Ver</button>`);
+        $("#okFim", m).onclick = () => { fecharModal(); if (p.modo === "datas") $("#pesquisa").scrollIntoView({ behavior: "smooth", block: "center" }); };
+        if (p.modo === "datas") mostrarPesquisa();
+      } else {
+        modal(`<h3>A atualização falhou</h3><p>O Airbnb pode ter recusado a consulta ou a página dele mudou. Os dados anteriores continuam valendo.</p><p><a href="${run.html_url}" target="_blank" rel="noopener">ver detalhes no GitHub ↗</a></p>`);
+      }
+      return;
+    }
+    if (Date.now() - p.desde > 3 * 3600e3) { gravarLS("radar.pendente", null); return acompanhar(); }
+  } catch (e) { if (e.status === 401) { gravarLS("radar.pendente", null); return acompanhar(); } }
+  timerAcomp = setTimeout(acompanhar, 10e3);
+}
+async function recarregar() {
+  // lê direto do repositório: o site publicado leva ~1 min para mostrar o commit novo
+  const raw = async c => { const r = await fetch(`https://api.github.com/repos/${REPO}/contents/radar/data/${c}?ref=main`, { cache: "no-store", headers: { ...(token() ? { Authorization: `Bearer ${token()}` } : {}), Accept: "application/vnd.github.raw+json" } }); if (!r.ok) throw new Error(r.status); return r.json(); };
+  try { [D, H] = await Promise.all([raw("londrina.json"), raw("londrina-historico.json").catch(() => H)]); }
+  catch { [D, H] = await Promise.all([json("data/londrina.json?t=" + Date.now()), json("data/londrina-historico.json?t=" + Date.now()).catch(() => H)]); }
+  desenharTudo();
+}
 
 // ---------- miudezas ----------
 const tip = $("#tip");

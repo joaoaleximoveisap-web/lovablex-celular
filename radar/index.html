@@ -6,6 +6,12 @@
 <title>Radar Londrina</title>
 <meta name="description" content="Todas as hospedagens de temporada de Londrina: oferta, procura e preço de cada data dos próximos 12 meses.">
 <meta name="theme-color" content="#080b12">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icone-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Radar Londrina">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%233987e5'/%3E%3Cstop offset='1' stop-color='%23d95926'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='%23080b12'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='url(%23g)' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='9' fill='url(%23g)'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -229,6 +235,12 @@
   .progresso i { display: block; height: 100%; background: linear-gradient(90deg, #3987e5, #9085e9); transition: width .8s; }
   .fechar { float: right; background: none; border: 0; color: var(--apagado); font-size: 22px; cursor: pointer; line-height: 1; }
   .erro-txt { color: var(--ruim); font-size: 13px; }
+  .instalar { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 4500; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 18px; background: rgba(21,27,42,.97); border: 1px solid rgba(57,135,229,.45); box-shadow: 0 16px 40px rgba(0,0,0,.5); font-size: 14px; color: var(--texto2); max-width: 520px; margin: 0 auto; }
+  .instalar[hidden] { display: none; }
+  .instalar img { border-radius: 10px; flex: none; }
+  .instalar span { flex: 1; } .instalar b { color: var(--texto); }
+  .instalar .fechar { float: none; }
+  header.topo { padding-top: env(safe-area-inset-top); }
   @media (max-width: 640px) { .botao-atualizar { margin-left: auto; } .pesq-linha > * { flex: 1 1 140px; } }
 </style>
 </head>
@@ -248,14 +260,20 @@
       <a href="#comparar">Hotéis e outros</a>
       <a href="#metodo">Como funciona</a>
     </nav>
-    <button class="botao-atualizar" id="btAtualizar" title="Buscar dados novos no Airbnb agora"><span class="ponto"></span><span id="btAtualizarTxt">Atualizar</span></button>
+    <button class="botao-atualizar" id="btAtualizar" title="Buscar os dados mais novos"><span class="ponto"></span><span id="btAtualizarTxt">Atualizar</span></button>
   </div>
 </header>
 
+<div class="instalar" id="instalar" hidden>
+  <img src="icone-192.png" alt="" width="40" height="40">
+  <span id="instalarTxt"></span>
+  <button class="botao" id="instalarBt">Instalar</button>
+  <button class="fechar" id="instalarX" aria-label="Fechar">×</button>
+</div>
 <main class="wrap">
   <section class="heroi">
     <span class="selo"><i></i><span id="seloTxt">Dados públicos · sem API paga</span></span>
-    <h1><span class="cidade">LONDRINA · PR</span>Onde está a <span class="grad">procura</span>,<br>quanto custa — e quando o preço erra.</h1>
+    <h1><span class="cidade">LONDRINA · PR</span>Onde está a <span class="grad">procura</span>, <br>quanto custa — e quando o preço erra.</h1>
     <p class="sub">Todas as hospedagens de temporada de Londrina no Airbnb e o que acontece com cada data dos próximos 12 meses: quantas ainda estão livres, quanto custam e onde o preço está descolado da procura.</p>
     <div class="pesquisa" id="pesquisa">
       <h2>Pesquise uma data</h2>
@@ -401,7 +419,7 @@
     <div class="eyebrow">Transparência</div>
     <h2 style="color:var(--texto)">Como funciona (e o que é estimativa)</h2>
     <h3>De onde vêm os dados</h3>
-    <p>Das páginas públicas de busca do Airbnb — as mesmas que qualquer pessoa vê ao procurar hospedagem em Londrina. Nenhuma API paga, nenhuma chave, nenhum login. Um robô gratuito (GitHub Actions) faz a consulta toda semana, devagar, com pausa entre cada página, e salva o resultado aqui. <span id="fonteAtual"></span></p>
+    <p>Das páginas públicas de busca do Airbnb — as mesmas que qualquer pessoa vê ao procurar hospedagem em Londrina. Nenhuma API paga, nenhuma chave, nenhum login. Um robô gratuito (GitHub Actions) faz a consulta todo dia, devagar, com pausa entre cada página, e salva o resultado aqui. <span id="fonteAtual"></span></p>
     <h3>O que é medido e o que é estimado</h3>
     <ul>
       <li><span class="ok">Medido</span> — catálogo de unidades (nome, tipo, bairro, localização, nota, avaliações); quantas estão livres em cada data consultada; preço das unidades livres.</li>
@@ -412,8 +430,8 @@
     </ul>
     <h3>Histórico</h3>
     <p>O Airbnb não mostra preços passados para ninguém. Por isso o histórico de preço e procura de Londrina começa na primeira coleta e cresce a cada semana: o robô guarda o que viu para cada data, então dá pra acompanhar o ritmo de reservas do Réveillon, do Carnaval etc. e comparar ano contra ano a partir do 2º ano.</p>
-    <h3>Atualizar quando quiser</h3>
-    <p>O botão <b>Atualizar</b> (lá em cima) liga o robô na hora: <b>rápida</b> (~10 min, próximas semanas e feriados) ou <b>completa</b> (~40 min, tudo). Na caixa <b>Pesquise uma data</b>, qualquer data dos próximos 12 meses pode ser consultada no Airbnb em ~2 minutos. Na primeira vez o app pede uma chave de acesso do GitHub, que fica guardada só no seu aparelho.</p>
+    <h3>Atualização automática</h3>
+    <p>Ninguém precisa fazer nada: o robô busca no Airbnb <b>todo dia de manhã</b> (próximas semanas e feriados) e <b>toda segunda</b> faz a varredura completa. O app pega os dados novos sozinho quando você abre; o botão <b>Atualizar</b> confere na hora se já saiu coisa nova.</p>
     <h3>Termos de uso</h3>
     <p>Os termos do Airbnb proíbem coleta automatizada. O coletor lê só páginas públicas, em volume baixo (~400 páginas por semana, espaçadas), sem login e sem burlar bloqueios — se o site recusar, ele para. Ainda assim, é decisão e responsabilidade do dono do app.</p>
   </section>
@@ -506,7 +524,6 @@ async function iniciar() {
   desenharTudo();
   carregando(false);
   observarRevela();
-  acompanhar();
 }
 function desenharTudo() {
   prepara(); filtrar();
@@ -816,10 +833,9 @@ function mostrarPesquisa() {
   const fdsTip = mediana(D.amostras.filter(x => x.tipo === "fds" && !x.longe && x.fechado != null).map(x => x.fechado));
   const fdsPreco = mediana(D.amostras.filter(x => x.tipo === "fds" && !x.longe).map(x => x.mediana));
   const periodo = `${dataLonga(ci)} → ${dataCurta(co)} (${n} ${n === 1 ? "noite" : "noites"})`;
-  const botaoAgora = txt => `<button class="botao" id="pqAgora" style="margin-top:12px">${txt}</button> <small style="color:var(--apagado)">consulta o Airbnb agora · leva ~2 min</small>`;
   if (!a || a.fechado == null) {
     const viz = D.amostras.filter(x => x.fechado != null && Math.abs(dt(x.checkin) - dt(ci)) <= 4 * 864e5).sort((x, y) => Math.abs(dt(x.checkin) - dt(ci)) - Math.abs(dt(y.checkin) - dt(ci)))[0];
-    alvo.innerHTML = `<p class="res-frase"><b>${periodo}</b> ainda não foi consultado.${viz ? ` A data consultada mais próxima é ${dataLonga(viz.checkin)}: <b>${pct(viz.fechado)}</b> fechado, diária <b>${moeda(viz.mediana)}</b>.` : ""}</p>${botaoAgora("Consultar esta data agora")}`;
+    alvo.innerHTML = `<p class="res-frase"><b>${periodo}</b> ainda não está no levantamento.${viz ? ` A data mais próxima com dados é <b>${dataLonga(viz.checkin)}</b> (2 noites): <b>${pct(viz.fechado)}</b> fechado, <b>${nf(viz.livresL)}</b> livres, diária <b>${moeda(viz.mediana)}</b>.` : ""}</p><p style="font-size:12.5px;color:var(--apagado);margin:6px 0 0">O robô levanta todo fim de semana dos próximos 6 meses, dias úteis a cada 2 semanas e todos os feriados — os toques acima mostram as datas com dados.</p>`;
   } else {
     const df = a.fechado - fdsTip, dp = a.mediana && fdsPreco ? (a.mediana / fdsPreco - 1) * 100 : null;
     let frase;
@@ -838,26 +854,13 @@ function mostrarPesquisa() {
       <div class="kpi"><div class="rot">Hospedagens livres</div><div class="val">${nf(a.livresL)}</div><div class="det">de ${nf(TOTAL)} em Londrina</div></div>
       <div class="kpi"><div class="rot">Diária mediana</div><div class="val">${moeda(a.mediana)}</div><div class="det">metade entre ${moeda(a.p25)} e ${moeda(a.p75)}</div></div>
     </div><p class="res-frase"><b>${periodo}</b> — ${frase}</p>
-    <p style="font-size:12.5px;color:var(--apagado);margin:6px 0 0">Dado de ${horas < 1 ? "menos de 1 hora" : horas < 48 ? horas + " h" : Math.round(horas / 24) + " dias"} atrás.${a.longe ? " Data distante: muitos anfitriões ainda não abriram a agenda." : ""}</p>${botaoAgora("Atualizar esta data agora")}`;
+    <p style="font-size:12.5px;color:var(--apagado);margin:6px 0 0">Dado de ${horas < 1 ? "menos de 1 hora" : horas < 48 ? horas + " h" : Math.round(horas / 24) + " dias"} atrás.${a.longe ? " Data distante: muitos anfitriões ainda não abriram a agenda." : ""}</p>`;
   }
-  $("#pqAgora").onclick = () => disparar("datas", `${ci}:${co}`, periodo);
 }
 
-// ---------- atualizar agora (liga o robô do GitHub Actions deste repositório) ----------
-const REPO = location.hostname.endsWith("github.io") ? `${location.hostname.split(".")[0]}/${location.pathname.split("/")[1]}` : "joaoaleximoveisap-web/lovablex-celular";
-const WF = "radar-londrina.yml";
-const CHAVE_TOKEN = "radar.github";   // chave de acesso que o próprio usuário cola no Radar; fica só neste navegador
-const LINK_TOKEN = "https://github.com/settings/tokens/new?scopes=repo,workflow&description=" + encodeURIComponent("Radar Londrina " + new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }));
-const lerLS = k => { try { return localStorage.getItem(k); } catch { return null; } };
-const gravarLS = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch {} };
-const token = () => lerLS(CHAVE_TOKEN) || "";
-async function gh(caminho, opts = {}) {
-  const cab = { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...(opts.headers || {}) };
-  if (token()) cab.Authorization = `Bearer ${token()}`;
-  const r = await fetch("https://api.github.com" + caminho, { ...opts, cache: "no-store", headers: cab });
-  if (!r.ok) { const e = new Error((await r.json().catch(() => ({}))).message || r.status); e.status = r.status; throw e; }
-  return r.status === 204 ? null : r.json();
-}
+// ---------- atualizar: busca os dados mais novos que o robô já publicou ----------
+// O robô roda sozinho todo dia de manhã (datas próximas e feriados) e toda segunda (tudo).
+const fecharModal = () => $("#modal")?.remove();
 function modal(html) {
   fecharModal();
   const f = document.createElement("div"); f.className = "modal-fundo"; f.id = "modal";
@@ -865,101 +868,47 @@ function modal(html) {
   f.addEventListener("click", e => { if (e.target === f || e.target.closest(".fechar")) fecharModal(); });
   document.body.appendChild(f); return f;
 }
-const fecharModal = () => $("#modal")?.remove();
-function pedirToken(depois) {
-  const m = modal(`<h3>Conectar ao GitHub (uma vez só)</h3>
-    <p>O botão de atualizar liga o robô que mora no seu GitHub. Para isso o Radar precisa de uma chave de acesso sua, que fica guardada só neste aparelho.</p>
-    <p>1. <a href="${LINK_TOKEN}" target="_blank" rel="noopener">Abrir o GitHub já preenchido ↗</a> → lá embaixo toque em <b>Generate token</b> e copie.<br>2. Cole aqui:</p>
-    <input id="tkIn" placeholder="ghp_…" autocomplete="off"><div class="erro-txt" id="tkErro"></div>
-    <button class="botao" id="tkOk">Conectar</button>`);
-  $("#tkOk", m).onclick = async () => {
-    const t = $("#tkIn", m).value.trim();
-    if (!/^(ghp_|github_pat_)/.test(t)) { $("#tkErro", m).textContent = "Isso não parece um token do GitHub (começa com ghp_)."; return; }
-    gravarLS(CHAVE_TOKEN, t);
-    try { await gh(`/repos/${REPO}`); fecharModal(); depois(); }
-    catch (e) { gravarLS(CHAVE_TOKEN, null); $("#tkErro", m).textContent = e.status === 401 ? "O GitHub recusou esse token. Gere outro." : "Não consegui acessar o repositório: " + e.message; }
-  };
-}
-$("#btAtualizar").onclick = () => {
-  if (lerPendente()) return mostrarProgresso();
-  const ult = D?.meta.ultima_atualizacao;
-  const m = modal(`<h3>Atualizar dados de Londrina</h3>
-    <p>Busca dados novos direto no Airbnb. Pode fechar o app; quando terminar, os números novos aparecem.${ult ? `<br><small>Última atualização: ${new Date(ult.quando).toLocaleString("pt-BR")}</small>` : ""}</p>
-    <button class="opcao" data-m="rapida"><b>⚡ Rápida — próximas semanas e feriados</b><small>~10 minutos · 19 datas</small></button>
-    <button class="opcao" data-m="completa"><b>🔄 Completa — tudo de novo</b><small>~40 minutos · catálogo inteiro, 12 meses de datas e zonas</small></button>
-    <button class="opcao" data-m="pesquisa"><b>📅 Só uma data</b><small>use a caixa “Pesquise uma data” no topo</small></button>
-    ${token() ? `<p style="font-size:12px;margin:10px 0 0"><a href="#" id="esquecer">desconectar o GitHub deste aparelho</a></p>` : ""}`);
-  m.addEventListener("click", e => {
-    if (e.target.id === "esquecer") { e.preventDefault(); gravarLS(CHAVE_TOKEN, null); fecharModal(); return; }
-    const b = e.target.closest(".opcao"); if (!b) return;
-    if (b.dataset.m === "pesquisa") { fecharModal(); $("#pesquisa").scrollIntoView({ behavior: "smooth", block: "center" }); $("#pqData").focus(); return; }
-    disparar(b.dataset.m, "", b.dataset.m === "rapida" ? "Atualização rápida" : "Atualização completa");
-  });
-};
-const DURACAO = { datas: 2.5, rapida: 10, completa: 40 };
-const lerPendente = () => { try { return JSON.parse(lerLS("radar.pendente") || "null"); } catch { return null; } };
-async function disparar(modo, datas, descricao) {
-  if (!token()) return pedirToken(() => disparar(modo, datas, descricao));
-  modal(`<h3>Ligando o robô…</h3><p>${esc(descricao)}</p>`);
-  try {
-    await gh(`/repos/${REPO}/actions/workflows/${WF}/dispatches`, { method: "POST", body: JSON.stringify({ ref: "main", inputs: { modo, datas } }) });
-  } catch (e) {
-    if (e.status === 401) { gravarLS(CHAVE_TOKEN, null); return pedirToken(() => disparar(modo, datas, descricao)); }
-    modal(`<h3>Não deu para ligar o robô</h3><p class="erro-txt">${esc(e.message)}</p><p>Confira se a chave tem a permissão <b>workflow</b>. Também dá para rodar pelo GitHub: <a href="https://github.com/${REPO}/actions/workflows/${WF}" target="_blank" rel="noopener">abrir ↗</a></p>`);
-    return;
-  }
-  gravarLS("radar.pendente", JSON.stringify({ modo, datas, descricao, desde: Date.now(), run: null }));
-  mostrarProgresso(); acompanhar();
-}
-let timerAcomp = null, statusRun = null;
-function mostrarProgresso() {
-  const p = lerPendente(); if (!p) return;
-  const min = (Date.now() - p.desde) / 6e4, tot = DURACAO[p.modo] || 10;
-  const fila = statusRun === "queued" || statusRun === "waiting" || statusRun === "pending";
-  modal(`<h3>${fila ? "Na fila…" : "Buscando no Airbnb…"}</h3><p>${esc(p.descricao)}</p>
-    <div class="progresso"><i style="width:${Math.min(95, min / tot * 100)}%"></i></div>
-    <p style="font-size:13px">${nf(min, 0)} de ~${tot} min${fila ? " · esperando outra atualização terminar" : ""}. Pode fechar esta janela: o botão lá em cima fica piscando e os números mudam sozinhos no fim.</p>
-    ${p.run ? `<p style="font-size:12.5px"><a href="https://github.com/${REPO}/actions/runs/${p.run}" target="_blank" rel="noopener">ver no GitHub ↗</a></p>` : ""}`);
-}
-async function acompanhar() {
-  clearTimeout(timerAcomp);
-  const p = lerPendente();
-  if (!p) { $("#btAtualizar").classList.remove("rodando"); $("#btAtualizarTxt").textContent = "Atualizar"; return; }
-  $("#btAtualizar").classList.add("rodando"); $("#btAtualizarTxt").textContent = "Atualizando…";
-  try {
-    let run = null;
-    if (p.run) run = await gh(`/repos/${REPO}/actions/runs/${p.run}`);
-    else {
-      const r = await gh(`/repos/${REPO}/actions/workflows/${WF}/runs?event=workflow_dispatch&per_page=10`);
-      run = (r.workflow_runs || []).filter(x => new Date(x.created_at).getTime() >= p.desde - 120e3).sort((a, b) => new Date(a.created_at) - new Date(b.created_at))[0] || null;
-      if (run) { p.run = run.id; gravarLS("radar.pendente", JSON.stringify(p)); }
-    }
-    statusRun = run?.status || null;
-    if ($("#modal .progresso")) mostrarProgresso();
-    if (run && run.status === "completed") {
-      gravarLS("radar.pendente", null);
-      $("#btAtualizar").classList.remove("rodando"); $("#btAtualizarTxt").textContent = "Atualizar";
-      if (run.conclusion === "success") {
-        await recarregar();
-        const m = modal(`<h3>Pronto ✓</h3><p>${esc(p.descricao)} — números atualizados.</p><button class="botao" id="okFim">Ver</button>`);
-        $("#okFim", m).onclick = () => { fecharModal(); if (p.modo === "datas") $("#pesquisa").scrollIntoView({ behavior: "smooth", block: "center" }); };
-        if (p.modo === "datas") mostrarPesquisa();
-      } else {
-        modal(`<h3>A atualização falhou</h3><p>O Airbnb pode ter recusado a consulta ou a página dele mudou. Os dados anteriores continuam valendo.</p><p><a href="${run.html_url}" target="_blank" rel="noopener">ver detalhes no GitHub ↗</a></p>`);
-      }
-      return;
-    }
-    if (Date.now() - p.desde > 3 * 3600e3) { gravarLS("radar.pendente", null); return acompanhar(); }
-  } catch (e) { if (e.status === 401) { gravarLS("radar.pendente", null); return acompanhar(); } }
-  timerAcomp = setTimeout(acompanhar, 10e3);
-}
 async function recarregar() {
-  // lê direto do repositório: o site publicado leva ~1 min para mostrar o commit novo
-  const raw = async c => { const r = await fetch(`https://api.github.com/repos/${REPO}/contents/radar/data/${c}?ref=main`, { cache: "no-store", headers: { ...(token() ? { Authorization: `Bearer ${token()}` } : {}), Accept: "application/vnd.github.raw+json" } }); if (!r.ok) throw new Error(r.status); return r.json(); };
-  try { [D, H] = await Promise.all([raw("londrina.json"), raw("londrina-historico.json").catch(() => H)]); }
-  catch { [D, H] = await Promise.all([json("data/londrina.json?t=" + Date.now()), json("data/londrina-historico.json?t=" + Date.now()).catch(() => H)]); }
-  desenharTudo();
+  const t = Date.now();
+  const [d, h] = await Promise.all([json("data/londrina.json?t=" + t), json("data/londrina-historico.json?t=" + t).catch(() => H)]);
+  const mudou = (d.meta.atualizado || d.meta.coleta) !== (D?.meta.atualizado || D?.meta.coleta);
+  D = d; H = h; desenharTudo();
+  return mudou;
 }
+const quandoTxt = iso => new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+$("#btAtualizar").onclick = async () => {
+  $("#btAtualizar").classList.add("rodando"); $("#btAtualizarTxt").textContent = "Buscando…";
+  let mudou = false, erro = false;
+  try { mudou = await recarregar(); } catch { erro = true; }
+  $("#btAtualizar").classList.remove("rodando"); $("#btAtualizarTxt").textContent = "Atualizar";
+  modal(erro
+    ? `<h3>Sem conexão</h3><p>Não consegui buscar os dados agora. Confira a internet e tente de novo.</p>`
+    : `<h3>${mudou ? "Dados novos ✓" : "Você já está com os dados mais novos ✓"}</h3>
+       <p>Última busca no Airbnb: <b>${quandoTxt(D.meta.atualizado || D.meta.coleta)}</b>.</p>
+       <p>O robô busca sozinho <b>todo dia de manhã</b> (próximas semanas e feriados) e <b>toda segunda</b> faz a varredura completa (todas as hospedagens e 12 meses de datas). Não precisa fazer nada.</p>`);
+};
+setInterval(() => { if (document.visibilityState === "visible") recarregar().catch(() => {}); }, 15 * 60e3);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") recarregar().catch(() => {}); });
+
+// ---------- instalar na tela de início ----------
+let pedidoInstalar = null;
+const instalado = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); pedidoInstalar = e; mostrarInstalar(); });
+function mostrarInstalar() {
+  if (instalado()) return;
+  try { if (localStorage.getItem("radar.instalar.fechado")) return; } catch {}
+  const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (!ios && !pedidoInstalar) return;
+  const b = $("#instalar"); b.hidden = false;
+  $("#instalarTxt").innerHTML = ios
+    ? `Para usar como app: toque em <b>Compartilhar</b> <span aria-hidden="true">⬆︎</span> e depois em <b>Adicionar à Tela de Início</b>.`
+    : `Coloque o Radar na tela de início do celular, como um app.`;
+  $("#instalarBt").hidden = ios;
+}
+$("#instalarBt").onclick = async () => { if (!pedidoInstalar) return; pedidoInstalar.prompt(); await pedidoInstalar.userChoice.catch(() => {}); pedidoInstalar = null; $("#instalar").hidden = true; };
+$("#instalarX").onclick = () => { $("#instalar").hidden = true; try { localStorage.setItem("radar.instalar.fechado", "1"); } catch {} };
+setTimeout(mostrarInstalar, 1500);
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 
 // ---------- miudezas ----------
 const tip = $("#tip");

@@ -322,7 +322,6 @@
   .topo-view h1 { font-size: clamp(30px, 8vw, 44px); line-height: 1; margin: 4px 0 0; display: flex; align-items: center; gap: 10px; }
   .topo-view .atual { font-size: 12px; color: var(--apagado); }
   .cidade-tag { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--apagado); font-weight: 700; }
-  .apresentar { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 11px 18px; border-radius: 999px; font-size: 14px; background: linear-gradient(120deg, #2a78d6, #9085e9 55%, #d95926); box-shadow: 0 10px 30px rgba(144,133,233,.3); }
   .info { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--linha2); background: none; color: var(--apagado); font: 700 12px/1 Inter; cursor: pointer; display: inline-grid; place-items: center; padding: 0; vertical-align: middle; flex: none; }
   .info:hover { color: var(--texto); border-color: var(--texto2); }
   .busca-data { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; background: var(--superficie); border: 1px solid var(--linha2); border-radius: 18px; padding: 6px; }
@@ -388,6 +387,60 @@
   .un-l .pr { text-align: right; font: 700 14px "Space Grotesk"; }
   .un-l .pr small { display: block; font: 500 10.5px Inter; color: var(--apagado); }
   #v-analises .bloco-cab p, #v-analises .eyebrow { display: none; }
+  /* calendário do ano numa tela — cabe inteiro na janela, sem rolagem */
+  #v-calendario.ativa { display: flex; flex-direction: column; height: calc(100dvh - 58px - 76px - env(safe-area-inset-bottom)); padding-bottom: 8px; }
+  @media (min-width: 900px) { #v-calendario.ativa { height: calc(100dvh - 120px); } }
+  #v-calendario .topo-view { padding: 10px 0 6px; }
+  #v-calendario .topo-view h1 { font-size: clamp(24px, 4vw, 34px); }
+  .ano-resumo { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 10px; }
+  .ano-resumo span { font-size: 12.5px; color: var(--texto2); background: var(--superficie); border: 1px solid var(--linha); border-radius: 999px; padding: 5px 11px; white-space: nowrap; }
+  .ano-resumo b { color: var(--texto); font-family: "Space Grotesk"; }
+  .ano { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+  @media (max-width: 1000px) { .ano { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .ano { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 8px 8px; } }
+  .ano .m { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+  .ano .m h4 { margin: 0 0 4px; font: 700 12px Inter; text-transform: capitalize; color: var(--texto2); display: flex; justify-content: space-between; gap: 4px; }
+  .ano .m h4 span { color: var(--apagado); font-weight: 600; }
+  .ano .gw { flex: 1; min-height: 0; container-type: size; }
+  .ano .g { width: min(100cqw, calc(100cqh * 7 / 6)); aspect-ratio: 7 / 6; display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 2px; }
+  .ano .g i { border-radius: 3px; background: rgba(255,255,255,.04); display: block; cursor: pointer; transition: transform .15s; min-height: 0; }
+  .ano .g i.vazio { background: none; cursor: default; }
+  .ano .g i.passado { background: rgba(255,255,255,.025); cursor: default; }
+  .ano .g i:hover { transform: scale(1.35); position: relative; z-index: 2; }
+  .ano .g i.longe { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.08) 0 2px, transparent 2px 5px); }
+  .ano .g i.fogo { box-shadow: 0 0 8px rgba(255,140,80,.75); }
+  .ano-leg { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11.5px; color: var(--apagado); margin-top: 8px; }
+  .ano-leg i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  @media (max-width: 640px) {
+    #v-calendario .cidade-tag { display: none; }
+    #v-calendario .topo-view { flex-wrap: nowrap; align-items: center; padding: 8px 0 6px; gap: 8px; }
+    #v-calendario .topo-view h1 { font-size: 21px; margin: 0; white-space: nowrap; }
+    #v-calendario .seg button { font-size: 12px; padding: 6px 9px; }
+    .ano-resumo { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-bottom: 8px; }
+    .ano-resumo::-webkit-scrollbar { display: none; }
+    .ano-resumo span { font-size: 11.5px; padding: 4px 9px; }
+    .ano .m h4 { font-size: 11px; margin-bottom: 3px; }
+    .ano .g { gap: 1.5px; } .ano .g i { border-radius: 2px; }
+    .ano-leg { font-size: 10.5px; gap: 4px; margin-top: 6px; } .ano-leg i { width: 10px; height: 10px; }
+  }
+  .manchete { font: 700 clamp(22px, 4.2vw, 40px)/1.12 "Space Grotesk"; letter-spacing: -.02em; margin: 2px 0 6px; max-width: 900px; }
+  .manchete em { font-style: normal; background: var(--acento); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sim2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
+  @media (max-width: 760px) { .sim2 { grid-template-columns: 1fr; } }
+  .sim2 .campos { display: grid; gap: 12px; background: var(--superficie); border: 1px solid var(--linha); border-radius: 20px; padding: 16px; }
+  .sim2 label { display: grid; gap: 4px; font-size: 13px; color: var(--texto2); font-weight: 600; }
+  .sim2 .lin { display: flex; justify-content: space-between; align-items: baseline; }
+  .sim2 output { font: 700 17px "Space Grotesk"; color: var(--texto); }
+  .sim2 input[type=range] { width: 100%; accent-color: #9085e9; }
+  .cenarios { display: grid; gap: 8px; }
+  .cen { border-radius: 18px; padding: 14px 16px; border: 1px solid var(--linha); background: var(--superficie); display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: baseline; }
+  .cen.destaque { border-color: rgba(144,133,233,.6); background: linear-gradient(135deg, rgba(57,135,229,.16), rgba(217,89,38,.12)); }
+  .cen .nm { font-size: 12px; font-weight: 700; color: var(--texto2); text-transform: uppercase; letter-spacing: .06em; }
+  .cen .oc { font-size: 12px; color: var(--apagado); text-align: right; }
+  .cen .mes { font: 700 clamp(24px, 4vw, 32px) "Space Grotesk"; font-variant-numeric: tabular-nums; }
+  .cen .mes small { font: 600 12px Inter; color: var(--apagado); }
+  .cen .aa { font: 700 20px "Space Grotesk"; color: var(--verde, #34d399); text-align: right; }
+  .cen .aa small { display: block; font: 600 11px Inter; color: var(--apagado); }
   /* computador: abas no topo, conteúdo mais largo — bom para apresentar */
   @media (min-width: 900px) {
     body { padding-bottom: 0; }
@@ -402,8 +455,20 @@
   .indice-analises a { text-decoration: none; color: var(--texto); font-size: 13.5px; background: var(--superficie); border: 1px solid var(--linha); border-radius: 999px; padding: 8px 12px; }
   #unidades { margin-top: 18px; }
   .rodape { color: var(--apagado); font-size: 12px; text-align: center; padding: 10px 0 20px; }
-  .folha .modal { align-self: end; border-radius: 22px 22px 0 0; width: min(560px, 100%); padding-bottom: calc(20px + env(safe-area-inset-bottom)); animation: sobe .25s ease; }
+  .folha .modal { align-self: end; border-radius: 22px 22px 0 0; width: min(560px, 100%); max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; padding-bottom: calc(20px + env(safe-area-inset-bottom)); animation: sobe .25s ease; }
   .folha { place-items: end center; padding: 0; }
+  .folha .modal::before { content: ""; display: block; width: 40px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.2); margin: -8px auto 12px; }
+  .modal-fundo { background: rgba(3,5,10,.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .modal .res-card { grid-template-columns: repeat(3, 1fr); }
+  .modal .res-card .kpi .val { font-size: 24px; }
+  @media (max-width: 480px) { .modal .res-card { gap: 6px; } .modal .res-card .kpi { padding: 10px 9px; } .modal .res-card .kpi .rot { font-size: 11px; } .modal .res-card .kpi .val { font-size: 19px; } .modal .res-card .kpi .det { font-size: 10.5px; } .modal .res-frase { font-size: 14px; } }
+  /* computador: a janela de detalhe abre no centro da tela, inteira */
+  @media (min-width: 760px) {
+    .folha { place-items: center; padding: 24px; }
+    .folha .modal { align-self: center; border-radius: 24px; width: min(620px, 100%); max-height: min(86vh, 760px); padding: 26px; animation: aparece .22s ease; box-shadow: 0 40px 120px rgba(0,0,0,.7); }
+    .folha .modal::before { display: none; }
+  }
+  @keyframes aparece { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
   @keyframes sobe { from { transform: translateY(40px); opacity: .4; } to { transform: none; opacity: 1; } }
   @media (max-width: 640px) { .botao-atualizar { margin-left: auto; } .pesq-linha > * { flex: 1 1 140px; } }
 </style>
@@ -439,24 +504,38 @@
     <div class="atalhos-datas" id="pqAtalhos"></div>
     <div class="resultado" id="pqResultado"></div>
     <div class="bento" id="kpis"></div>
-    <div class="sec-cab"><h2>Próximas datas</h2><a href="#calendario" data-ir="calendario">Ver tudo</a></div>
+    <div class="sec-cab"><h2>Próximas datas</h2><a href="#calendario" data-ir="calendario">Ver o ano</a></div>
     <div class="carrossel" id="listaDatas"></div>
     <div class="sec-cab"><h2>Oportunidades <button class="info" data-info="oport" aria-label="O que é">i</button></h2></div>
     <div id="oportunidades"></div>
   </section>
 
   <section class="view" id="v-calendario">
-    <div class="topo-view"><div><div class="cidade-tag">Chegada + 2 noites</div><h1>Calendário <button class="info" data-info="calendario" aria-label="Como ler">i</button></h1></div></div>
-    <div class="legenda-niveis" id="legNiveis2"></div>
-    <div id="calendario"></div>
+    <div class="topo-view">
+      <div><div class="cidade-tag">Próximos 12 meses · dia a dia</div><h1>O ano inteiro <button class="info" data-info="calendario" aria-label="Como ler">i</button></h1></div>
+      <div class="seg" id="segAno"><button data-v="jh" class="ativo">JH Palhano</button><button data-v="londrina">Londrina</button></div>
+    </div>
+    <div class="ano-resumo" id="anoResumo"></div>
+    <div class="ano" id="ano"></div>
+    <div class="ano-leg" id="anoLeg"></div>
   </section>
 
   <section class="view" id="v-predio">
     <div class="topo-view">
       <div><div class="cidade-tag">Gleba Palhano · Londrina</div><h1 id="prNome">JH Palhano</h1><span class="atual" id="prSub"></span></div>
-      <a class="botao apresentar" href="apresentacao.html">▶ Apresentar</a>
     </div>
+    <p class="manchete" id="prManchete"></p>
     <div class="bento" id="prKpis"></div>
+    <div class="sec-cab"><h2>Quanto um studio rende aqui</h2><button class="info" data-info="sim" aria-label="Como calculamos">i</button></div>
+    <div class="sim2" id="sim">
+      <div class="campos">
+        <label><span class="lin">Valor do imóvel<output id="oPreco"></output></span><input type="range" id="sPreco" min="150000" max="1500000" step="10000" value="380000"></label>
+        <label><span class="lin">Diária para o dono<output id="oDiaria"></output></span><input type="range" id="sDiaria" min="120" max="900" step="5"></label>
+        <label><span class="lin">Custos fixos/mês<output id="oFixo"></output></span><input type="range" id="sFixo" min="0" max="3000" step="50" value="900"></label>
+        <label><span class="lin">Administração + taxa<output id="oGestao"></output></span><input type="range" id="sGestao" min="0" max="40" step="1" value="23"></label>
+      </div>
+      <div class="cenarios" id="cenarios"></div>
+    </div>
     <div class="sec-cab"><h2>Ocupação por mês <button class="info" data-info="ocupado" aria-label="Como medimos">i</button></h2><div class="legenda mini" id="legPredio"></div></div>
     <div class="grafico baixo"><canvas id="gPredioMes" role="img" aria-label="Ocupação por mês: JH Palhano e Londrina"></canvas></div>
     <div class="sec-cab"><h2>Acumulado do mês <button class="info" data-info="receita" aria-label="Como calculamos">i</button></h2></div>
@@ -625,7 +704,7 @@
 </main>
 <nav class="tabbar" id="tabbar">
   <button data-ir="inicio" class="ativo"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Início</span></button>
-  <button data-ir="calendario"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Calendário</span></button>
+  <button data-ir="calendario"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Ano</span></button>
   <button data-ir="predio"><svg viewBox="0 0 24 24"><path d="M5 21V4.5A1.5 1.5 0 0 1 6.5 3h7A1.5 1.5 0 0 1 15 4.5V21M15 9h3.5A1.5 1.5 0 0 1 20 10.5V21M3 21h18M8.5 7h3M8.5 11h3M8.5 15h3"/></svg><span>JH Palhano</span></button>
   <button data-ir="unidades"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Hospedagens</span></button>
   <button data-ir="analises"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Análises</span></button>
@@ -1006,10 +1085,11 @@ $("#limparCsv").onclick = e => { e.preventDefault(); try { localStorage.removeIt
 // ---------- explicações (atrás do ⓘ) ----------
 const INFO = {
   oport: ["Oportunidades", "Datas em que a procura está bem acima do normal para aquele tipo de dia, mas a diária quase não subiu. É onde dá para cobrar mais."],
-  calendario: ["Como ler o calendário", "Cada dia mostra a procura para quem chega naquele dia e fica 2 noites. Verde = bem livre · azul = normal · amarelo = disputada · vermelho = lotando. O valor é a diária mediana de quem ainda está livre. Bolinha laranja = feriado. Dias apagados estão a mais de 8 meses, quando muitos anfitriões ainda não abriram a agenda."],
+  sim: ["Como calculamos", "Diária para o dono = diária média medida no prédio menos a taxa de serviço que o hóspede paga ao Airbnb (~14%). Mês = 30 noites × ocupação. Do bruto saem administração e taxa do anfitrião; depois os custos fixos. Antes de impostos. As ocupações são as medidas no próprio JH Palhano."],
+  calendario: ["Como ler o calendário", "Cada quadradinho é um dia: quanto já está ocupado para quem chega naquele dia e fica 2 noites, conferido no Airbnb dia a dia. Quanto mais laranja, mais cheio; brilhando = 80% ou mais. Toque num dia para ver o detalhe. Dias riscados ficam a mais de 8 meses: muitos donos ainda não abriram a agenda, então ali o número ainda não vale."],
   ocupado: ["Como medimos a ocupação", "Para cada data, o robô busca no Airbnb quais unidades do prédio aparecem livres para 2 noites. Ocupado = não aparece livre (reservado ou bloqueado pelo dono). A linha azul é Londrina inteira. Meses distantes ainda vão encher: as reservas chegam perto da data."],
   receita: ["Como calculamos o acumulado", "Noites ocupadas = ocupação medida × dias do mês. Receita estimada = noites ocupadas × diária média anunciada no prédio. É antes da taxa do Airbnb, limpeza e impostos."],
-  historico: ["Ocupação pelo histórico", "Estimada pelo ritmo de avaliações desde que o anúncio entrou no Airbnb. O começo da barra é uma hipótese conservadora (72% dos hóspedes avaliam, 2,5 noites por estadia); o fim é o modelo padrão do mercado (50% avaliam, 3 noites). Anúncios com menos de 9 meses ficam sem estimativa."],
+  historico: ["Ocupação média do prédio", "Calculada pelo ritmo de avaliações de cada apartamento desde que entrou no Airbnb, no modelo padrão do mercado (metade dos hóspedes avalia, 3 noites por estadia). Numa hipótese mais conservadora (72% avaliam, 2,5 noites), a média fica em torno de 39% — é o começo da barra na lista de unidades. Anúncios com menos de 9 meses ficam de fora."],
 };
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-info]"); if (!b) return;
@@ -1062,25 +1142,64 @@ function desenharInicio() {
 $("#listaDatas").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
 $("#oportunidades").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
 
-function desenharCalendario() {
-  $("#legNiveis2").innerHTML = NIVEIS.map(n => `<span><i style="width:10px;height:10px;border-radius:3px;display:inline-block;background:${COR_NIVEL[n.c]}"></i>${n.nome}</span>`).join("");
-  const por = {}; D.amostras.forEach(a => { if (a.fechado != null) por[a.checkin] = a; });
-  const hoje = dt(isoHoje()), fim = dt(D.amostras.at(-1)?.checkin || isoHoje());
-  let html = "";
-  for (let m = new Date(hoje.getFullYear(), hoje.getMonth(), 1); m <= fim; m.setMonth(m.getMonth() + 1)) {
-    const ano = m.getFullYear(), mes = m.getMonth(), dias = new Date(ano, mes + 1, 0).getDate();
-    let cel = SEMANA.map(s => `<div class="sem">${s[0].toUpperCase()}</div>`).join("") + "<div></div>".repeat(new Date(ano, mes, 1).getDay());
-    for (let d = 1; d <= dias; d++) {
-      const iso = `${ano}-${String(mes + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`, a = por[iso];
-      const cls = ["dia-cal", a && "dado", a && nivel(a.fechado).c, a?.longe && "longe", a?.tipo === "feriado" && "fer", iso === isoHoje() && "hoje"].filter(Boolean).join(" ");
-      cel += a ? `<button class="${cls}" data-ci="${a.checkin}" data-co="${a.checkout}" aria-label="${dataLonga(iso)}: ${nivel(a.fechado).nome}, diária ${moeda(a.mediana)}">${d}<small>${a.mediana ? "R$" + Math.round(a.mediana) : ""}</small></button>`
-             : `<div class="${cls}">${d}</div>`;
-    }
-    html += `<div class="mes"><h3>${MESES_L[mes]} ${ano}</h3><div class="grade-cal">${cel}</div></div>`;
-  }
-  $("#calendario").innerHTML = html;
+let modoAno = "jh";
+const ESCALA_ANO = [[20, "rgba(255,255,255,.06)"], [40, "#5a2a17"], [60, "#93401d"], [80, "#d95926"], [101, "#ff9a5c"]];
+const corAno = v => v == null ? "rgba(255,255,255,.03)" : ESCALA_ANO.find(([m]) => v < m)[1];
+function diasAno() {
+  const A = D.ano; if (!A) return [];
+  const P = A.predios?.[(D.predios || [])[0]?.nome] || Object.values(A.predios || {})[0];
+  const f = D.meta.fator_londrina || 1, ini = dt(A.inicio), hoje = dt(isoHoje());
+  return A.londrina.map((liv, k) => {
+    const d = new Date(ini); d.setDate(d.getDate() + k);
+    const iso = d.toISOString().slice(0, 10), jh = P?.dias?.[k];
+    return { iso, dias: Math.round((d - hoje) / 864e5),
+      londrina: liv == null ? null : Math.max(0, Math.min(100, (1 - liv * f / TOTAL) * 100)), livresL: liv == null ? null : Math.round(liv * f),
+      jh: jh ? (1 - jh[0] / P.unidades) * 100 : null, jhLivres: jh?.[0], jhDiaria: jh?.[1], N: P?.unidades };
+  });
 }
-$("#calendario").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
+function desenharCalendario() {
+  const dias = diasAno();
+  if (!dias.length) { $("#ano").innerHTML = `<div class="tile" style="grid-column:1/-1;min-height:0">A varredura do ano entra na próxima atualização.</div>`; return; }
+  const v = modoAno === "jh" ? "jh" : "londrina";
+  const por = Object.fromEntries(dias.map(d => [d.iso, d]));
+  const firmes = dias.filter(d => d.dias <= HORIZONTE && d[v] != null);
+  const lotados = firmes.filter(d => d[v] >= 80).length;
+  const prox90 = media(firmes.filter(d => d.dias <= 90).map(d => d[v]));
+  const porMes = {}; firmes.forEach(d => (porMes[d.iso.slice(0, 7)] ||= []).push(d[v]));
+  const melhor = Object.entries(porMes).map(([m, a]) => [m, media(a)]).sort((a, b) => b[1] - a[1])[0];
+  const nome = v === "jh" ? ((D.predios || [])[0]?.nome || "JH Palhano") : "Londrina";
+  $("#anoResumo").innerHTML = `<span>🔥 <b>${lotados}</b> dias com 80%+</span><span><b>${pct(prox90)}</b> ocupado nos próximos 90 dias</span>${melhor ? `<span>mês mais cheio: <b style="text-transform:capitalize">${MESES[+melhor[0].slice(5) - 1]}</b> ${pct(melhor[1])}</span>` : ""}`;
+  const ini = dt(dias[0].iso);
+  let html = "";
+  for (let k = 0, m = new Date(ini.getFullYear(), ini.getMonth(), 1); k < 12; k++, m.setMonth(m.getMonth() + 1)) {
+    const a = m.getFullYear(), mes = m.getMonth(), n = new Date(a, mes + 1, 0).getDate();
+    const vals = [];
+    let cel = '<i class="vazio"></i>'.repeat(new Date(a, mes, 1).getDay());
+    for (let d = 1; d <= n; d++) {
+      const iso = `${a}-${String(mes + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`, x = por[iso];
+      if (!x) { cel += `<i class="passado"></i>`; continue; }
+      const val = x[v]; if (x.dias <= HORIZONTE && val != null) vals.push(val);
+      cel += `<i data-d="${iso}" class="${x.dias > HORIZONTE ? "longe" : val >= 80 ? "fogo" : ""}" style="background-color:${corAno(val)}" title="${dataLonga(iso)} · ${pct(val)} ocupado"></i>`;
+    }
+    const usados = new Date(a, mes, 1).getDay() + n;
+    cel += '<i class="vazio"></i>'.repeat(42 - usados);
+    html += `<div class="m"><h4>${MESES[mes]} <span>${vals.length ? pct(media(vals)) : ""}</span></h4><div class="gw"><div class="g">${cel}</div></div></div>`;
+  }
+  $("#ano").innerHTML = html;
+  $("#anoLeg").innerHTML = `menos cheio ${ESCALA_ANO.map(([, c]) => `<i style="background:${c}"></i>`).join("")} mais cheio · <i style="background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.2) 0 2px,transparent 2px 5px)"></i> agenda ainda abrindo`;
+}
+$("#segAno").onclick = e => { const b = e.target.closest("button"); if (!b) return; modoAno = b.dataset.v; $$("#segAno button").forEach(x => x.classList.toggle("ativo", x === b)); desenharCalendario(); };
+$("#ano").onclick = e => {
+  const c = e.target.closest("[data-d]"); if (!c) return;
+  const x = diasAno().find(d => d.iso === c.dataset.d); if (!x) return;
+  const nome = (D.predios || [])[0]?.nome || "JH Palhano";
+  const co = somaDias(x.iso, 2);
+  modal(`<h3>${dataLonga(x.iso)}</h3><p style="margin-top:0">chegada → ${dataCurta(co)} · 2 noites</p>
+    <div class="bento" style="margin-top:6px">
+      <div class="tile w2"><div class="k">${esc(nome)}</div><div class="v md">${x.jh == null ? "—" : pct(x.jh)}<small>ocupado</small></div><div class="d">${x.jh == null ? "" : x.jhLivres === 0 ? "🔥 esgotado" : `${x.N - x.jhLivres} de ${x.N} ocupados · diária ${moeda(x.jhDiaria)}`}</div></div>
+      <div class="tile w2"><div class="k">Londrina</div><div class="v md">${pct(x.londrina)}<small>ocupado</small></div><div class="d">${nf(x.livresL)} hospedagens livres</div></div>
+    </div>${x.dias > HORIZONTE ? `<p style="font-size:12.5px">Data a mais de 8 meses: muitos donos ainda não abriram a agenda.</p>` : ""}`).classList.add("folha");
+};
 
 function abrirData(ci, co) {
   const n = Math.round((dt(co) - dt(ci)) / 864e5);
@@ -1128,15 +1247,16 @@ function desenharPredio() {
     return { a, mm, dias, ocup, londrina: media(ds.map(d => d.londrina)), diaria, noites, receita: diaria ? noites * diaria : null, longe: ds.every(d => d.longe) };
   });
   const tot = linhas.filter(l => !l.longe);
-  const recMes = media(tot.map(l => l.receita));
   const barra = (v, cor) => `<span class="trilho"><i style="width:${Math.min(100, v || 0)}%;background:${cor}"></i></span>`;
   $("#prKpis").innerHTML = `
     <div class="tile w2 h2"><div class="k">Ocupado · próximos 30 dias <button class="info" data-info="ocupado">i</button></div>
       <div class="v">${pct(oJH)}</div>
       <div class="comp"><span class="linha"><span>${esc(P.nome)}</span>${barra(oJH, COR.preco)}<b>${pct(oJH)}</b></span><span class="linha"><span>Londrina</span>${barra(oL, COR.demanda)}<b>${pct(oL)}</b></span></div></div>
     <div class="tile"><div class="k">Diária média</div><div class="v md">${moeda(dJH)}</div><div class="d"><span class="delta up">+${nf((dJH / dL - 1) * 100)}%</span> vs Londrina</div>${spark(tot.map(l => l.diaria), COR.preco)}</div>
-    <div class="tile"><div class="k">Receita / unidade <button class="info" data-info="receita">i</button></div><div class="v md">${moeda(recMes)}</div><div class="d">por mês · estimada</div></div>
-    <div class="tile w2"><div class="k">Ocupação pelo histórico <button class="info" data-info="historico">i</button></div><div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap"><div class="v md">${hist.length ? `${nf(mediana(hist.map(h => h.conservador)))}–${nf(mediana(hist.map(h => h.padrao)))}%` : "—"}</div><div class="d"><span class="delta up">${acima80} de ${hist.length}</span> acima de 80%</div></div></div>`;
+    <div class="tile toque" onclick="document.getElementById('sim').scrollIntoView({behavior:'smooth',block:'center'})"><div class="k">Rende por mês <button class="info" data-info="sim">i</button></div><div class="v md" id="prRende">—</div><div class="d" id="prRendeAA"></div></div>
+    <div class="tile w2"><div class="k">Ocupação média do prédio <button class="info" data-info="historico">i</button></div><div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap"><div class="v md">${hist.length ? pct(mediana(hist.map(h => h.padrao))) : "—"}</div><div class="d"><span class="delta up">${acima80} de ${hist.length}</span> acima de 80%</div></div></div>`;
+  $("#prManchete").innerHTML = `Ocupa <em>${nf(oJH / oL * 100 - 100)}% mais</em> que Londrina e cobra <em>${nf((dJH / dL - 1) * 100)}% mais</em> por noite.`;
+  montarSimulador({ dJH, oJH, hist: mediana(hist.map(h => h.padrao)), top: mediana(hist.filter(h => h.padrao >= 80).map(h => h.padrao)) });
   $("#legPredio").innerHTML = `<span><i style="background:${COR.preco};height:8px;width:12px;border-radius:2px"></i>${esc(P.nome)}</span><span><i style="background:${COR.demanda};height:8px;width:12px;border-radius:2px"></i>Londrina</span>`;
   grafico("gPredioMes", {
     type: "bar",
@@ -1163,6 +1283,23 @@ function desenharPredio() {
       <span class="pr">${moeda(media(o.precos))}<small>${o.tot ? nf(o.fech / o.tot * 100) + "% ocupado" : ""}</small></span></a>`).join("");
 }
 $("#listaPredio").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
+
+// ---------- simulador de rendimento (JH Palhano) ----------
+let simPronto = false;
+function montarSimulador(K) {
+  const s = id => document.getElementById(id);
+  if (!simPronto) { s("sDiaria").value = Math.round(K.dJH / 1.14 / 5) * 5; simPronto = true; }
+  const cen = [["Ocupação de hoje", K.oJH, "próximos 30 dias"], ["Média do prédio", K.hist, "histórico", true], ["Melhores do prédio", K.top, "unidades com 80%+"]].filter(c => c[1] != null);
+  const calc = () => {
+    const preco = +s("sPreco").value, diaria = +s("sDiaria").value, fixo = +s("sFixo").value, g = +s("sGestao").value / 100;
+    s("oPreco").textContent = moeda(preco); s("oDiaria").textContent = moeda(diaria); s("oFixo").textContent = moeda(fixo); s("oGestao").textContent = nf(g * 100) + "%";
+    s("cenarios").innerHTML = cen.map(([nm, oc, sub, dest]) => { const liq = diaria * 30 * oc / 100 * (1 - g) - fixo, aa = liq * 12 / preco * 100;
+      if (dest) { s("prRende").textContent = moeda(liq); s("prRendeAA").innerHTML = `<span class="delta up">${nf(aa, 1)}% ao ano</span> studio de ${moeda(preco)}`; }
+      return `<div class="cen ${dest ? "destaque" : ""}"><span class="nm">${nm}</span><span class="oc">${nf(oc)}% · ${sub}</span><span class="mes">${moeda(liq)}<small> /mês</small></span><span class="aa">${nf(aa, 1)}%<small>ao ano</small></span></div>`; }).join("");
+  };
+  ["sPreco", "sDiaria", "sFixo", "sGestao"].forEach(id => s(id).oninput = calc);
+  calc();
+}
 
 // ---------- abas ----------
 const VIEWS = ["inicio", "calendario", "predio", "unidades", "analises"];
@@ -1237,6 +1374,7 @@ function htmlResultado(ci, n) {
 // ---------- atualizar: busca os dados mais novos que o robô já publicou ----------
 // O robô roda sozinho todo dia de manhã (datas próximas e feriados) e toda segunda (tudo).
 const fecharModal = () => $("#modal")?.remove();
+document.addEventListener("keydown", e => { if (e.key === "Escape") fecharModal(); });
 function modal(html) {
   fecharModal();
   const f = document.createElement("div"); f.className = "modal-fundo"; f.id = "modal";

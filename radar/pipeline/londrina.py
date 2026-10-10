@@ -18,7 +18,7 @@ Uso:  python3 radar/pipeline/londrina.py                       coleta completa (
       python3 radar/pipeline/londrina.py --rapido              próximas semanas e feriados (~10 min)
       python3 radar/pipeline/londrina.py --datas 2026-12-24    só estas datas (~1 min cada)
 """
-import base64, hashlib, json, math, os, random, re, subprocess, sys, time
+import base64, gzip, hashlib, json, math, os, random, re, subprocess, sys, time
 from datetime import date, datetime, timedelta, timezone
 from urllib.parse import urlencode
 
@@ -26,7 +26,7 @@ RAIZ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 DADOS = os.path.join(RAIZ, "data")
 BUSCA = "https://www.airbnb.com.br/s/Londrina--PR/homes"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"
-PAUSA = (3.0, 5.0)          # segundos entre páginas — educado com o site
+PAUSA = (1.5, 3.0)          # segundos entre páginas — ritmo de uma pessoa navegando
 POR_PAGINA = 18
 MAX_PAGINAS = 15            # a busca não passa de 15 páginas; acima disso a área é dividida
 
@@ -86,12 +86,12 @@ def baixar(params):
     cache = os.environ.get("RADAR_CACHE")
     if cache:
         os.makedirs(cache, exist_ok=True)
-        arq = os.path.join(cache, hashlib.sha1(url.encode()).hexdigest() + ".html")
+        arq = os.path.join(cache, hashlib.sha1(url.encode()).hexdigest() + ".html.gz")
         if os.path.exists(arq):
-            with open(arq, encoding="utf-8") as f:
+            with gzip.open(arq, "rt", encoding="utf-8") as f:
                 return f.read()
         corpo = _baixar(url)
-        with open(arq, "w", encoding="utf-8") as f:
+        with gzip.open(arq, "wt", encoding="utf-8") as f:
             f.write(corpo)
         return corpo
     return _baixar(url)
@@ -487,6 +487,44 @@ def ler_datas(txt):
     return out[:10]
 
 
+def ano_dia_a_dia(saida, dias=365, dias_predio=240):
+    """Para cada dia do próximo ano (chegada no dia, 2 noites): quantas hospedagens de Londrina estão livres
+    e, em cada prédio acompanhado, quais unidades estão livres e a diária média delas.
+    1 página por dia para a cidade; os prédios (~4 páginas/dia, a região é densa) só até dias_predio,
+    porque depois disso a maioria dos donos ainda não abriu a agenda. Salva em saida["ano"]."""
+    hoje = date.today()
+    cidade, predios = [], {}
+    cfgs = {nome: (cfg, ids_predio(saida["unidades"], cfg)) for nome, cfg in PREDIOS.items()}
+    for k in range(1, dias + 1):
+        ci = hoje + timedelta(days=k)
+        co = ci + timedelta(days=2)
+        pg = ler(baixar(params(AREA, ci.isoformat(), co.isoformat())), 2)
+        cidade.append(pg["total"] if pg["total"] is not None else None)
+        for nome, (cfg, ids) in cfgs.items():
+            if not ids:
+                continue
+            if k > dias_predio:
+                predios.setdefault(nome, []).append(None)
+                continue
+            r = consulta_predio(cfg, ids, ci, co)
+            precos = [v for v in r["precos"].values() if v]
+            predios.setdefault(nome, []).append([len(r["livres"]), round(sum(precos) / len(precos)) if precos else None])
+        if k % 30 == 0:
+            print(f"  ano: {k}/{dias} dias", flush=True)
+    saida["ano"] = dict(inicio=(hoje + timedelta(days=1)).isoformat(), noites=2, coleta=datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                        londrina=cidade, predios={n: dict(unidades=len(cfgs[n][1]), dias=v) for n, v in predios.items()})
+
+
+def so_ano():
+    caminho = os.path.join(DADOS, "londrina.json")
+    with open(caminho, encoding="utf-8") as f:
+        saida = json.load(f)
+    ano_dia_a_dia(saida)
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(saida, f, ensure_ascii=False, separators=(",", ":"))
+    print(f"ok: ano dia a dia, {_pedidos} páginas consultadas", flush=True)
+
+
 def so_predios():
     caminho = os.path.join(DADOS, "londrina.json")
     with open(caminho, encoding="utf-8") as f:
@@ -502,6 +540,8 @@ def so_predios():
 def main(args):
     if "--predios" in args:
         return so_predios()
+    if "--ano" in args:
+        return so_ano()
     if "--datas" in args:
         return atualizar_datas(ler_datas(args[args.index("--datas") + 1]), "pesquisa")
     if "--rapido" in args:
@@ -557,6 +597,8 @@ def main(args):
     )
     print("prédios acompanhados…", flush=True)
     atualizar_predios(saida, [(date.fromisoformat(a["checkin"]), date.fromisoformat(a["checkout"])) for a in amostras])
+    print("ano dia a dia…", flush=True)
+    ano_dia_a_dia(saida)
     with open(os.path.join(DADOS, "londrina.json"), "w", encoding="utf-8") as f:
         json.dump(saida, f, ensure_ascii=False, separators=(",", ":"))
 

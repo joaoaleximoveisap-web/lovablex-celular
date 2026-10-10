@@ -317,6 +317,76 @@
   .tabela .sub { display: block; font-weight: 500; font-size: 11.5px; color: var(--apagado); }
   .tabela tfoot td { font-weight: 700; border-top: 1px solid var(--linha2); }
   .barra-dupla { display: grid; gap: 3px; min-width: 110px; }
+  /* ---------- visual de app: tiles, números grandes, pouco texto ---------- */
+  .topo-view { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 18px 0 12px; flex-wrap: wrap; }
+  .topo-view h1 { font-size: clamp(30px, 8vw, 44px); line-height: 1; margin: 4px 0 0; display: flex; align-items: center; gap: 10px; }
+  .topo-view .atual { font-size: 12px; color: var(--apagado); }
+  .cidade-tag { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--apagado); font-weight: 700; }
+  .info { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--linha2); background: none; color: var(--apagado); font: 700 12px/1 Inter; cursor: pointer; display: inline-grid; place-items: center; padding: 0; vertical-align: middle; flex: none; }
+  .info:hover { color: var(--texto); border-color: var(--texto2); }
+  .busca-data { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; background: var(--superficie); border: 1px solid var(--linha2); border-radius: 18px; padding: 6px; }
+  .busca-data input, .busca-data select { font: 600 15px Inter; color: var(--texto); background: transparent; border: 0; padding: 10px; min-width: 0; color-scheme: dark; outline: none; }
+  .busca-data select { border-left: 1px solid var(--linha); }
+  .busca-data .botao { border-radius: 13px; padding: 10px 18px; font-size: 15px; }
+  .atalhos-datas { margin: 10px 0 0; padding: 0; }
+  .resultado:empty { display: none; }
+  .resultado { margin-top: 12px; }
+  .res-frase { font-size: 14px; }
+  .bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+  .tile { position: relative; overflow: hidden; border-radius: 22px; padding: 16px; min-height: 132px; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02)); border: 1px solid var(--linha); }
+  .tile.w2 { grid-column: span 2; } .tile.h2 { grid-row: span 2; }
+  .tile.h2 .v { font-size: clamp(44px, 8vw, 96px); }
+  .tile.toque { cursor: pointer; } .tile.toque:active { transform: scale(.985); }
+  .tile .k { font-size: 12px; font-weight: 600; color: var(--apagado); display: flex; justify-content: space-between; align-items: center; gap: 6px; position: relative; z-index: 1; }
+  .tile .v { font: 700 clamp(32px, 8vw, 52px)/1 "Space Grotesk"; letter-spacing: -.03em; font-variant-numeric: tabular-nums; position: relative; z-index: 1; }
+  .tile .v.md { font-size: clamp(24px, 6vw, 34px); }
+  .tile .v small { font-size: .4em; color: var(--apagado); letter-spacing: 0; margin-left: 8px; font-weight: 600; }
+  .tile .d { font-size: 12.5px; color: var(--texto2); position: relative; z-index: 1; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .tile .spark { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 34px; pointer-events: none; opacity: .9; }
+  .tile:has(.spark) { padding-bottom: 44px; }
+  .tile .comp { display: grid; gap: 7px; position: relative; z-index: 1; }
+  .comp .linha { display: grid; grid-template-columns: 74px 1fr 40px; align-items: center; gap: 8px; font-size: 12px; color: var(--texto2); }
+  .comp .trilho { height: 8px; border-radius: 4px; background: rgba(255,255,255,.06); overflow: hidden; }
+  .comp .trilho i { display: block; height: 100%; border-radius: 4px; }
+  .comp b { font-variant-numeric: tabular-nums; text-align: right; color: var(--texto); }
+  .delta { font-size: 12px; font-weight: 700; padding: 2px 7px; border-radius: 999px; }
+  .delta.up { color: #34d399; background: rgba(52,211,153,.12); } .delta.down { color: #fb7185; background: rgba(251,113,133,.12); }
+  @media (max-width: 760px) { .bento { grid-template-columns: 1fr 1fr; gap: 8px; } .tile { min-height: 116px; padding: 14px; border-radius: 20px; } .tile.h2 { grid-row: span 1; } }
+  .carrossel { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2px 0 8px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; scrollbar-width: none; }
+  .carrossel::-webkit-scrollbar { display: none; }
+  .card-data { flex: none; width: 112px; scroll-snap-align: start; display: grid; justify-items: center; gap: 6px; padding: 12px 8px; border-radius: 20px; background: var(--superficie); border: 1px solid var(--linha); color: var(--texto); font: inherit; cursor: pointer; }
+  .card-data .sem { font-size: 11px; color: var(--apagado); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+  .card-data .num { font: 700 20px "Space Grotesk"; line-height: 1; }
+  .card-data .pr { font: 700 14px "Space Grotesk"; font-variant-numeric: tabular-nums; }
+  .card-data .tag { font-size: 10.5px; color: #fbbf24; font-weight: 700; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .anel { position: relative; width: 58px; height: 58px; }
+  .anel svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .anel b { position: absolute; inset: 0; display: grid; place-items: center; font: 700 14px "Space Grotesk"; }
+  .oport { display: flex; align-items: center; gap: 12px; padding: 12px 14px; }
+  .oport .anel { width: 46px; height: 46px; flex: none; } .oport .anel b { font-size: 12px; }
+  .oport .txt { flex: 1; min-width: 0; font-size: 13px; color: var(--texto2); }
+  .oport .txt b { display: block; font-size: 15px; color: var(--texto); }
+  .oport .seta { color: var(--bom); font-weight: 700; font-size: 13px; white-space: nowrap; }
+  .legenda.mini { margin: 0; font-size: 12px; gap: 10px; }
+  .lista-meses, .lista-un { display: grid; gap: 6px; }
+  .mes-l { display: grid; grid-template-columns: 62px 1fr 76px 92px; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 16px; background: var(--superficie); border: 1px solid var(--linha); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .mes-l.longe { opacity: .45; }
+  .mes-l .nm { font-weight: 700; text-transform: capitalize; }
+  .mes-l .barra { position: relative; height: 10px; border-radius: 5px; background: rgba(255,255,255,.06); }
+  .mes-l .barra i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; background: var(--preco); }
+  .mes-l .barra u { position: absolute; top: -4px; bottom: -4px; width: 2px; background: #86b6ef; border-radius: 1px; }
+  .mes-l .pc { font: 700 15px "Space Grotesk"; } .mes-l .rc { text-align: right; font: 700 14px "Space Grotesk"; } .mes-l .rc small, .mes-l .pc small { display: block; font: 500 10.5px Inter; color: var(--apagado); }
+  .mes-l.cab { background: none; border: 0; padding: 0 14px; font-size: 11px; color: var(--apagado); font-weight: 600; }
+  .mes-l.tot { border-color: rgba(217,89,38,.4); background: rgba(217,89,38,.07); }
+  @media (max-width: 560px) { .mes-l { grid-template-columns: 50px 1fr 64px 78px; gap: 8px; padding: 10px 12px; } }
+  .un-l { display: grid; grid-template-columns: 1fr 120px 70px; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 16px; background: var(--superficie); border: 1px solid var(--linha); text-decoration: none; color: var(--texto); font-size: 13px; }
+  .un-l .nm b { display: block; font: 700 15px "Space Grotesk"; } .un-l .nm small { color: var(--apagado); }
+  .un-l .faixa { position: relative; height: 10px; border-radius: 5px; background: rgba(255,255,255,.06); }
+  .un-l .faixa i { position: absolute; top: 0; bottom: 0; border-radius: 5px; background: linear-gradient(90deg, rgba(57,135,229,.5), #3987e5); }
+  .un-l .faixa span { position: absolute; right: 0; top: -17px; font: 700 11.5px Inter; color: var(--texto2); }
+  .un-l .pr { text-align: right; font: 700 14px "Space Grotesk"; }
+  .un-l .pr small { display: block; font: 500 10.5px Inter; color: var(--apagado); }
+  #v-analises .bloco-cab p, #v-analises .eyebrow { display: none; }
   /* computador: abas no topo, conteúdo mais largo — bom para apresentar */
   @media (min-width: 900px) {
     body { padding-bottom: 0; }
@@ -356,52 +426,44 @@
 </div>
 <main class="wrap">
   <section class="view ativa" id="v-inicio">
-    <div class="ola">
-      <div class="cidade-tag">📍 Londrina · PR</div>
-      <h1>Como está a procura por hospedagem?</h1>
-      <p class="atual" id="seloTxt"></p>
+    <div class="topo-view">
+      <div><div class="cidade-tag">Londrina · PR</div><h1>Hoje</h1></div>
+      <span class="atual" id="seloTxt"></span>
     </div>
-    <div class="pesquisa" id="pesquisa">
-      <h2>🔎 Pesquisar uma data</h2>
-      <div class="pesq-linha">
-        <label>Chegada<input type="date" id="pqData"></label>
-        <label>Noites<select id="pqNoites"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>7</option></select></label>
-        <button class="botao" id="pqVer">Ver</button>
-      </div>
-      <div class="atalhos-datas" id="pqAtalhos"></div>
-      <div class="resultado" id="pqResultado"></div>
+    <div class="busca-data" id="pesquisa">
+      <input type="date" id="pqData" aria-label="Chegada">
+      <select id="pqNoites" aria-label="Noites"><option value="1">1 noite</option><option value="2" selected>2 noites</option><option value="3">3 noites</option><option value="4">4 noites</option><option value="5">5 noites</option><option value="7">7 noites</option></select>
+      <button class="botao" id="pqVer" aria-label="Ver data">Ver</button>
     </div>
-    <div class="kpis kpis-3" id="kpis"></div>
-    <div class="sec-cab"><h2>Próximas datas</h2><a href="#calendario" data-ir="calendario">calendário completo →</a></div>
-    <div class="legenda-niveis" id="legNiveis1"></div>
-    <div class="lista-datas" id="listaDatas"></div>
-    <div class="sec-cab"><h2>💰 Oportunidades</h2></div>
+    <div class="atalhos-datas" id="pqAtalhos"></div>
+    <div class="resultado" id="pqResultado"></div>
+    <div class="bento" id="kpis"></div>
+    <div class="sec-cab"><h2>Próximas datas</h2><a href="#calendario" data-ir="calendario">Ver tudo</a></div>
+    <div class="carrossel" id="listaDatas"></div>
+    <div class="sec-cab"><h2>Oportunidades <button class="info" data-info="oport" aria-label="O que é">i</button></h2></div>
     <div id="oportunidades"></div>
   </section>
 
   <section class="view" id="v-calendario">
-    <div class="ola"><h1>Calendário</h1><p class="atual">Cada dia mostra como está a procura para quem chega naquele dia e fica 2 noites. Toque num dia para ver os detalhes.</p></div>
+    <div class="topo-view"><div><div class="cidade-tag">Chegada + 2 noites</div><h1>Calendário <button class="info" data-info="calendario" aria-label="Como ler">i</button></h1></div></div>
     <div class="legenda-niveis" id="legNiveis2"></div>
     <div id="calendario"></div>
   </section>
 
   <section class="view" id="v-predio">
-    <div class="ola">
-      <div class="cidade-tag">🏢 Gleba Palhano · Londrina</div>
-      <h1 id="prNome">JH Palhano</h1>
-      <p class="atual" id="prSub"></p>
+    <div class="topo-view">
+      <div><div class="cidade-tag">Gleba Palhano · Londrina</div><h1 id="prNome">JH Palhano</h1></div>
+      <span class="atual" id="prSub"></span>
     </div>
-    <div class="kpis kpis-4" id="prKpis"></div>
-    <div class="sec-cab"><h2>Acumulado por mês</h2></div>
-    <p class="leg-sec">Para cada mês: quanto das unidades do prédio já está ocupado (reservado ou bloqueado) nas datas consultadas, a diária média, e quanto isso dá em noites e receita por unidade. Comparado com Londrina inteira.</p>
-    <div class="legenda" id="legPredio"></div>
-    <div class="grafico"><canvas id="gPredioMes" role="img" aria-label="Ocupação por mês: JH Palhano e Londrina"></canvas></div>
-    <div class="rolagem" style="margin-top:14px"><table class="tabela" id="tabPredioMes"></table></div>
-    <div class="sec-cab"><h2>Próximas datas no prédio</h2></div>
-    <div class="lista-datas" id="listaPredio"></div>
-    <div class="sec-cab"><h2 id="prTitUn">Unidades</h2></div>
-    <div class="rolagem"><table class="tabela" id="tabPredioUn"></table></div>
-    <div class="aviso" style="margin-top:16px" id="prAviso"></div>
+    <div class="bento" id="prKpis"></div>
+    <div class="sec-cab"><h2>Ocupação por mês <button class="info" data-info="ocupado" aria-label="Como medimos">i</button></h2><div class="legenda mini" id="legPredio"></div></div>
+    <div class="grafico baixo"><canvas id="gPredioMes" role="img" aria-label="Ocupação por mês: JH Palhano e Londrina"></canvas></div>
+    <div class="sec-cab"><h2>Acumulado do mês <button class="info" data-info="receita" aria-label="Como calculamos">i</button></h2></div>
+    <div class="lista-meses" id="tabPredioMes"></div>
+    <div class="sec-cab"><h2>Próximas datas</h2></div>
+    <div class="carrossel" id="listaPredio"></div>
+    <div class="sec-cab"><h2 id="prTitUn">Unidades</h2><button class="info" data-info="historico" aria-label="Como estimamos">i</button></div>
+    <div class="lista-un" id="tabPredioUn"></div>
   </section>
 
   <section class="view" id="v-unidades">
@@ -410,7 +472,6 @@
     <div class="bloco-cab">
       <div>
         <h2 id="unTitulo">Hospedagens</h2>
-        <p>Toque num ponto do mapa ou num nome para abrir no Airbnb.</p>
       </div>
       <button class="botao sec" id="baixarCsv">Baixar CSV</button>
     </div>
@@ -429,7 +490,7 @@
   </section>
 
   <section class="view" id="v-analises">
-    <div class="ola"><h1>Análises</h1><p class="atual">Para quem quer ir fundo: gráficos de preço × procura, zonas da cidade, histórico e comparação com hotéis.</p></div>
+    <div class="topo-view"><div><div class="cidade-tag">Para ir fundo</div><h1>Análises</h1></div></div>
     <div class="indice-analises">
       <a href="#discrepancia">📈 Preço × procura</a><a href="#datas">📅 Datas-chave</a><a href="#zonas">🗺️ Zonas</a>
       <a href="#historico">⏳ Histórico</a><a href="#comparar">🏨 Hotéis</a><a href="#metodo">ℹ️ Como funciona</a>
@@ -670,15 +731,23 @@ function desenharTudo() {
 // ---------- KPIs ----------
 function desenharKpis() {
   const am = D.amostras.filter(a => a.fechado != null && !a.longe);
-  const prox = am.find(a => a.tipo === "fds");
+  const fds = am.filter(a => a.tipo === "fds");
+  const prox = fds[0];
+  const top = am.slice().sort((a, b) => b.fechado - a.fechado)[0];
   const diaria = mediana(am.slice(0, 12).map(a => a.mediana));
-  const cards = [
-    ["Hospedagens", nf(TOTAL), "no Airbnb em Londrina"],
-    ["Diária típica", moeda(diaria), "próximas semanas"],
-    ["Próx. fim de semana", pct(prox?.fechado), prox ? `já fechado · ${dataCurta(prox.checkin)}` : ""],
-  ];
-  $("#kpis").innerHTML = cards.map(([r, v, d]) => `<div class="kpi"><div class="rot">${r}</div><div class="val">${v}</div><div class="det">${d}</div></div>`).join("");
+  const anoAtual = new Date().getFullYear() + new Date().getMonth() / 12;
+  const novas = D.unidades.filter(u => u[9] != null && u[9] >= anoAtual - 1).length;
+  $("#kpis").innerHTML = `
+    <div class="tile w2 h2 toque" data-ci="${prox?.checkin}" data-co="${prox?.checkout}">
+      <div class="k">Próximo fim de semana ${prox ? selo(prox.fechado) : ""}</div>
+      <div><div class="v">${pct(prox?.fechado)}<small>ocupado</small></div><div class="d">${prox ? `${dataCurta(prox.checkin)} → ${dataCurta(prox.checkout)} · ${nf(prox.livresL)} livres` : ""}</div></div>
+      ${spark(fds.slice(0, 10).map(a => a.fechado), COR_NIVEL[nivel(prox?.fechado ?? 0).c])}
+    </div>
+    <div class="tile"><div class="k">Diária típica</div><div class="v md">${moeda(diaria)}</div>${spark(fds.slice(0, 12).map(a => a.mediana), COR.preco)}</div>
+    <div class="tile"><div class="k">Hospedagens</div><div class="v md">${nf(TOTAL)}</div><div class="d"><span class="delta up">+${nf(novas)}</span> em 12 meses</div></div>
+    <div class="tile w2 toque" data-ci="${top?.checkin}" data-co="${top?.checkout}"><div class="k">Data mais disputada</div><div style="display:flex;align-items:center;gap:14px">${top ? anel(top.fechado) : ""}<div><div class="v md">${top ? dataCurta(top.checkin) : "—"}</div><div class="d">${top?.tipo === "feriado" ? esc(top.rotulo) + " · " : ""}diária ${moeda(top?.mediana)}</div></div></div></div>`;
 }
+$("#kpis").onclick = e => { const b = e.target.closest("[data-ci]"); if (b && b.dataset.ci !== "undefined") abrirData(b.dataset.ci, b.dataset.co); };
 
 // ---------- preço × procura ----------
 function serieVoce() {
@@ -933,6 +1002,35 @@ drop.addEventListener("drop", e => e.dataTransfer.files[0] && importar(e.dataTra
 $("#exemploCsv").onclick = e => { e.preventDefault(); const l = ["data,preco,plataforma"]; D.amostras.filter(a => a.mediana).forEach(a => l.push(`${a.checkin},${Math.round(a.mediana * 1.25 * (a.tipo === "util" ? 1.1 : .95))},Hotel Exemplo (Booking)`)); baixar("exemplo-tarifas-londrina.csv", l.join("\n")); };
 $("#limparCsv").onclick = e => { e.preventDefault(); try { localStorage.removeItem(CHAVE_CSV); } catch {} desenharComparacao(); desenharDiscrepancia(); };
 
+// ---------- explicações (atrás do ⓘ) ----------
+const INFO = {
+  oport: ["Oportunidades", "Datas em que a procura está bem acima do normal para aquele tipo de dia, mas a diária quase não subiu. É onde dá para cobrar mais."],
+  calendario: ["Como ler o calendário", "Cada dia mostra a procura para quem chega naquele dia e fica 2 noites. Verde = bem livre · azul = normal · amarelo = disputada · vermelho = lotando. O valor é a diária mediana de quem ainda está livre. Bolinha laranja = feriado. Dias apagados estão a mais de 8 meses, quando muitos anfitriões ainda não abriram a agenda."],
+  ocupado: ["Como medimos a ocupação", "Para cada data, o robô busca no Airbnb quais unidades do prédio aparecem livres para 2 noites. Ocupado = não aparece livre (reservado ou bloqueado pelo dono). A linha azul é Londrina inteira. Meses distantes ainda vão encher: as reservas chegam perto da data."],
+  receita: ["Como calculamos o acumulado", "Noites ocupadas = ocupação medida × dias do mês. Receita estimada = noites ocupadas × diária média anunciada no prédio. É antes da taxa do Airbnb, limpeza e impostos."],
+  historico: ["Ocupação pelo histórico", "Estimada pelo ritmo de avaliações desde que o anúncio entrou no Airbnb. O começo da barra é uma hipótese conservadora (72% dos hóspedes avaliam, 2,5 noites por estadia); o fim é o modelo padrão do mercado (50% avaliam, 3 noites). Anúncios com menos de 9 meses ficam sem estimativa."],
+};
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-info]"); if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  const [t, txt] = INFO[b.dataset.info] || ["", ""];
+  modal(`<h3>${t}</h3><p>${txt}</p>`).classList.add("folha");
+});
+// mini-gráfico (área) para o fundo dos tiles
+function spark(vals, cor) {
+  const v = vals.filter(x => x != null); if (v.length < 2) return "";
+  const mn = Math.min(...v), mx = Math.max(...v), w = 100, h = 40;
+  const pts = vals.map((x, i) => x == null ? null : [i / (vals.length - 1) * w, h - 4 - (mx === mn ? .5 : (x - mn) / (mx - mn)) * (h - 10)]).filter(Boolean);
+  const linha = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const id = "g" + Math.random().toString(36).slice(2, 8);
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${cor}" stop-opacity=".35"/><stop offset="1" stop-color="${cor}" stop-opacity="0"/></linearGradient></defs><path d="${linha} L${w} ${h} L0 ${h}Z" fill="url(#${id})"/><path d="${linha}" fill="none" stroke="${cor}" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>`;
+}
+const COR_NIVEL = { n0: "#34d399", n1: "#3987e5", n2: "#fbbf24", n3: "#fb7185" };
+function anel(f) {
+  const c = COR_NIVEL[nivel(f).c], r = 24, L = 2 * Math.PI * r;
+  return `<span class="anel" title="${nivel(f).nome}"><svg viewBox="0 0 58 58"><circle cx="29" cy="29" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/><circle cx="29" cy="29" r="${r}" fill="none" stroke="${c}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(f / 100 * L).toFixed(1)} ${L.toFixed(1)}"/></svg><b>${Math.round(f)}%</b></span>`;
+}
+
 // ---------- níveis de procura (semáforo) ----------
 const NIVEIS = [
   { c: "n0", ic: "●", nome: "Bem livre", max: 20 },
@@ -945,32 +1043,26 @@ const selo = f => { const n = nivel(f); return `<span class="nv ${n.c}">${n.ic} 
 const legendaNiveis = () => NIVEIS.map((n, i) => `<span>${selo(i === 0 ? 0 : NIVEIS[i - 1].max)} ${i === 0 ? "até 20% fechado" : i === 3 ? "60%+ fechado" : `${NIVEIS[i - 1].max}–${n.max}%`}</span>`).join("");
 const MESES_ABR = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 
+function cardData(a, ocup, preco, extra = "") {
+  const d = dt(a.checkin);
+  return `<button class="card-data" data-ci="${a.checkin}" data-co="${a.checkout}"><span class="sem">${SEMANA[d.getDay()]} · ${MESES_ABR[d.getMonth()]}</span><span class="num">${d.getDate()}</span>${anel(ocup)}<span class="pr">${moeda(preco)}</span>${a.tipo === "feriado" ? `<span class="tag">${esc(a.rotulo)}</span>` : extra}</button>`;
+}
 function desenharInicio() {
-  $("#legNiveis1").innerHTML = legendaNiveis();
-  const prox = D.amostras.filter(a => a.fechado != null && !a.longe).slice(0, 10);
-  $("#listaDatas").innerHTML = prox.map(a => {
-    const d = dt(a.checkin);
-    return `<button class="item-data" data-ci="${a.checkin}" data-co="${a.checkout}">
-      <span class="dia"><small>${SEMANA[d.getDay()]}</small><b>${d.getDate()}</b><small>${MESES_ABR[d.getMonth()]}</small></span>
-      <span class="meio"><span class="t">${a.tipo === "feriado" ? "🎉 " + esc(a.rotulo) : a.tipo === "fds" ? "Fim de semana" : "Dia útil"}</span>
-        <span class="s">${selo(a.fechado)}<span>${nf(a.livresL)} livres</span></span></span>
-      <span class="preco">${moeda(a.mediana)}<small>diária</small></span></button>`;
-  }).join("");
-  // oportunidades: procura bem acima do fim de semana típico e diária que não acompanhou
-  const grupo = a => a.tipo === "util" ? "util" : "fds";   // feriado compara com fim de semana
+  const prox = D.amostras.filter(a => a.fechado != null && !a.longe).slice(0, 14);
+  $("#listaDatas").innerHTML = prox.map(a => cardData(a, a.fechado, a.mediana)).join("");
+  const grupo = a => a.tipo === "util" ? "util" : "fds";
   const tipo = {}; ["fds", "util"].forEach(g => { const v = D.amostras.filter(x => grupo(x) === g && x.tipo !== "feriado" && !x.longe && x.fechado != null); tipo[g] = { f: mediana(v.map(x => x.fechado)), p: mediana(v.map(x => x.mediana)) }; });
   const ops = D.amostras.filter(a => { const t = tipo[grupo(a)]; return !a.longe && a.fechado != null && a.mediana && t.f != null && a.fechado - t.f > 8 && (a.mediana / t.p - 1) * 100 < (a.fechado - t.f) / 2; })
     .sort((a, b) => b.fechado - a.fechado).slice(0, 3);
-  const nomeG = a => a.tipo === "util" ? "um dia útil comum" : "um fim de semana comum";
   $("#oportunidades").innerHTML = ops.length
-    ? ops.map(a => { const t = tipo[grupo(a)], dp = (a.mediana / t.p - 1) * 100; return `<div class="oport" data-ci="${a.checkin}" data-co="${a.checkout}">📈 <b>${dataLonga(a.checkin)}${a.tipo === "feriado" ? " · " + esc(a.rotulo) : ""}</b><br>${pct(a.fechado)} já fechado (${nomeG(a)}: ${pct(t.f)}), mas a diária está em ${moeda(a.mediana)} — ${dp >= 1 ? `só ${nf(dp)}% acima` : dp <= -1 ? `${nf(-dp)}% abaixo` : "igual"} do normal. <b style="color:var(--bom)">Dá pra cobrar mais.</b></div>`; }).join("")
-    : `<div class="oport neutra">Nenhuma data com preço abaixo da procura agora. Quando aparecer, ela fica aqui.</div>`;
+    ? ops.map(a => { const t = tipo[grupo(a)], dp = (a.mediana / t.p - 1) * 100; return `<div class="oport tile toque" style="min-height:0" data-ci="${a.checkin}" data-co="${a.checkout}">${anel(a.fechado)}<span class="txt"><b>${dataCurta(a.checkin)}${a.tipo === "feriado" ? " · " + esc(a.rotulo) : ""}</b>normal ${pct(t.f)} · diária ${dp >= 0 ? "+" : ""}${nf(dp)}%</span><span class="seta">cobrar mais ›</span></div>`; }).join("")
+    : `<div class="tile" style="min-height:0;color:var(--apagado);font-size:13px">Nenhuma agora.</div>`;
 }
 $("#listaDatas").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
 $("#oportunidades").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
 
 function desenharCalendario() {
-  $("#legNiveis2").innerHTML = legendaNiveis() + `<span><span class="nv" style="color:#fbbf24">●</span> feriado</span>`;
+  $("#legNiveis2").innerHTML = NIVEIS.map(n => `<span><i style="width:10px;height:10px;border-radius:3px;display:inline-block;background:${COR_NIVEL[n.c]}"></i>${n.nome}</span>`).join("");
   const por = {}; D.amostras.forEach(a => { if (a.fechado != null) por[a.checkin] = a; });
   const hoje = dt(isoHoje()), fim = dt(D.amostras.at(-1)?.checkin || isoHoje());
   let html = "";
@@ -985,7 +1077,7 @@ function desenharCalendario() {
     }
     html += `<div class="mes"><h3>${MESES_L[mes]} ${ano}</h3><div class="grade-cal">${cel}</div></div>`;
   }
-  $("#calendario").innerHTML = html + `<p style="font-size:12.5px;color:var(--apagado)">Dias sem cor ainda não entram no levantamento. Dias apagados estão a mais de 8 meses — muitos anfitriões ainda não abriram a agenda.</p>`;
+  $("#calendario").innerHTML = html;
 }
 $("#calendario").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
 
@@ -1007,9 +1099,10 @@ function ocupHistorico(u) {
   const porAno = u[7] / anos;
   return { padrao: Math.min(100, porAno / .5 * 3 / 365 * 100), conservador: Math.min(100, porAno / .72 * 2.5 / 365 * 100), anos };
 }
+const codigoUn = u => { const m = (u[1] || "").match(/JH\s*-?\s*(\d{3,4})/i) || (u[1] || "").match(/\b(\d{3,4})\b/); return m ? "JH " + m[1] : (u[1] || "").slice(0, 22); };
 function desenharPredio() {
   const P = (D.predios || [])[0];
-  if (!P || !P.datas?.length) { $("#prSub").textContent = "O acompanhamento do prédio começa na próxima atualização."; return; }
+  if (!P || !P.datas?.length) { $("#prSub").textContent = "começa na próxima atualização"; return; }
   const N = P.ids.length, ids = new Set(P.ids);
   const un = D.unidades.filter(u => ids.has(u[0]));
   const hojeMs = new Date(D.meta.coleta).getTime();
@@ -1020,60 +1113,53 @@ function desenharPredio() {
     return { ...d, n: d.livres.length, ocup: (1 - d.livres.length / N) * 100, diaria: media(precos), londrina: a?.fechado ?? null, diariaL: a?.mediana ?? null, tipo: a?.tipo, rotulo: a?.rotulo, longe: (dt(d.checkin) - hojeMs) / 864e5 > HORIZONTE };
   });
   $("#prNome").textContent = P.nome;
-  $("#prSub").textContent = `${N} apartamentos do prédio no Airbnb · ${datas.length} datas consultadas · atualizado ${quandoTxt(D.meta.atualizado || D.meta.coleta)}`;
-  // KPIs
-  const prox = datas.filter(d => (dt(d.checkin) - hojeMs) / 864e5 <= 30);
-  const perto = datas.filter(d => !d.longe);
+  $("#prSub").textContent = `${N} unidades · ${quandoTxt(D.meta.atualizado || D.meta.coleta)}`;
+  const prox = datas.filter(d => (dt(d.checkin) - hojeMs) / 864e5 <= 30), perto = datas.filter(d => !d.longe);
+  const oJH = media(prox.map(d => d.ocup)), oL = media(prox.map(d => d.londrina));
+  const dJH = media(perto.map(d => d.diaria)), dL = media(perto.map(d => d.diariaL));
   const hist = un.map(ocupHistorico).filter(Boolean);
-  const medPad = mediana(hist.map(h => h.padrao)), medCons = mediana(hist.map(h => h.conservador));
   const acima80 = hist.filter(h => h.padrao >= 80).length;
-  $("#prKpis").innerHTML = [
-    ["Ocupado nos próximos 30 dias", pct(media(prox.map(d => d.ocup))), `Londrina: ${pct(media(prox.map(d => d.londrina)))}`],
-    ["Diária média no prédio", moeda(media(perto.map(d => d.diaria))), `Londrina: ${moeda(media(perto.map(d => d.diariaL)))}`],
-    ["Ocupação pelo histórico", medPad == null ? "—" : `${nf(medCons)}–${nf(medPad)}%`, `mediana das ${hist.length} unidades com 9+ meses de Airbnb`],
-    ["Unidades com 80%+", `${acima80} de ${hist.length}`, "no modelo padrão de avaliações"],
-  ].map(([r, v, d]) => `<div class="kpi"><div class="rot">${r}</div><div class="val">${v}</div><div class="det">${d}</div></div>`).join("");
-
   // acumulado por mês
-  const meses = {};
-  datas.forEach(d => { const m = d.checkin.slice(0, 7); (meses[m] ||= []).push(d); });
+  const meses = {}; datas.forEach(d => (meses[d.checkin.slice(0, 7)] ||= []).push(d));
   const linhas = Object.entries(meses).map(([m, ds]) => {
     const [a, mm] = m.split("-").map(Number), dias = new Date(a, mm, 0).getDate();
-    const ocup = media(ds.map(d => d.ocup)), diaria = media(ds.map(d => d.diaria).filter(Boolean));
-    const noites = ocup / 100 * dias, receita = diaria ? noites * diaria : null;
-    return { m, a, mm, dias, n: ds.length, ocup, londrina: media(ds.map(d => d.londrina)), diaria, diariaL: media(ds.map(d => d.diariaL)), noites, receita, longe: ds.every(d => d.longe) };
-  });
-  const nomeMes = l => `${MESES[l.mm - 1]}/${String(l.a).slice(2)}`;
-  $("#legPredio").innerHTML = `<span><i style="background:${COR.preco};height:10px;width:14px;border-radius:3px"></i>${esc(P.nome)}</span><span><i style="background:${COR.demanda};height:10px;width:14px;border-radius:3px"></i>Londrina inteira</span>`;
-  grafico("gPredioMes", {
-    type: "bar",
-    data: { labels: linhas.map(nomeMes), datasets: [
-      { label: P.nome, data: linhas.map(l => l.ocup), backgroundColor: linhas.map(l => l.longe ? "rgba(217,89,38,.35)" : COR.preco), borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: "bottom", barPercentage: .8, categoryPercentage: .7 },
-      { label: "Londrina", data: linhas.map(l => l.londrina), backgroundColor: linhas.map(l => l.longe ? "rgba(57,135,229,.35)" : COR.demanda), borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: "bottom", barPercentage: .8, categoryPercentage: .7 },
-    ] },
-    options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
-      scales: { x: escalaX(), y: escalaY({ min: 0, max: 100, ticks: { color: COR.apagado, callback: v => v + "%" } }) },
-      plugins: { tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${pct(c.raw)} ocupado`, afterBody: c => { const l = linhas[c[0].dataIndex]; return [` ${l.n} datas consultadas no mês`, l.longe ? " mês distante: reservas ainda vão chegar" : ""]; } } } } },
+    const ocup = media(ds.map(d => d.ocup)), diaria = media(ds.map(d => d.diaria).filter(Boolean)), noites = ocup / 100 * dias;
+    return { a, mm, dias, ocup, londrina: media(ds.map(d => d.londrina)), diaria, noites, receita: diaria ? noites * diaria : null, longe: ds.every(d => d.longe) };
   });
   const tot = linhas.filter(l => !l.longe);
-  const somaRec = tot.reduce((t, l) => t + (l.receita || 0), 0), somaNoites = tot.reduce((t, l) => t + l.noites, 0), somaDias = tot.reduce((t, l) => t + l.dias, 0);
-  $("#tabPredioMes").innerHTML = `<thead><tr><th>Mês</th><th class="num">Ocupado no prédio</th><th class="num">Londrina</th><th class="num">Diária média</th><th class="num">Noites ocupadas<span class="sub">por unidade</span></th><th class="num">Receita estimada<span class="sub">por unidade</span></th><th class="num">Receita estimada<span class="sub">prédio (${N} un.)</span></th></tr></thead>
-    <tbody>${linhas.map(l => `<tr class="${l.longe ? "longe" : ""}"><td>${MESES_L[l.mm - 1]} ${l.a}${l.longe ? `<span class="sub">agenda ainda abrindo</span>` : `<span class="sub">${l.n} datas</span>`}</td><td class="num"><b>${pct(l.ocup)}</b></td><td class="num">${pct(l.londrina)}</td><td class="num">${moeda(l.diaria)}<span class="sub">Londrina ${moeda(l.diariaL)}</span></td><td class="num">${nf(l.noites, 1)} de ${l.dias}</td><td class="num">${moeda(l.receita)}</td><td class="num">${moeda(l.receita == null ? null : l.receita * N)}</td></tr>`).join("")}</tbody>
-    <tfoot><tr><td>Próximos 8 meses</td><td class="num">${pct(somaNoites / somaDias * 100)}</td><td class="num">${pct(media(tot.map(l => l.londrina)))}</td><td class="num">${moeda(media(tot.map(l => l.diaria)))}</td><td class="num">${nf(somaNoites, 0)} de ${somaDias}</td><td class="num">${moeda(somaRec)}</td><td class="num">${moeda(somaRec * N)}</td></tr></tfoot>`;
-
-  // próximas datas
-  $("#listaPredio").innerHTML = perto.slice(0, 8).map(d => { const x = dt(d.checkin); return `<button class="item-data" data-ci="${d.checkin}" data-co="${d.checkout}">
-      <span class="dia"><small>${SEMANA[x.getDay()]}</small><b>${x.getDate()}</b><small>${MESES_ABR[x.getMonth()]}</small></span>
-      <span class="meio"><span class="t">${d.tipo === "feriado" ? "🎉 " + esc(d.rotulo) : d.tipo === "util" ? "Dia útil" : "Fim de semana"}</span>
-        <span class="s">${selo(d.ocup)}<span>${N - d.n} de ${N} ocupados</span></span></span>
-      <span class="preco">${moeda(d.diaria)}<small>diária média</small></span></button>`; }).join("");
-
-  // unidades
-  const ocupData = {}; P.ids.forEach(id => ocupData[id] = { tot: 0, fech: 0, precos: [] });
-  perto.forEach(d => P.ids.forEach(id => { const o = ocupData[id]; o.tot++; if (!d.precos?.[id]) o.fech++; else o.precos.push(d.precos[id]); }));
-  $("#prTitUn").textContent = `As ${N} unidades`;
-  $("#tabPredioUn").innerHTML = `<thead><tr><th>Unidade</th><th class="num">Avaliações</th><th class="num">No Airbnb há</th><th class="num">Ocupação pelo histórico</th><th class="num">Ocupado nas próximas datas</th><th class="num">Diária média</th></tr></thead><tbody>${un.map(u => ({ u, h: ocupHistorico(u), o: ocupData[u[0]] })).sort((a, b) => (b.h?.padrao ?? -1) - (a.h?.padrao ?? -1)).map(({ u, h, o }) => `<tr><td><a href="https://www.airbnb.com.br/rooms/${encodeURIComponent(u[0])}" target="_blank" rel="noopener">${esc(u[1])}</a></td><td class="num">${nf(u[7])}${u[6] ? `<span class="sub">nota ${nf(u[6], 2)}</span>` : ""}</td><td class="num">${u[9] == null ? "—" : (h?.anos ?? 0) >= 1 ? nf(h.anos, 1) + " anos" : "menos de 1 ano"}</td><td class="num">${h ? `<b>${nf(h.conservador)}–${nf(h.padrao)}%</b>` : `<span class="sub">novo demais</span>`}</td><td class="num">${o.tot ? pct(o.fech / o.tot * 100) : "—"}<span class="sub">${o.fech} de ${o.tot} datas</span></td><td class="num">${moeda(media(o.precos))}</td></tr>`).join("")}</tbody>`;
-  $("#prAviso").innerHTML = `<b>Como ler.</b> “Ocupado” = a unidade não aparece livre na busca do Airbnb para aquela estadia de 2 noites (reservada <i>ou</i> bloqueada pelo dono, ou com estadia mínima maior). Meses distantes ainda vão encher, porque as reservas chegam perto da data — a ocupação real do mês tende a ser maior que a medida hoje. “Ocupação pelo histórico” estima o passado pelo ritmo de avaliações: o número da direita é o modelo padrão do mercado (metade dos hóspedes avalia, estadia de 3 noites); o da esquerda, uma hipótese conservadora. Receita = diária anunciada × noites ocupadas, antes de taxas do Airbnb, limpeza e impostos.`;
+  const recMes = media(tot.map(l => l.receita));
+  const barra = (v, cor) => `<span class="trilho"><i style="width:${Math.min(100, v || 0)}%;background:${cor}"></i></span>`;
+  $("#prKpis").innerHTML = `
+    <div class="tile w2 h2"><div class="k">Ocupado · próximos 30 dias <button class="info" data-info="ocupado">i</button></div>
+      <div class="v">${pct(oJH)}</div>
+      <div class="comp"><span class="linha"><span>${esc(P.nome)}</span>${barra(oJH, COR.preco)}<b>${pct(oJH)}</b></span><span class="linha"><span>Londrina</span>${barra(oL, COR.demanda)}<b>${pct(oL)}</b></span></div></div>
+    <div class="tile"><div class="k">Diária média</div><div class="v md">${moeda(dJH)}</div><div class="d"><span class="delta up">+${nf((dJH / dL - 1) * 100)}%</span> vs Londrina</div>${spark(tot.map(l => l.diaria), COR.preco)}</div>
+    <div class="tile"><div class="k">Receita / unidade <button class="info" data-info="receita">i</button></div><div class="v md">${moeda(recMes)}</div><div class="d">por mês · estimada</div></div>
+    <div class="tile w2"><div class="k">Ocupação pelo histórico <button class="info" data-info="historico">i</button></div><div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap"><div class="v md">${hist.length ? `${nf(mediana(hist.map(h => h.conservador)))}–${nf(mediana(hist.map(h => h.padrao)))}%` : "—"}</div><div class="d"><span class="delta up">${acima80} de ${hist.length}</span> acima de 80%</div></div></div>`;
+  $("#legPredio").innerHTML = `<span><i style="background:${COR.preco};height:8px;width:12px;border-radius:2px"></i>${esc(P.nome)}</span><span><i style="background:${COR.demanda};height:8px;width:12px;border-radius:2px"></i>Londrina</span>`;
+  grafico("gPredioMes", {
+    type: "bar",
+    data: { labels: linhas.map(l => `${MESES[l.mm - 1]}`), datasets: [
+      { label: P.nome, data: linhas.map(l => l.ocup), backgroundColor: linhas.map(l => l.longe ? "rgba(217,89,38,.3)" : COR.preco), borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: "bottom", barPercentage: .8, categoryPercentage: .7 },
+      { label: "Londrina", data: linhas.map(l => l.londrina), backgroundColor: linhas.map(l => l.longe ? "rgba(57,135,229,.3)" : COR.demanda), borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: "bottom", barPercentage: .8, categoryPercentage: .7 },
+    ] },
+    options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      scales: { x: escalaX(), y: escalaY({ min: 0, max: 100, ticks: { color: COR.apagado, stepSize: 25, callback: v => v + "%" } }) },
+      plugins: { tooltip: { callbacks: { title: c => { const l = linhas[c[0].dataIndex]; return `${MESES_L[l.mm - 1]} ${l.a}`; }, label: c => ` ${c.dataset.label}: ${pct(c.raw)}` } } } },
+  });
+  const somaN = tot.reduce((t, l) => t + l.noites, 0), somaD = tot.reduce((t, l) => t + l.dias, 0), somaR = tot.reduce((t, l) => t + (l.receita || 0), 0);
+  const kmoeda = v => v == null ? "—" : v >= 1e6 ? "R$ " + nf(v / 1e6, 2) + " mi" : v >= 1e4 ? "R$ " + nf(v / 1e3, 1) + " mil" : moeda(v);
+  $("#tabPredioMes").innerHTML = `<div class="mes-l cab"><span>Mês</span><span>Ocupação <span style="color:#86b6ef">| Londrina</span></span><span>Diária</span><span style="text-align:right">Receita/un.</span></div>`
+    + linhas.map(l => `<div class="mes-l ${l.longe ? "longe" : ""}"><span class="nm">${MESES[l.mm - 1]}<small style="display:block;font:500 10.5px Inter;color:var(--apagado)">${l.a}</small></span><span class="barra"><i style="width:${l.ocup}%"></i>${l.londrina != null ? `<u style="left:${l.londrina}%"></u>` : ""}</span><span class="pc">${pct(l.ocup)}<small>${moeda(l.diaria)}</small></span><span class="rc">${kmoeda(l.receita)}<small>${nf(l.noites, 0)} noites</small></span></div>`).join("")
+    + `<div class="mes-l tot"><span class="nm">8 meses</span><span class="barra"><i style="width:${somaN / somaD * 100}%"></i></span><span class="pc">${pct(somaN / somaD * 100)}<small>${moeda(media(tot.map(l => l.diaria)))}</small></span><span class="rc">${kmoeda(somaR)}<small>prédio: ${kmoeda(somaR * N)}</small></span></div>`;
+  $("#listaPredio").innerHTML = perto.slice(0, 14).map(d => cardData(d, d.ocup, d.diaria, `<span class="tag" style="color:var(--apagado)">${N - d.n}/${N} ocupados</span>`)).join("");
+  const oc = {}; P.ids.forEach(id => oc[id] = { tot: 0, fech: 0, precos: [] });
+  perto.forEach(d => P.ids.forEach(id => { const o = oc[id]; o.tot++; if (!d.precos?.[id]) o.fech++; else o.precos.push(d.precos[id]); }));
+  $("#prTitUn").textContent = `${N} unidades`;
+  $("#tabPredioUn").innerHTML = un.map(u => ({ u, h: ocupHistorico(u), o: oc[u[0]] })).sort((a, b) => (b.h?.padrao ?? -1) - (a.h?.padrao ?? -1)).map(({ u, h, o }) =>
+    `<a class="un-l" href="https://www.airbnb.com.br/rooms/${encodeURIComponent(u[0])}" target="_blank" rel="noopener"><span class="nm"><b>${esc(codigoUn(u))}</b><small>${u[6] ? "★ " + nf(u[6], 2) + " · " : ""}${nf(u[7])} avaliações</small></span>
+      <span class="faixa">${h ? `<i style="left:${h.conservador}%;right:${100 - h.padrao}%"></i><span>${nf(h.conservador)}–${nf(h.padrao)}%</span>` : `<span style="color:var(--apagado)">novo</span>`}</span>
+      <span class="pr">${moeda(media(o.precos))}<small>${o.tot ? nf(o.fech / o.tot * 100) + "% ocupado" : ""}</small></span></a>`).join("");
 }
 $("#listaPredio").onclick = e => { const b = e.target.closest("[data-ci]"); if (b) abrirData(b.dataset.ci, b.dataset.co); };
 

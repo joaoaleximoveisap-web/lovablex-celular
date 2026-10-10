@@ -322,6 +322,7 @@
   .topo-view h1 { font-size: clamp(30px, 8vw, 44px); line-height: 1; margin: 4px 0 0; display: flex; align-items: center; gap: 10px; }
   .topo-view .atual { font-size: 12px; color: var(--apagado); }
   .cidade-tag { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--apagado); font-weight: 700; }
+  .apresentar { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 11px 18px; border-radius: 999px; font-size: 14px; background: linear-gradient(120deg, #2a78d6, #9085e9 55%, #d95926); box-shadow: 0 10px 30px rgba(144,133,233,.3); }
   .info { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--linha2); background: none; color: var(--apagado); font: 700 12px/1 Inter; cursor: pointer; display: inline-grid; place-items: center; padding: 0; vertical-align: middle; flex: none; }
   .info:hover { color: var(--texto); border-color: var(--texto2); }
   .busca-data { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; background: var(--superficie); border: 1px solid var(--linha2); border-radius: 18px; padding: 6px; }
@@ -452,8 +453,8 @@
 
   <section class="view" id="v-predio">
     <div class="topo-view">
-      <div><div class="cidade-tag">Gleba Palhano · Londrina</div><h1 id="prNome">JH Palhano</h1></div>
-      <span class="atual" id="prSub"></span>
+      <div><div class="cidade-tag">Gleba Palhano · Londrina</div><h1 id="prNome">JH Palhano</h1><span class="atual" id="prSub"></span></div>
+      <a class="botao apresentar" href="apresentacao.html">▶ Apresentar</a>
     </div>
     <div class="bento" id="prKpis"></div>
     <div class="sec-cab"><h2>Ocupação por mês <button class="info" data-info="ocupado" aria-label="Como medimos">i</button></h2><div class="legenda mini" id="legPredio"></div></div>

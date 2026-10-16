@@ -3,205 +3,113 @@
 <head>
 <meta charset="utf-8">
 <title>The One · Operação 20 Vendas</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=block" rel="stylesheet">
 <style>
   @page { size: A4; margin: 0; }
-  :root{
-    --paper:#F7F4EE; --ink:#2B2825; --ink2:#5A544D; --mute:#8A8278;
-    --bronze:#9A7347; --bronze-soft:#E9DFD1; --line:#D9D2C6; --alert:#8C3B2E;
-  }
+  :root{ --paper:#F7F4EE; --ink:#2B2825; --ink2:#5F5951; --mute:#968E83; --bronze:#9A7347; --soft:#ECE4D8; --line:#DCD5C9; --alert:#8C3B2E; }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--paper)}
-  body{width:210mm;height:297mm;padding:10mm 13mm 8mm;font-family:Inter,sans-serif;color:var(--ink);font-size:7.6pt;line-height:1.33;-webkit-print-color-adjust:exact;print-color-adjust:exact;display:flex;flex-direction:column;overflow:hidden}
-  .serif{font-family:Newsreader,Georgia,serif}
-  .eyebrow{font-size:6.6pt;letter-spacing:.14em;text-transform:uppercase;color:var(--bronze);font-weight:600}
-  header{display:block}
-  .hrow{display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;margin-top:2mm}
-  h1{font-family:Newsreader,serif;font-weight:500;font-size:26pt;line-height:1;letter-spacing:-.01em;margin-top:1.4mm;white-space:nowrap}
-  h1 b{font-weight:600;color:var(--bronze)}
-  .sub{font-size:9.6pt;color:var(--ink2);font-family:Newsreader,serif;font-style:italic;max-width:80mm}
-  .kpis{display:flex;gap:0;border-left:1px solid var(--line)}
-  .kpi{padding:0 3.6mm;border-right:1px solid var(--line);text-align:left}
-  .kpi .n{font-family:Newsreader,serif;font-size:21pt;line-height:1;font-weight:500}
-  .kpi .l{font-size:6.4pt;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;margin-top:.8mm}
+  body{width:210mm;height:297mm;padding:14mm 15mm 11mm;font-family:Inter,"Liberation Sans",sans-serif;color:var(--ink);font-size:10pt;line-height:1.3;-webkit-print-color-adjust:exact;print-color-adjust:exact;display:flex;flex-direction:column}
+  .eyebrow{font-size:8pt;letter-spacing:.12em;text-transform:uppercase;color:var(--bronze);font-weight:600}
+  h1{font-size:30pt;font-weight:800;letter-spacing:-.02em;line-height:1;margin-top:2mm}
+  h1 span{color:var(--bronze);font-weight:300}
+  .sub{font-size:11.5pt;color:var(--ink2);margin-top:2mm}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);margin-top:6mm;border-top:2px solid var(--ink);border-bottom:1px solid var(--line)}
+  .kpi{padding:3mm 0}
+  .kpi+.kpi{padding-left:4mm;border-left:1px solid var(--line)}
+  .kpi .n{font-size:26pt;font-weight:700;line-height:1;letter-spacing:-.02em}
+  .kpi .l{font-size:8pt;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;margin-top:1.2mm}
   .kpi.hl .n{color:var(--bronze)}
-  .rule{height:1px;background:var(--ink);margin:3.2mm 0 3mm}
-  .thesis{display:grid;grid-template-columns:30mm 1fr;gap:4mm;align-items:baseline}
-  .thesis p{font-family:Newsreader,serif;font-size:12.6pt;line-height:1.24;font-weight:400}
-  .thesis p em{font-style:italic;color:var(--bronze)}
-  h2{font-size:6.8pt;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink);margin-bottom:2mm;display:flex;gap:2mm;align-items:baseline}
-  h2 span{color:var(--bronze)}
-  section{margin-top:3.4mm}
-  .mechs{display:grid;grid-template-columns:1fr 1.32fr 1fr;gap:3.2mm}
-  .m{background:#FFFDF9;border:1px solid var(--line);border-top:2px solid var(--bronze);padding:2.2mm 2.8mm 2.4mm}
-  .m .tag{font-size:6.2pt;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:600}
-  .m h3{font-family:Newsreader,serif;font-size:11.2pt;font-weight:600;line-height:1.12;margin:.8mm 0 1.4mm}
-  .m p{margin-bottom:1.2mm;color:var(--ink2)}
-  .m p strong{color:var(--ink);font-weight:600}
-  .aud{border-top:1px dotted var(--line);padding-top:1mm;margin-top:1mm}
-  .aud div{display:grid;grid-template-columns:16mm 1fr;gap:1.6mm;padding:.55mm 0;color:var(--ink2)}
-  .aud div b{color:var(--ink);font-weight:600}
-  .q{background:var(--bronze-soft);padding:1.2mm 1.8mm;margin-top:1.4mm;font-size:7.3pt;color:var(--ink)}
-  .row2{display:grid;grid-template-columns:1.18fr 1fr;gap:5mm}
-  .funnel{display:flex;flex-direction:column;gap:1.1mm}
-  .f{display:grid;grid-template-columns:23mm 1fr 21mm;align-items:center;gap:2mm}
-  .f .lab{font-size:7.2pt;color:var(--ink2);text-align:right}
-  .f .bar{height:5.4mm;background:var(--ink);display:flex;align-items:center;padding-left:2mm;color:var(--paper);font-family:Newsreader,serif;font-size:11.5pt;font-weight:500}
-  .f .rate{font-size:6.6pt;color:var(--bronze);font-weight:600}
-  .f.last .bar{background:var(--bronze)}
-  .fnote{margin-top:2mm;font-size:7.1pt;color:var(--ink2);border-left:2px solid var(--alert);padding-left:2mm}
-  .fnote b{color:var(--alert)}
-  table{width:100%;border-collapse:collapse;font-size:7.5pt}
-  th{font-size:6.2pt;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-weight:600;text-align:right;padding:0 0 1.2mm 1.5mm;border-bottom:1px solid var(--ink)}
-  th:first-child,td:first-child{text-align:left}
-  td{padding:1mm 0;border-bottom:1px solid var(--line);text-align:right}
-  td .c{font-size:6.4pt;color:var(--mute);margin-left:1mm}
-  td.v{font-family:Newsreader,serif;font-size:12pt;font-weight:600;color:var(--bronze);line-height:1}
-  tr.tot td{border-bottom:none;font-weight:700}
-  tr.tot td.v{color:var(--ink)}
-  .tnote{font-size:6.8pt;color:var(--ink2);margin-top:1.6mm}
-  .phases{display:grid;grid-template-columns:repeat(3,1fr);gap:3.2mm}
-  .p{border-top:1px solid var(--ink);padding-top:1.6mm}
-  .p .d{font-family:Newsreader,serif;font-size:10.8pt;font-weight:600}
-  .p .d span{font-family:Inter;font-size:6.6pt;color:var(--mute);font-weight:500;margin-left:1mm;letter-spacing:.04em}
-  .p ul{list-style:none;margin-top:1mm}
-  .p li{padding-left:2.6mm;position:relative;margin-bottom:.7mm;color:var(--ink2)}
-  .p li:before{content:"";position:absolute;left:0;top:1.6mm;width:1.2mm;height:1px;background:var(--bronze)}
-  .p .mk{margin-top:1.2mm;background:#FFFDF9;border:1px solid var(--line);padding:1.1mm 1.8mm;font-size:7.2pt}
-  .p .mk b{color:var(--bronze)}
-  .ctrl{margin-top:2.2mm;font-size:7.1pt;color:var(--ink2);display:grid;grid-template-columns:22mm 1fr;gap:2mm}
-  .ctrl b{color:var(--ink)}
-  .decision{margin-top:auto;background:var(--ink);color:var(--paper);padding:3mm 4mm;display:grid;grid-template-columns:24mm 1fr;gap:3mm;align-items:center}
-  .decision .eyebrow{color:#C9A77C}
-  .decision p{font-family:Newsreader,serif;font-size:10.4pt;line-height:1.28}
-  .decision p b{color:#E2C9A3;font-weight:600}
-  .foot{font-size:6pt;color:var(--mute);margin-top:1.8mm;line-height:1.35}
+  .thesis{margin-top:6mm;font-size:15pt;font-weight:600;line-height:1.25;letter-spacing:-.01em}
+  .thesis em{font-style:normal;color:var(--bronze)}
+  h2{font-size:8pt;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--mute);margin:7mm 0 2.6mm}
+  .src{display:grid;grid-template-columns:repeat(3,1fr);gap:3.5mm}
+  .s{background:#FFFDF9;border:1px solid var(--line);border-top:3px solid var(--bronze);padding:3.5mm}
+  .s .k{font-size:8pt;color:var(--mute);font-weight:600;letter-spacing:.06em}
+  .s h3{font-size:13pt;font-weight:700;margin:1mm 0 1.6mm;letter-spacing:-.01em}
+  .s p{color:var(--ink2);font-size:9.6pt}
+  .s .out{margin-top:2.6mm;font-size:9.5pt;font-weight:700;color:var(--bronze)}
+  .funnel{display:grid;grid-template-columns:repeat(9,auto);align-items:center;justify-content:space-between}
+  .st{text-align:center}
+  .st .n{font-size:24pt;font-weight:700;letter-spacing:-.02em;line-height:1}
+  .st .l{font-size:8.5pt;color:var(--ink2);margin-top:1mm;text-transform:uppercase;letter-spacing:.06em}
+  .st.last .n{color:var(--bronze)}
+  .ar{text-align:center;color:var(--bronze);font-size:8.5pt;font-weight:700}
+  .ar:before{content:"→";display:block;font-size:14pt;font-weight:300;color:var(--mute);line-height:1}
+  .warn{margin-top:4mm;font-size:10.5pt;font-weight:600;border-left:3px solid var(--alert);padding:1mm 0 1mm 3mm}
+  .warn span{color:var(--alert)}
+  .team{display:grid;grid-template-columns:repeat(4,1fr);gap:3.5mm}
+  .t{border-top:1px solid var(--ink);padding-top:2mm}
+  .t .n{font-size:30pt;font-weight:700;color:var(--bronze);line-height:1;letter-spacing:-.02em}
+  .t .nm{font-size:11pt;font-weight:700;margin-top:1mm}
+  .t .d{font-size:8.5pt;color:var(--ink2);margin-top:.6mm}
+  .phases{display:grid;grid-template-columns:repeat(3,1fr);gap:3.5mm}
+  .p{background:var(--soft);padding:3.2mm 3.5mm}
+  .p .d{font-size:8pt;color:var(--ink2);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+  .p .a{font-size:10pt;margin:1.4mm 0 2mm}
+  .p .m{font-size:12pt;white-space:nowrap;font-weight:700;color:var(--bronze);letter-spacing:-.01em}
+  .decision{margin-top:auto;background:var(--ink);color:var(--paper);padding:4.5mm 5mm;display:flex;gap:5mm;align-items:center}
+  .decision .eyebrow{color:#C9A77C;white-space:nowrap}
+  .decision p{font-size:11pt;white-space:nowrap;font-weight:500;line-height:1.3}
+  .decision b{color:#E2C9A3;font-weight:700}
+  .foot{font-size:7pt;color:var(--mute);margin-top:2mm;line-height:1.35}
 </style>
 </head>
 <body>
 
-<header>
-  <div>
-    <div class="eyebrow">DAJ Empreendimentos · Plano de virada comercial · 16 a 29/10/2026</div>
-    <h1>THE ONE <b>|</b> OPERAÇÃO 20 VENDAS</h1>
-  </div>
-  <div class="hrow">
-  <div class="sub">14 dias para transformar patrimônio imobiliário em oportunidades comerciais.</div>
-  <div class="kpis">
-    <div class="kpi hl"><div class="n">20</div><div class="l">vendas</div></div>
-    <div class="kpi"><div class="n">14</div><div class="l">dias</div></div>
-    <div class="kpi"><div class="n">1.900</div><div class="l">contatos potenciais</div></div>
-    <div class="kpi"><div class="n">150</div><div class="l">visitas necessárias</div></div>
-  </div>
-  </div>
-</header>
+<div class="eyebrow">DAJ Empreendimentos · 16 a 29/10/2026</div>
+<h1>THE ONE <span>|</span> OPERAÇÃO 20 VENDAS</h1>
+<div class="sub">14 dias para transformar patrimônio imobiliário em vendas.</div>
 
-<div class="rule"></div>
-
-<div class="thesis">
-  <div class="eyebrow">A tese da virada</div>
-  <p>Não vamos disputar quem procura apartamento. Vamos procurar <em>quem já tem imóvel</em> e oferecer uma conta que ninguém fez com ele: <em>quanto o patrimônio dele rende de verdade hoje</em>, e o que fazer com isso.</p>
+<div class="kpis">
+  <div class="kpi hl"><div class="n">20</div><div class="l">vendas</div></div>
+  <div class="kpi"><div class="n">14</div><div class="l">dias</div></div>
+  <div class="kpi"><div class="n">1.900</div><div class="l">proprietários</div></div>
+  <div class="kpi"><div class="n">150</div><div class="l">visitas necessárias</div></div>
 </div>
 
-<section>
-  <h2><span>01</span> Como vamos gerar vendas: três fontes, três velocidades</h2>
-  <div class="mechs">
-    <div class="m">
-      <div class="tag">Fecha nos 14 dias · todos, Lucas lidera</div>
-      <h3>Repescagem com prazo</h3>
-      <p><strong>Quem:</strong> leads, visitantes e propostas não fechadas dos últimos 12 meses. Já conhecem o produto: ciclo curto.</p>
-      <p><strong>Motivo para voltar:</strong> condição de outubro válida até 29/10, com lote limitado de unidades.</p>
-      <p><strong>Conversão:</strong> o executivo que atendeu liga e convida para revisita com proposta já simulada.</p>
-      <div class="q">100% contatada em 48h. Fonte das primeiras assinaturas.</div>
-    </div>
-    <div class="m">
-      <div class="tag">Gera visitas a partir do D3 · Gabriel e Ellen</div>
-      <h3>Diagnóstico de Renda Imobiliária</h3>
-      <p>Aos 1.900 proprietários oferecemos um <strong>laudo gratuito de uma página</strong>, não o apartamento.</p>
-      <div class="aud">
-        <div><b>Alugado</b><span>“Quanto sobra líquido após IR, vacância e manutenção?” Comparado a outras alternativas.</span></div>
-        <div><b>À venda</b><span>“Para onde vai o recurso?” Entrada casada com a data da venda dele.</span></div>
-        <div><b>Geminadas</b><span>Gestão, liquidez e ticket: casa × studio operado no Palhano.</span></div>
-      </div>
-      <div class="q"><b>Qualificação:</b> recurso em até 90 dias? horizonte de 3+ anos? quem decide? Sem 2 sins, vai para nutrição.</div>
-    </div>
-    <div class="m">
-      <div class="tag">9 vendas · Rodrigo, Imobi</div>
-      <h3>A carteira de locação dos parceiros</h3>
-      <p><strong>Quem:</strong> 15 imobiliárias que administram locação e já têm relação e consentimento de centenas de proprietários.</p>
-      <p><strong>Como:</strong> o parceiro oferece o Diagnóstico à própria carteira; a DAJ entrega laudo, stand e fechamento.</p>
-      <p><strong>Motivo do corretor:</strong> bônus por venda assinada até 29/10.</p>
-      <div class="q">Meta: 30 corretores com cliente em visita até o D7.</div>
-    </div>
-  </div>
-</section>
+<div class="thesis">Não oferecemos apartamento. Oferecemos a <em>quem já tem imóvel</em> um laudo grátis de <em>quanto o patrimônio dele rende de verdade</em>.</div>
 
-<section class="row2">
-  <div>
-    <h2><span>02</span> Funil reverso: o caminho matemático</h2>
-    <div class="funnel">
-      <div class="f"><div class="lab">Abordagens</div><div class="bar" style="width:100%">3.000</div><div class="rate">20% atendem</div></div>
-      <div class="f"><div class="lab">Conversas efetivas</div><div class="bar" style="width:70%">600</div><div class="rate">25% agendam</div></div>
-      <div class="f"><div class="lab">Visitas realizadas</div><div class="bar" style="width:44%">150</div><div class="rate">40% recebem proposta</div></div>
-      <div class="f"><div class="lab">Propostas</div><div class="bar" style="width:27%">60</div><div class="rate">33% fecham</div></div>
-      <div class="f last"><div class="lab">Vendas</div><div class="bar" style="width:15%">20</div><div class="rate"></div></div>
-    </div>
-    <div class="fnote"><b>Leitura honesta.</b> Taxas são hipóteses, não histórico DAJ; medidas desde o D2. Os 1.900 não cobrem 3.000 abordagens: o restante vem da repescagem e das carteiras Imobi. <b>Gargalo:</b> no ritmo atual (≈3 visitas/semana por vendedor) o House faria ≈18 visitas e ≈2 vendas. A meta exige ~3× esse ritmo.</div>
-  </div>
-  <div>
-    <h2><span>03</span> Distribuição e esforço por executivo</h2>
-    <table>
-      <tr><th style="width:32%">Executivo</th><th style="width:13%">Vendas</th><th style="width:17%">Propostas</th><th style="width:14%">Visitas</th><th>Por dia*</th></tr>
-      <tr><td>Gabriel <span class="c">House</span></td><td class="v">5</td><td>15</td><td>38</td><td>3,2</td></tr>
-      <tr><td>Ellen <span class="c">House</span></td><td class="v">5</td><td>15</td><td>38</td><td>3,2</td></tr>
-      <tr><td>Lucas <span class="c">House · novo</span></td><td class="v">1</td><td>3</td><td>8</td><td>0,7</td></tr>
-      <tr><td>Rodrigo <span class="c">Imobi</span></td><td class="v">9</td><td>27</td><td>68</td><td style="white-space:nowrap">~30 corretores</td></tr>
-      <tr class="tot"><td>Total</td><td class="v">20</td><td>60</td><td>152</td><td></td></tr>
-    </table>
-    <div class="tnote">*12 dias de visita; 55 abordagens/dia por executivo House. <b>Divergência:</b> a meta House citada é 15, mas a distribuição soma 11. Base do plano: 11 + 9. Com 15 House seriam 24 vendas: +12 propostas e +30 visitas, sem capacidade hoje.</div>
-  </div>
-</section>
+<h2>De onde vêm as vendas</h2>
+<div class="src">
+  <div class="s"><div class="k">1 · TODOS</div><h3>Base antiga</h3><p>Leads e propostas dos últimos 12 meses. Condição válida até 29/10.</p><div class="out">→ Primeiras assinaturas</div></div>
+  <div class="s"><div class="k">2 · GABRIEL E ELLEN</div><h3>1.900 proprietários</h3><p>Alugam, vendem ou têm geminadas. O laudo grátis abre a reunião.</p><div class="out">→ Volume de visitas</div></div>
+  <div class="s"><div class="k">3 · RODRIGO</div><h3>Imobiliárias parceiras</h3><p>15 parceiras levam o laudo à própria carteira de locação. Bônus por venda.</p><div class="out">→ 9 vendas</div></div>
+</div>
 
-<section>
-  <h2><span>04</span> Execução em três fases</h2>
-  <div class="phases">
-    <div class="p">
-      <div class="d">D1–D2 <span>16–17/10 · primeiras conversas</span></div>
-      <ul>
-        <li>Base quente em lista única; cada um liga para os próprios clientes.</li>
-        <li>Diagnóstico, lote 1: 300 imóveis anunciados à venda.</li>
-        <li>Rodrigo apresenta o kit Diagnóstico a 10 imobiliárias.</li>
-      </ul>
-      <div class="mk">Marco D2: <b>25 visitas agendadas</b> para D3–D7.</div>
-    </div>
-    <div class="p">
-      <div class="d">D3–D7 <span>18–22/10 · volume de visitas</span></div>
-      <ul>
-        <li>165 abordagens/dia; laudo entregue só na reunião.</li>
-        <li>Agenda única em horários fixos; toda visita sai com proposta simulada.</li>
-        <li>15 imobiliárias ativas; corretor sem cliente em 72h é substituído.</li>
-      </ul>
-      <div class="mk">Marco D7: <b>80 visitas · 30 propostas</b>.</div>
-    </div>
-    <div class="p">
-      <div class="d">D8–D14 <span>23–29/10 · fechamento</span></div>
-      <ul>
-        <li>Manhã do Investidor (sáb 24/10), só por convite.</li>
-        <li>Revisão diária de cada proposta: objeção, decisor, data.</li>
-        <li>Quem não fechar segue em novembro, sem tirar foco do The View.</li>
-      </ul>
-      <div class="mk">Marco D14: <b>60 propostas e 20 assinaturas</b>.</div>
-    </div>
-  </div>
-  <div class="ctrl"><b>Pontos de controle</b><span>Reunião diária de 15 min às 8h30, só números. Correção no D2, D5 e D8: conversa &lt;12% em 200 contatos → trocar roteiro/segmento; visita→proposta &lt;30% → rever condução e condição; &lt;40 visitas até o D5 → todos para repescagem e Imobi.</span></div>
-</section>
+<h2>O caminho até 20</h2>
+<div class="funnel">
+  <div class="st"><div class="n">3.000</div><div class="l">abordagens</div></div>
+  <div class="ar">20%</div>
+  <div class="st"><div class="n">600</div><div class="l">conversas</div></div>
+  <div class="ar">25%</div>
+  <div class="st"><div class="n">150</div><div class="l">visitas</div></div>
+  <div class="ar">40%</div>
+  <div class="st"><div class="n">60</div><div class="l">propostas</div></div>
+  <div class="ar">33%</div>
+  <div class="st last"><div class="n">20</div><div class="l">vendas</div></div>
+</div>
+<div class="warn">Ritmo atual: ~18 visitas = ~2 vendas. <span>A meta exige 3× mais visitas.</span></div>
+
+<h2>Quem entrega</h2>
+<div class="team">
+  <div class="t"><div class="n">5</div><div class="nm">Gabriel</div><div class="d">House · 38 visitas</div></div>
+  <div class="t"><div class="n">5</div><div class="nm">Ellen</div><div class="d">House · 38 visitas</div></div>
+  <div class="t"><div class="n">1</div><div class="nm">Lucas</div><div class="d">House · 8 visitas</div></div>
+  <div class="t"><div class="n">9</div><div class="nm">Rodrigo</div><div class="d">Imobi · ~30 corretores</div></div>
+</div>
+
+<h2>14 dias</h2>
+<div class="phases">
+  <div class="p"><div class="d">D1–D2 · 16–17/10</div><div class="a">Ligar para toda a base antiga</div><div class="m">25 visitas agendadas</div></div>
+  <div class="p"><div class="d">D3–D7 · 18–22/10</div><div class="a">Laudos e visitas todo dia</div><div class="m">80 visitas · 30 propostas</div></div>
+  <div class="p"><div class="d">D8–D14 · 23–29/10</div><div class="a">Só fechamento</div><div class="m">20 assinaturas</div></div>
+</div>
 
 <div class="decision">
-  <div class="eyebrow">Decisão hoje</div>
-  <p>Autorizar hoje: <b>condição de outubro até 29/10</b> (com entrada casada à venda do imóvel do cliente), <b>bônus por venda ao corretor parceiro</b> e <b>base histórica de leads</b> + 1 pessoa do marketing por 10 dias no primeiro contato.</p>
+  <div class="eyebrow">Aprovar hoje</div>
+  <p><b>Condição até 29/10</b> · <b>bônus ao corretor parceiro</b> · <b>acesso à base de leads</b></p>
 </div>
-<div class="foot">Sem promessa de rentabilidade ou valorização: o laudo compara cenários com premissas declaradas. Contatos só de origem legítima, com identificação da fonte e opção de não receber novos contatos (LGPD, legítimo interesse documentado). Sorteio exige autorização prévia da SPA/MF (Lei 5.768/71) e não cabe no prazo. Por isso, foi substituído por encontros por convite, sem prêmio, com parceiros (associações profissionais e cooperativas).</div>
+<div class="foot">Taxas do funil são hipóteses, revisadas no D2, D5 e D8. Sem promessa de rentabilidade. Contatos com origem legítima e opção de saída (LGPD). Distribuição usa 11 House + 9 Imobi; com 15 House a meta vira 24 vendas.</div>
 
 </body>
 </html>

@@ -703,15 +703,31 @@ const FONT_ALIAS = {
   aptos: "Inter", "aptos display": "Inter", "aptos light": "Inter", "century gothic": "Questrial", "gill sans": "Lato", "gill sans mt": "Lato",
   futura: "Jost", avenir: "Nunito Sans", "avenir next": "Nunito Sans", verdana: "DejaVu Sans", tahoma: "PT Sans", garamond: "EB Garamond", georgia: "Gelasio",
 };
-const fontStack = name => { const a = FONT_ALIAS[name.toLowerCase()]; return `"${name}"${a ? `, "${a}"` : ""}, Inter, system-ui, sans-serif`; };
+/** "Jost Light", "Montserrat SemiBold"…: no PowerPoint o peso vem no nome; no Google Fonts é a família "Jost" com peso 300. */
+const PESOS = { thin: 100, hairline: 100, extralight: 200, ultralight: 200, light: 300, regular: 400, book: 400, medium: 500, semibold: 600, demibold: 600, bold: 700, extrabold: 800, ultrabold: 800, black: 900, heavy: 900 };
+function familia(name) {
+  const m = name.match(/^(.+?)\s+(thin|hairline|extra ?light|ultra ?light|light|regular|book|medium|semi ?bold|demi ?bold|bold|extra ?bold|ultra ?bold|black|heavy)$/i);
+  return m ? { base: m[1], peso: PESOS[m[2].replace(/ /g, "").toLowerCase()] } : { base: name, peso: 0 };
+}
+const fontStack = name => {
+  const { base } = familia(name), a = FONT_ALIAS[name.toLowerCase()] || FONT_ALIAS[base.toLowerCase()];
+  return `"${name}"${base !== name ? `, "${base}"` : ""}${a ? `, "${a}"` : ""}, Inter, system-ui, sans-serif`;
+};
 function loadFonts(names) {
-  const fams = [...new Set(names.map(n => FONT_ALIAS[n.toLowerCase()] || n))].filter(f => /^[\w .-]+$/.test(f) && f !== "Inter");
+  const fams = [...new Set(names.map(n => { const b = familia(n).base; return FONT_ALIAS[b.toLowerCase()] || b; }))].filter(f => /^[\w .-]+$/.test(f) && f !== "Inter");
   for (const f of fams) {
     const fam = f.trim().replace(/ +/g, "+");
+    // todos os pesos se a fonte tiver; senão os comuns; senão o que houver
+    const urls = [
+      `https://fonts.googleapis.com/css2?family=${fam}:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap`,
+      `https://fonts.googleapis.com/css2?family=${fam}:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,700&display=swap`,
+      `https://fonts.googleapis.com/css2?family=${fam}&display=swap`,
+    ];
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = `https://fonts.googleapis.com/css2?family=${fam}:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,700&display=swap`;
-    link.onerror = () => { link.onerror = null; link.href = `https://fonts.googleapis.com/css2?family=${fam}&display=swap`; };
+    let k = 0;
+    link.href = urls[0];
+    link.onerror = () => { if (++k < urls.length) link.href = urls[k]; else link.onerror = null; };
     document.head.appendChild(link);
   }
 }
@@ -729,7 +745,11 @@ function runStyle(r, p, e) {
   if (r.caps) e.style.textTransform = "uppercase";
   if (r.spc) e.style.letterSpacing = px(r.spc);
   if (r.color) e.style.color = r.color;
-  if (r.font) e.style.fontFamily = fontStack(r.font);
+  if (r.font) {
+    e.style.fontFamily = fontStack(r.font);
+    const { peso } = familia(r.font);
+    if (peso && !r.b) e.style.fontWeight = String(peso);
+  }
   if (r.sup) e.style.verticalAlign = "super";
   if (r.sub) e.style.verticalAlign = "sub";
 }

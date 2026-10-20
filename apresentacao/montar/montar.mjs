@@ -42,7 +42,8 @@ function playwright() {
 
 async function importar(arquivo) {
   const { chromium } = playwright();
-  const browser = await chromium.launch(process.env.PLAYWRIGHT_BROWSERS_PATH ? {} : { executablePath: "/opt/pw-browsers/chromium" });
+  // o Chromium da versão do Playwright do projeto pode não estar baixado: usa o que já existe na máquina
+  const browser = await chromium.launch().catch(() => chromium.launch({ executablePath: process.env.CHROMIUM_PATH || "/opt/pw-browsers/chromium" }));
   try {
     const page = await browser.newPage();
     page.on("pageerror", e => console.error("[chromium]", e.message));

@@ -1,5 +1,5 @@
 // Guarda o app para abrir rápido e funcionar sem internet (menos a inteligência completa).
-const CACHE = "impossible-v2";
+const CACHE = "impossible-v3";
 const CASCA = ["./", "./index.html", "./manifest.webmanifest", "./marca/icone.svg"];
 
 self.addEventListener("install", (e) => {

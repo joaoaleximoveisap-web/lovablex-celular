@@ -12,168 +12,243 @@
 <link rel="apple-touch-icon" href="marca/icone.svg">
 <link rel="icon" href="marca/icone.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap">
 <style>
-  /* Pensado para quem nunca mexeu em celular: letra grande, botões enormes,
-     uma decisão por tela, sempre um "Voltar" visível, nada escondido em gestos. */
+  /* Feito para qualquer idade: letra grande, áreas de toque generosas, uma decisão
+     por tela, navegação sempre à vista embaixo e "Voltar" no topo das telas internas. */
   :root {
-    --fundo: #f3eee5; --cartao: #fffdf9; --texto: #141414; --suave: #4d4a45;
-    --linha: #d8cfc0; --marca: #141414; --marca-txt: #f6f1e8; --ouro: #b4531f;
-    --ouro-fundo: #f4e2d3; --verde: #1f6b45; --verde-fundo: #dcefe2;
-    --alerta: #9a4a12; --alerta-fundo: #fbe7d4; --sombra: 0 2px 0 rgba(20,20,20,.06), 0 6px 18px rgba(20,20,20,.08);
-    --raio: 18px; --serifa: "Playfair Display", "Didot", "Bodoni 72", Georgia, "Times New Roman", serif;
+    --fundo: #f4f0e8; --cartao: #fffdf9; --tom: #ebe4d7; --tom-2: #e3dacb;
+    --texto: #161513; --suave: #5b564e; --linha: #e2d9ca;
+    --marca: #161513; --marca-txt: #f6f1e8; --marca-suave: #c9c1b4;
+    --acento: #a94c1a; --acento-fundo: #f5e3d4;
+    --ok: #2c6646; --ok-fundo: #e1efe5; --alerta: #94440f; --alerta-fundo: #f8e6d6;
+    --sombra: 0 1px 2px rgba(22,21,19,.05), 0 10px 28px rgba(22,21,19,.07);
+    --raio: 22px; --abas: 78px;
+    --serifa: "Playfair Display", Georgia, "Times New Roman", serif;
+    --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --fundo: #0d0d0d; --cartao: #1a1a1a; --texto: #f4efe6; --suave: #bdb6aa; --linha: #34312c;
-      --marca: #f4efe6; --marca-txt: #0d0d0d; --ouro: #ee8a4f; --ouro-fundo: #3a2416;
-      --verde: #7fd6a4; --verde-fundo: #183526; --alerta: #f3b483; --alerta-fundo: #3d2616;
-      --sombra: 0 2px 0 rgba(0,0,0,.3);
+      --fundo: #0f0e0d; --cartao: #1b1a18; --tom: #26241f; --tom-2: #2f2c27;
+      --texto: #f4efe6; --suave: #bab3a7; --linha: #302d28;
+      --marca: #f4efe6; --marca-txt: #0f0e0d; --marca-suave: #4a463f;
+      --acento: #ef9257; --acento-fundo: #3a2416; --ok: #8fd1aa; --ok-fundo: #173323; --alerta: #f3b483; --alerta-fundo: #3d2616;
+      --sombra: 0 1px 2px rgba(0,0,0,.4);
     }
   }
   :root[data-theme="dark"] {
-    --fundo: #0d0d0d; --cartao: #1a1a1a; --texto: #f4efe6; --suave: #bdb6aa; --linha: #34312c;
-    --marca: #f4efe6; --marca-txt: #0d0d0d; --ouro: #ee8a4f; --ouro-fundo: #3a2416;
-    --verde: #7fd6a4; --verde-fundo: #183526; --alerta: #f3b483; --alerta-fundo: #3d2616;
-    --sombra: 0 2px 0 rgba(0,0,0,.3);
+    --fundo: #0f0e0d; --cartao: #1b1a18; --tom: #26241f; --tom-2: #2f2c27;
+    --texto: #f4efe6; --suave: #bab3a7; --linha: #302d28;
+    --marca: #f4efe6; --marca-txt: #0f0e0d; --marca-suave: #4a463f;
+    --acento: #ef9257; --acento-fundo: #3a2416; --ok: #8fd1aa; --ok-fundo: #173323; --alerta: #f3b483; --alerta-fundo: #3d2616;
+    --sombra: 0 1px 2px rgba(0,0,0,.4);
   }
-  html[data-letra="1"] { font-size: 18px; }
-  html[data-letra="2"] { font-size: 21px; }
-  html[data-letra="3"] { font-size: 25px; }
+  html[data-letra="1"] { font-size: 17px; }
+  html[data-letra="2"] { font-size: 19px; }
+  html[data-letra="3"] { font-size: 23px; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; background: var(--fundo); color: var(--texto); overflow-x: hidden; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.45;
-    -webkit-font-smoothing: antialiased; }
-  button, input, textarea, select { font: inherit; color: inherit; }
-  button { cursor: pointer; }
+  body { font-family: var(--sans); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; background: none; border: 0; padding: 0; text-align: inherit; }
   [hidden] { display: none !important; }
   img { max-width: 100%; display: block; }
+  h1, h2, h3, p { margin: 0; }
+  .i { flex: none; display: block; }
+  :focus-visible { outline: 3px solid var(--acento); outline-offset: 3px; border-radius: 12px; }
 
-  .app { max-width: 560px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column;
-    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
-  .topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px;
-    padding: 12px 16px; background: var(--fundo); border-bottom: 2px solid var(--linha); }
-  .topo h1 { margin: 0; font-size: 1.15rem; flex: 1; min-width: 0; line-height: 1.2; }
-  .voltar { min-height: 56px; padding: 0 18px; border-radius: 16px; border: 2px solid var(--marca);
-    background: var(--cartao); font-weight: 700; font-size: 1rem; color: var(--marca); flex: none; }
-  .conteudo { flex: 1; padding: 18px 16px 40px; display: flex; flex-direction: column; gap: 16px; }
+  .app { max-width: 560px; margin: 0 auto; min-height: 100dvh; padding-top: env(safe-area-inset-top); }
+  .tela { min-height: 100dvh; display: flex; flex-direction: column; }
+  .tela.com-abas { padding-bottom: calc(var(--abas) + env(safe-area-inset-bottom) + 24px); }
+  .anima-avanca { animation: daDireita .32s cubic-bezier(.2,.8,.2,1); }
+  .anima-volta { animation: daEsquerda .32s cubic-bezier(.2,.8,.2,1); }
+  .anima-aba { animation: surge .25s ease; }
+  @keyframes daDireita { from { transform: translateX(28px); opacity: .4; } to { transform: none; opacity: 1; } }
+  @keyframes daEsquerda { from { transform: translateX(-28px); opacity: .4; } to { transform: none; opacity: 1; } }
+  @keyframes surge { from { opacity: .3; } to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .anima-avanca, .anima-volta, .anima-aba, .digitando i { animation: none !important; } }
 
-  h2 { font-size: 1.55rem; line-height: 1.15; margin: 6px 0 0; font-family: var(--serifa); font-weight: 700; letter-spacing: -.2px; }
-  .topo h1, .veredito, .marca-nome { font-family: var(--serifa); }
-  .marca-nome { font-size: 2.3rem; line-height: 1; margin: 0; font-style: italic; font-weight: 600; letter-spacing: -.5px; }
-  .marca-por { font-size: .8rem; letter-spacing: 3px; text-transform: uppercase; color: var(--suave); }
-  .frase { font-family: var(--serifa); font-size: 1.25rem; line-height: 1.35; font-style: italic; }
-  .frase cite { display: block; margin-top: 8px; font-family: inherit; font-style: normal; font-size: .8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--ouro); }
-  .manifesto { background: var(--marca); color: var(--marca-txt); border-radius: var(--raio); padding: 22px 20px; }
-  .traco { width: 48px; height: 3px; background: var(--ouro); margin: 12px 0; }
-  p { margin: 0; }
+  /* topo das telas */
+  .cabeca { position: sticky; top: 0; z-index: 6; display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    background: color-mix(in srgb, var(--fundo) 92%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .cabeca h1 { flex: 1; min-width: 0; font-size: 1.05rem; font-weight: 600; line-height: 1.25; }
+  .voltar { display: flex; align-items: center; gap: 4px; min-height: 52px; padding: 0 16px 0 10px; border-radius: 999px;
+    background: var(--cartao); box-shadow: var(--sombra); font-weight: 600; font-size: .95rem; }
+  .cabeca-raiz { padding: 22px 20px 6px; display: flex; align-items: center; gap: 14px; }
+  .cabeca-raiz .textos { flex: 1; min-width: 0; }
+  .cabeca-raiz h1 { font-family: var(--serifa); font-size: 1.9rem; line-height: 1.1; font-weight: 600; }
+  .cabeca-raiz p { color: var(--suave); font-size: .9rem; margin-top: 4px; }
+
+  .conteudo { flex: 1; padding: 12px 16px 28px; display: flex; flex-direction: column; gap: 16px; }
+  .sobre { font-size: .72rem; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase; color: var(--acento); }
   .suave { color: var(--suave); }
   .centro { text-align: center; }
+  .titulo { font-family: var(--serifa); font-size: 1.55rem; line-height: 1.15; font-weight: 600; }
+  .secao { font-family: var(--serifa); font-size: 1.3rem; font-weight: 600; margin: 10px 4px -4px; }
 
-  /* botões grandes */
-  .btn { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%;
-    min-height: 72px; padding: 14px 20px; border-radius: var(--raio); border: 0; font-weight: 700;
-    font-size: 1.1rem; background: var(--marca); color: var(--marca-txt); box-shadow: var(--sombra); text-align: center; }
-  .btn.claro { background: var(--cartao); color: var(--marca); border: 2px solid var(--marca); box-shadow: none; }
-  .btn.ouro { background: var(--ouro); color: #fff; }
-  .btn .ico { font-size: 1.5rem; line-height: 1; }
-  .btn:active, .opcao:active, .menu:active { transform: scale(.98); }
+  /* cards */
+  .card { background: var(--cartao); border-radius: var(--raio); box-shadow: var(--sombra); padding: 20px; display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .card h3 { font-size: 1.08rem; font-weight: 600; line-height: 1.3; }
+  .card.escuro { background: var(--marca); color: var(--marca-txt); }
+  .card.escuro .sobre { color: var(--acento); }
+  .card.acento { background: var(--acento-fundo); box-shadow: none; }
+  .card.ok { background: var(--ok-fundo); box-shadow: none; }
+  .card.atencao { background: var(--alerta-fundo); box-shadow: none; }
+  button.card { transition: transform .15s ease; }
+  button.card:active, .btn:active, .item:active, .opcao:active, .aba:active { transform: scale(.98); }
+
+  .circulo { width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; background: var(--tom); color: var(--texto); flex: none; }
+  .circulo.acento { background: var(--acento); color: #fff; }
+  .circulo.pequeno { width: 46px; height: 46px; border-radius: 14px; }
+  .atalho-grande { flex-direction: row; align-items: center; gap: 16px; padding: 18px; min-height: 96px; }
+  .atalho-grande .texto, .item .texto { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .atalho-grande b { font-size: 1.08rem; line-height: 1.3; }
+  .atalho-grande small, .atalho small, .item small { color: var(--suave); font-size: .86rem; line-height: 1.35; }
+  .grade-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grade-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .atalho { gap: 12px; padding: 18px; min-height: 150px; justify-content: flex-start; }
+  .atalho b { font-size: 1rem; line-height: 1.25; }
+
+  /* lista dentro de um card */
+  .lista { padding: 6px; gap: 0; }
+  .item { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 72px; padding: 10px 12px; border-radius: 16px; }
+  .item + .item { border-top: 1px solid var(--linha); border-radius: 0 0 16px 16px; }
+  .item b { font-weight: 600; font-size: 1rem; line-height: 1.3; }
+  .item .seta { color: var(--suave); }
+
+  /* olá */
+  .ola { display: flex; align-items: flex-start; gap: 12px; padding: 18px 4px 4px; }
+  .ola > div { flex: 1; }
+  .data { color: var(--suave); font-size: .9rem; }
+  .titulo-grande { font-family: var(--serifa); font-size: 2.05rem; line-height: 1.08; font-weight: 600; margin-top: 4px; }
+  .avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--marca); color: var(--marca-txt); display: grid; place-items: center;
+    font-family: var(--serifa); font-size: 1.4rem; font-weight: 600; flex: none; }
+
+  /* look do dia */
+  .destaque-look { gap: 14px; padding: 22px; text-align: left; }
+  .mini-quadro { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .mini-tile { aspect-ratio: 1; border-radius: 16px; background: rgba(255,255,255,.08); display: grid; place-items: center; overflow: hidden; }
+  .mini-tile img { width: 100%; height: 100%; object-fit: cover; }
+  .frase-look { font-family: var(--serifa); font-size: 1.25rem; line-height: 1.3; }
+  .link-claro { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--marca-txt); opacity: .9; }
+
+  /* desenhos e fotos das peças */
+  .roupa { width: 82%; height: 82%; }
+  .tile { aspect-ratio: 1; background: var(--tom); border-radius: 18px; display: grid; place-items: center; overflow: hidden; }
+  .tile img { width: 100%; height: 100%; object-fit: cover; }
+  .tile.grande { border-radius: var(--raio); }
+  .peca { background: var(--cartao); border-radius: 20px; box-shadow: var(--sombra); padding: 8px; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+  .peca .nome { padding: 0 6px 6px; font-weight: 600; font-size: .9rem; line-height: 1.25; }
+  .pecas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .quadro { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tile-look { background: var(--cartao); border-radius: 20px; box-shadow: var(--sombra); padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+  .tile-look .legenda { padding: 0 6px 8px; display: flex; flex-direction: column; gap: 4px; }
+  .tile-look small { color: var(--suave); font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; }
+  .tile-look b { font-size: .95rem; line-height: 1.25; }
+  .tile-look.falta .tile { background: repeating-linear-gradient(135deg, var(--tom) 0 10px, var(--tom-2) 10px 20px); }
+  .chip { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: .75rem; font-weight: 600; background: var(--tom); }
+  .chip-ok { background: var(--ok-fundo); color: var(--ok); }
+  .chip-acento { background: var(--acento-fundo); color: var(--acento); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips .chip { font-size: .85rem; padding: 8px 14px; }
+
+  /* botões */
+  .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 64px; padding: 12px 20px;
+    border-radius: 18px; font-weight: 600; font-size: 1.02rem; background: var(--marca); color: var(--marca-txt); text-align: center; }
+  .btn.claro { background: var(--cartao); color: var(--texto); box-shadow: inset 0 0 0 2px var(--linha); }
+  .btn.acento { background: var(--acento); color: #fff; }
   .btn[disabled] { opacity: .5; }
+  .acoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .acoes .btn { font-size: .95rem; padding: 10px 12px; gap: 8px; }
+  .btn-texto { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--acento); min-height: 44px; }
+  .btn-ouvir { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 16px; border-radius: 999px; background: var(--tom); font-weight: 600; font-size: .9rem; flex: none; }
+  .linha-titulo { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 
-  /* cartões do menu principal */
-  .menu { display: flex; align-items: center; gap: 16px; width: 100%; text-align: left; padding: 18px;
-    min-height: 104px; border-radius: var(--raio); background: var(--cartao); border: 2px solid var(--linha);
-    box-shadow: var(--sombra); }
-  .menu .ico { width: 64px; height: 64px; flex: none; border-radius: 18px; display: grid; place-items: center;
-    font-size: 2rem; background: var(--ouro-fundo); }
-  .menu b { display: block; font-size: 1.15rem; line-height: 1.25; }
-  .menu span { display: block; color: var(--suave); font-size: .9rem; margin-top: 2px; }
-  .menu.destaque { background: var(--marca); border-color: var(--marca); color: var(--marca-txt); }
-  .menu.destaque span { color: inherit; opacity: .85; }
-  .menu.destaque .ico { background: rgba(255,255,255,.16); }
+  /* veredito */
+  .veredito { flex-direction: row; align-items: flex-start; gap: 14px; }
+  .veredito .marcador { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--cartao); }
+  .veredito h2 { font-family: var(--serifa); font-size: 1.6rem; line-height: 1.15; font-weight: 600; margin-top: 2px; }
+  .veredito.ok .marcador { color: var(--ok); } .veredito.acento .marcador { color: var(--acento); } .veredito.atencao .marcador { color: var(--alerta); }
+  .foto { width: 100%; max-height: 46vh; object-fit: contain; border-radius: 18px; background: var(--tom); }
 
-  /* opções em grade (escolhas por toque, sem digitar) */
-  .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .grade.uma { grid-template-columns: 1fr; }
-  .opcao { min-height: 96px; border-radius: var(--raio); border: 3px solid var(--linha); background: var(--cartao);
-    padding: 12px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
-    font-weight: 700; font-size: 1rem; line-height: 1.2; text-align: center; }
-  .grade.uma .opcao { flex-direction: row; justify-content: flex-start; gap: 14px; min-height: 76px; padding: 12px 16px; text-align: left; }
-  .opcao .ico { font-size: 2rem; line-height: 1; }
-  .opcao small { font-weight: 500; color: var(--suave); font-size: .8rem; }
-  .opcao.marcada { border-color: var(--ouro); background: var(--ouro-fundo); }
-  .opcao.marcada::after { content: "✔"; color: var(--ouro); font-size: 1.2rem; }
-  .bola { width: 46px; height: 46px; border-radius: 50%; border: 2px solid rgba(0,0,0,.18); flex: none; }
-
-  .caixa { background: var(--cartao); border: 2px solid var(--linha); border-radius: var(--raio); padding: 18px; }
-  .caixa.ok { background: var(--verde-fundo); border-color: var(--verde); }
-  .caixa.atencao { background: var(--alerta-fundo); border-color: var(--alerta); }
-  .caixa.ouro { background: var(--ouro-fundo); border-color: var(--ouro); }
-  .caixa h3 { margin: 0 0 6px; font-size: 1.15rem; }
-  .caixa ul { margin: 6px 0 0; padding-left: 1.2em; }
-  .caixa li { margin: 4px 0; }
-  .veredito { font-size: 1.4rem; font-weight: 800; }
-
-  .foto-grande { width: 100%; max-height: 52vh; object-fit: contain; border-radius: var(--raio); background: var(--cartao);
-    border: 2px solid var(--linha); }
-  .passo { font-weight: 700; color: var(--ouro); font-size: .9rem; text-transform: uppercase; letter-spacing: .5px; }
-
-  /* peças (guarda-roupa e look) */
-  .pecas { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-  .peca { background: var(--cartao); border: 2px solid var(--linha); border-radius: 18px; overflow: hidden; text-align: left; padding: 0; }
-  .peca .img, .look .mini, .produto .mini { box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
-  .peca .img { aspect-ratio: 1; width: 100%; object-fit: cover; display: grid; place-items: center; font-size: 3rem; }
-  .peca .nome { padding: 8px 10px 10px; font-weight: 700; font-size: .9rem; line-height: 1.2; }
-  .look { display: flex; flex-direction: column; gap: 10px; }
-  .look .item { display: flex; gap: 14px; align-items: center; background: var(--cartao); border: 2px solid var(--linha);
-    border-radius: 18px; padding: 10px; }
-  .look .item.falta { border-style: dashed; border-color: var(--ouro); }
-  .look .mini { width: 84px; height: 84px; border-radius: 14px; object-fit: cover; flex: none; display: grid; place-items: center; font-size: 2.4rem; }
-  .look .item b { display: block; font-size: 1.05rem; line-height: 1.2; }
-  .look .item small { color: var(--suave); }
-  .etiqueta { display: inline-block; margin-top: 4px; padding: 2px 10px; border-radius: 999px; background: var(--ouro-fundo);
-    color: var(--texto); font-size: .78rem; font-weight: 700; }
-  .grupo-titulo { font-weight: 800; font-size: 1.1rem; margin: 8px 0 -4px; }
+  /* escolhas (perguntas e tipos de roupa) */
+  .progresso { height: 6px; border-radius: 6px; background: var(--tom); overflow: hidden; }
+  .progresso span { display: block; height: 100%; background: var(--acento); border-radius: 6px; transition: width .3s ease; }
+  .escolhas { display: flex; flex-direction: column; gap: 10px; }
+  .opcao { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 76px; padding: 14px 18px; border-radius: 18px;
+    background: var(--cartao); box-shadow: var(--sombra); text-align: left; }
+  .opcao .texto { flex: 1; display: flex; flex-direction: column; }
+  .opcao b { font-weight: 600; font-size: 1.02rem; line-height: 1.3; }
+  .opcao small { color: var(--suave); font-size: .85rem; }
+  .opcao .marca-opcao { width: 30px; height: 30px; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--linha); display: grid; place-items: center; flex: none; color: #fff; }
+  .opcao.marcada { box-shadow: inset 0 0 0 2px var(--acento), var(--sombra); }
+  .opcao.marcada .marca-opcao { background: var(--acento); box-shadow: none; }
+  .opcao-peca { background: var(--cartao); border-radius: 20px; box-shadow: var(--sombra); padding: 8px 8px 12px; display: flex; flex-direction: column; gap: 8px; align-items: stretch; text-align: center; }
+  .opcao-peca b { font-size: .85rem; line-height: 1.2; font-weight: 600; padding: 0 4px; }
+  .opcao-peca.marcada { box-shadow: inset 0 0 0 3px var(--acento), var(--sombra); }
+  .opcao-cor { background: var(--cartao); border-radius: 18px; box-shadow: var(--sombra); padding: 14px 6px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; min-height: 112px; }
+  .opcao-cor b { font-size: .8rem; line-height: 1.2; font-weight: 600; }
+  .opcao-cor.marcada { box-shadow: inset 0 0 0 3px var(--acento), var(--sombra); }
+  .amostra { width: 48px; height: 48px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.15); }
+  .sugerido { flex-direction: row; align-items: center; gap: 14px; }
+  .sugerido .tile { width: 92px; flex: none; }
 
   /* conversa */
-  .conversa { display: flex; flex-direction: column; gap: 12px; }
-  .bolha { max-width: 88%; padding: 14px 16px; border-radius: 20px; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .bolha.eu { align-self: flex-end; background: var(--marca); color: var(--marca-txt); border-bottom-right-radius: 6px; }
-  .bolha.ia { align-self: flex-start; background: var(--cartao); border: 2px solid var(--linha); border-bottom-left-radius: 6px; }
-  .bolha img { border-radius: 12px; margin-bottom: 8px; max-height: 220px; }
-  .bolha .ouvir { margin-top: 10px; min-height: 48px; padding: 0 16px; border-radius: 14px; border: 2px solid var(--linha);
-    background: var(--fundo); font-weight: 700; font-size: .9rem; }
-  .sugestoes { display: flex; flex-direction: column; gap: 10px; }
-  .sugestao { text-align: left; min-height: 60px; padding: 12px 16px; border-radius: 16px; border: 2px solid var(--linha);
-    background: var(--cartao); font-weight: 600; }
-  .escrever { position: sticky; bottom: 0; background: var(--fundo); padding: 10px 16px calc(12px + env(safe-area-inset-bottom));
-    border-top: 2px solid var(--linha); display: flex; flex-direction: column; gap: 10px; }
-  .escrever textarea { width: 100%; min-height: 64px; max-height: 160px; resize: none; padding: 14px 16px; border-radius: 16px;
-    border: 2px solid var(--linha); background: var(--cartao); font-size: 1.05rem; }
-  .escrever .linha { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 8px; }
-  .escrever .btn { min-height: 60px; font-size: .95rem; padding: 8px; gap: 6px; }
+  .conversa { display: flex; flex-direction: column; gap: 14px; padding-bottom: 150px; }
+  .msg { display: flex; gap: 10px; align-items: flex-end; max-width: 92%; }
+  .msg.eu { align-self: flex-end; }
+  .selo { width: 38px; height: 38px; border-radius: 50%; background: var(--marca); color: var(--marca-txt); display: grid; place-items: center;
+    font-family: var(--serifa); font-style: italic; font-weight: 600; font-size: .85rem; flex: none; }
+  .bolha { padding: 14px 16px; border-radius: 22px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; }
+  .msg.ia .bolha { background: var(--cartao); box-shadow: var(--sombra); border-bottom-left-radius: 8px; }
+  .msg.eu .bolha { background: var(--marca); color: var(--marca-txt); border-bottom-right-radius: 8px; }
+  .bolha img { border-radius: 14px; margin-bottom: 8px; max-height: 220px; }
+  .bolha .btn-ouvir { margin-top: 10px; }
+  .digitando { display: inline-flex; gap: 5px; padding: 6px 2px; }
+  .digitando i { width: 8px; height: 8px; border-radius: 50%; background: var(--suave); animation: pula 1.2s infinite ease-in-out; }
+  .digitando i:nth-child(2) { animation-delay: .15s; } .digitando i:nth-child(3) { animation-delay: .3s; }
+  @keyframes pula { 0%, 60%, 100% { transform: none; opacity: .4; } 30% { transform: translateY(-5px); opacity: 1; } }
+  .escrever { position: fixed; left: 0; right: 0; bottom: calc(var(--abas) + env(safe-area-inset-bottom)); z-index: 7; max-width: 560px; margin: 0 auto;
+    padding: 10px 16px; background: color-mix(in srgb, var(--fundo) 94%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; flex-direction: column; gap: 8px; }
+  .campo-msg { display: flex; align-items: flex-end; gap: 8px; background: var(--cartao); border-radius: 24px; box-shadow: var(--sombra); padding: 6px 6px 6px 18px; }
+  .campo-msg textarea { flex: 1; border: 0; background: transparent; resize: none; min-height: 48px; max-height: 140px; padding: 12px 0; font-size: 1rem; outline: none; }
+  .enviar { width: 52px; height: 52px; border-radius: 50%; background: var(--acento); color: #fff; display: grid; place-items: center; flex: none; }
+  .extras { display: flex; gap: 8px; }
+  .extras button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; border-radius: 999px; background: var(--cartao); box-shadow: var(--sombra); font-weight: 600; font-size: .9rem; }
 
-  input[type=text], input[type=password], textarea.campo { width: 100%; min-height: 64px; padding: 14px 16px; border-radius: 16px;
-    border: 2px solid var(--linha); background: var(--cartao); font-size: 1.05rem; }
-  textarea.campo { min-height: 260px; font-size: .85rem; line-height: 1.5; }
-  label.rotulo { font-weight: 700; display: block; margin-bottom: 6px; }
+  /* barra de navegação */
+  .abas { position: fixed; left: 0; right: 0; bottom: 0; z-index: 8; max-width: 560px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr);
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom)); background: var(--cartao); border-top: 1px solid var(--linha); box-shadow: 0 -6px 24px rgba(22,21,19,.06); }
+  .aba { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: 66px; border-radius: 16px; color: var(--suave); font-size: .74rem; font-weight: 600; position: relative; }
+  .aba.ativa { color: var(--texto); }
+  .aba.ativa::before { content: ""; position: absolute; top: 2px; width: 28px; height: 3px; border-radius: 3px; background: var(--acento); }
 
-  .carregando { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 40px 0; text-align: center; font-size: 1.2rem; font-weight: 700; }
-  .roda { width: 64px; height: 64px; border-radius: 50%; border: 7px solid var(--linha); border-top-color: var(--ouro); animation: gira 1s linear infinite; }
+  /* outros */
+  .manifesto { background: var(--marca); color: var(--marca-txt); border-radius: var(--raio); padding: 24px 22px; }
+  .frase { font-family: var(--serifa); font-size: 1.22rem; line-height: 1.38; font-style: italic; }
+  .traco { width: 44px; height: 3px; background: var(--acento); margin: 14px 0 10px; border-radius: 2px; }
+  .assina { font-size: .72rem; letter-spacing: 2.4px; text-transform: uppercase; opacity: .75; }
+  .boas-vindas { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; padding: 32px 20px calc(28px + env(safe-area-inset-bottom)); }
+  .marca-nome { font-family: var(--serifa); font-size: 2.6rem; line-height: 1; font-style: italic; font-weight: 600; letter-spacing: -.5px; }
+  .marca-por { font-size: .78rem; letter-spacing: 3px; text-transform: uppercase; color: var(--suave); margin-top: 10px; }
+  .monograma { width: 72px; height: 72px; border-radius: 22px; background: var(--marca); color: var(--marca-txt); display: grid; place-items: center;
+    font-family: var(--serifa); font-style: italic; font-size: 1.6rem; font-weight: 600; margin-bottom: 22px; }
+  .segmentos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: var(--tom); padding: 6px; border-radius: 18px; }
+  .segmentos button { min-height: 60px; border-radius: 14px; font-family: var(--serifa); font-weight: 600; }
+  .segmentos button.ativo { background: var(--cartao); box-shadow: var(--sombra); }
+  .carregando { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; padding: 40px 20px; }
+  .roda { width: 56px; height: 56px; border-radius: 50%; border: 5px solid var(--tom); border-top-color: var(--acento); animation: gira 1s linear infinite; }
   @keyframes gira { to { transform: rotate(360deg); } }
-  @media (prefers-reduced-motion: reduce) { .roda { animation-duration: 3s; } }
-
-  .aviso { position: fixed; left: 16px; right: 16px; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 50; max-width: 528px; margin: 0 auto;
-    background: var(--marca); color: var(--marca-txt); padding: 18px 20px; border-radius: 18px; font-weight: 700; font-size: 1.05rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,.25); text-align: center; }
-  .rodape { display: flex; gap: 10px; }
-  .rodape .btn { min-height: 64px; font-size: 1rem; }
-  .boas-vindas { text-align: center; display: flex; flex-direction: column; gap: 18px; align-items: center; padding-top: 18px; }
-  .boas-vindas img { width: 104px; height: 104px; border-radius: 24px; }
-  .produto { display: flex; gap: 14px; align-items: center; }
-  .produto .mini { width: 84px; height: 84px; border-radius: 14px; flex: none; display: grid; place-items: center; font-size: 2.4rem; border: 2px solid var(--linha); }
-  .produto b { display: block; line-height: 1.25; }
-  .separador { height: 2px; background: var(--linha); margin: 6px 0; }
+  input[type=text], input[type=password], textarea.campo { width: 100%; min-height: 60px; padding: 14px 16px; border-radius: 16px;
+    border: 0; box-shadow: inset 0 0 0 2px var(--linha); background: var(--cartao); font-size: 1.02rem; outline: none; }
+  input:focus, textarea.campo:focus { box-shadow: inset 0 0 0 2px var(--acento); }
+  textarea.campo { min-height: 240px; font-size: .82rem; line-height: 1.5; resize: vertical; }
+  label.rotulo { font-weight: 600; display: block; margin-bottom: 6px; }
+  .aviso { position: fixed; left: 16px; right: 16px; bottom: calc(var(--abas) + 16px + env(safe-area-inset-bottom)); z-index: 50; max-width: 528px; margin: 0 auto;
+    display: flex; align-items: center; gap: 12px; background: var(--marca); color: var(--marca-txt); padding: 16px 18px; border-radius: 18px; font-weight: 600;
+    box-shadow: 0 12px 30px rgba(0,0,0,.25); animation: surge .2s ease; }
+  .aviso .i { color: var(--acento); }
 </style>
 </head>
 <body>
@@ -188,20 +263,20 @@
 
 // formal: faixa de formalidade em que a peça funciona (1 = em casa ... 5 = festa/casamento)
 const TIPOS = {
-  camiseta:   { nome: "Camiseta",            grupo: "cima",   formal: [1, 3], ico: "👕", fem: true },
-  polo:       { nome: "Camisa polo",         grupo: "cima",   formal: [2, 3], ico: "👕", fem: true },
-  camisa:     { nome: "Camisa de botão",     grupo: "cima",   formal: [2, 5], ico: "👔", fem: true },
-  sueter:     { nome: "Suéter ou tricô",     grupo: "camada", formal: [2, 4], ico: "🧶" },
-  jaqueta:    { nome: "Jaqueta",             grupo: "camada", formal: [1, 3], ico: "🧥", fem: true },
-  blazer:     { nome: "Blazer ou paletó",    grupo: "camada", formal: [3, 5], ico: "🧥" },
-  jeans:      { nome: "Calça jeans",         grupo: "baixo",  formal: [1, 3], ico: "👖", fem: true },
-  sarja:      { nome: "Calça de sarja",      grupo: "baixo",  formal: [2, 4], ico: "👖", fem: true },
-  social:     { nome: "Calça social",        grupo: "baixo",  formal: [4, 5], ico: "👖", fem: true },
-  bermuda:    { nome: "Bermuda",             grupo: "baixo",  formal: [1, 2], ico: "🩳", fem: true },
-  tenis:      { nome: "Tênis",               grupo: "pes",    formal: [1, 3], ico: "👟" },
-  mocassim:   { nome: "Mocassim ou sapatênis", grupo: "pes",  formal: [2, 4], ico: "👞" },
-  sapato:     { nome: "Sapato social",       grupo: "pes",    formal: [4, 5], ico: "👞" },
-  chinelo:    { nome: "Chinelo ou sandália", grupo: "pes",    formal: [1, 1], ico: "🩴" },
+  camiseta:   { nome: "Camiseta",            grupo: "cima",   formal: [1, 3], fem: true },
+  polo:       { nome: "Camisa polo",         grupo: "cima",   formal: [2, 3], fem: true },
+  camisa:     { nome: "Camisa de botão",     grupo: "cima",   formal: [2, 5], fem: true },
+  sueter:     { nome: "Suéter ou tricô",     grupo: "camada", formal: [2, 4] },
+  jaqueta:    { nome: "Jaqueta",             grupo: "camada", formal: [1, 3], fem: true },
+  blazer:     { nome: "Blazer ou paletó",    grupo: "camada", formal: [3, 5] },
+  jeans:      { nome: "Calça jeans",         grupo: "baixo",  formal: [1, 3], fem: true },
+  sarja:      { nome: "Calça de sarja",      grupo: "baixo",  formal: [2, 4], fem: true },
+  social:     { nome: "Calça social",        grupo: "baixo",  formal: [4, 5], fem: true },
+  bermuda:    { nome: "Bermuda",             grupo: "baixo",  formal: [1, 2], fem: true },
+  tenis:      { nome: "Tênis",               grupo: "pes",    formal: [1, 3] },
+  mocassim:   { nome: "Mocassim ou sapatênis", grupo: "pes",  formal: [2, 4] },
+  sapato:     { nome: "Sapato social",       grupo: "pes",    formal: [4, 5] },
+  chinelo:    { nome: "Chinelo ou sandália", grupo: "pes",    formal: [1, 1] },
 };
 const GRUPOS = { cima: "Parte de cima", camada: "Por cima (casaco)", baixo: "Parte de baixo", pes: "Nos pés" };
 
@@ -236,13 +311,13 @@ const PELES = {
 };
 
 const OCASIOES = [
-  { id: "trabalho",  nome: "Trabalho",                 ico: "💼", nivel: 3 },
-  { id: "passeio",   nome: "Passeio ou fim de semana", ico: "🌳", nivel: 2 },
-  { id: "encontro",  nome: "Encontro ou jantar",       ico: "🍷", nivel: 3 },
-  { id: "entrevista",nome: "Entrevista ou reunião importante", ico: "🤝", nivel: 4 },
-  { id: "familia",   nome: "Igreja ou almoço de família", ico: "⛪", nivel: 3 },
-  { id: "festa",     nome: "Festa ou casamento",       ico: "🎉", nivel: 5 },
-  { id: "casa",      nome: "Ficar em casa",            ico: "🏠", nivel: 1 },
+  { id: "trabalho",  nome: "Trabalho", nivel: 3 },
+  { id: "passeio",   nome: "Passeio ou fim de semana", nivel: 2 },
+  { id: "encontro",  nome: "Encontro ou jantar", nivel: 3 },
+  { id: "entrevista",nome: "Entrevista ou reunião importante", nivel: 4 },
+  { id: "familia",   nome: "Igreja ou almoço de família", nivel: 3 },
+  { id: "festa",     nome: "Festa ou casamento", nivel: 5 },
+  { id: "casa",      nome: "Ficar em casa", nivel: 1 },
 ];
 
 // Peças básicas usadas quando o guarda-roupa ainda não tem o que precisa
@@ -377,7 +452,6 @@ const novoId = () => Date.now().toString(36) + Math.random().toString(36).slice(
 const nomeConsultor = () => E.consultor.nome || "consultor";
 const nomeApp = () => E.consultor.app || "Impossible Man";
 const MANIFESTO = "Imagem como identidade, não vaidade. Roupa como extensão do caráter, não compensação por falta de substância.";
-const ICONE_PRODUTO = { cuidado: "💈", clube: "🤝" };
 const primeiroNome = () => (E.perfil && E.perfil.nome) ? E.perfil.nome.split(" ")[0] : "";
 // concordância: "camisa branca", "sapato branco"
 const FEMININO = { branco: "branca", preto: "preta", vermelho: "vermelha", estampa: "estampada ou xadrez" };
@@ -407,7 +481,7 @@ function falar(texto, botao) {
   if (!temVoz) { aviso("Este celular não consegue ler em voz alta."); return; }
   if (speechSynthesis.speaking) {
     speechSynthesis.cancel();
-    document.querySelectorAll("[data-falando]").forEach((b) => { b.textContent = "🔊 Ouvir"; delete b.dataset.falando; });
+    document.querySelectorAll("[data-falando]").forEach((b) => { b.innerHTML = ROTULO_OUVIR; delete b.dataset.falando; });
     if (botao && botao.dataset.era === "1") { delete botao.dataset.era; return; }
   }
   const u = new SpeechSynthesisUtterance(texto.replace(/[•✔✅🤔⚠️]/g, ""));
@@ -415,8 +489,8 @@ function falar(texto, botao) {
   const voz = speechSynthesis.getVoices().find((v) => v.lang && v.lang.toLowerCase().startsWith("pt"));
   if (voz) u.voice = voz;
   if (botao) {
-    botao.textContent = "⏹ Parar"; botao.dataset.falando = "1"; botao.dataset.era = "1";
-    u.onend = u.onerror = () => { botao.textContent = "🔊 Ouvir"; delete botao.dataset.falando; delete botao.dataset.era; };
+    botao.innerHTML = ROTULO_PARAR; botao.dataset.falando = "1"; botao.dataset.era = "1";
+    u.onend = u.onerror = () => { botao.innerHTML = ROTULO_OUVIR; delete botao.dataset.falando; delete botao.dataset.era; };
   }
   speechSynthesis.speak(u);
 }
@@ -733,228 +807,419 @@ async function analisarFotoIA(foto) {
 /* ===================== Perfil (perguntas iniciais) ===================== */
 
 const IDADES = [
-  { id: "ate25", nome: "Até 25 anos", ico: "🧑" }, { id: "26-40", nome: "26 a 40 anos", ico: "👨" },
-  { id: "41-60", nome: "41 a 60 anos", ico: "🧔" }, { id: "60+", nome: "Mais de 60", ico: "👴" },
+  { id: "ate25", nome: "Até 25 anos" }, { id: "26-40", nome: "26 a 40 anos" },
+  { id: "41-60", nome: "41 a 60 anos" }, { id: "60+", nome: "Mais de 60" },
 ];
 const ROTINAS = [
-  { id: "escritorio", nome: "Trabalho em escritório ou atendo clientes", ico: "💼" },
-  { id: "pratico", nome: "Trabalho na rua, obra ou de uniforme", ico: "🦺" },
-  { id: "proprio", nome: "Tenho meu próprio negócio", ico: "🏪" },
-  { id: "aposentado", nome: "Sou aposentado ou fico mais em casa", ico: "🏡" },
+  { id: "escritorio", nome: "Trabalho em escritório ou atendo clientes" },
+  { id: "pratico", nome: "Trabalho na rua, obra ou de uniforme" },
+  { id: "proprio", nome: "Tenho meu próprio negócio" },
+  { id: "aposentado", nome: "Sou aposentado ou fico mais em casa" },
 ];
 const CORPOS = [
-  { id: "magro", nome: "Magro", ico: "🧍" }, { id: "medio", nome: "Médio", ico: "🧍‍♂️" },
-  { id: "forte", nome: "Forte ou com barriga", ico: "🫃" }, { id: "atletico", nome: "Musculoso", ico: "💪" },
+  { id: "magro", nome: "Magro" }, { id: "medio", nome: "Médio" },
+  { id: "forte", nome: "Forte ou com barriga" }, { id: "atletico", nome: "Musculoso" },
 ];
 
-/* ===================== Telas ===================== */
+/* ===================== Ícones (traço fino, sem emoji) ===================== */
+
+const ICONES = {
+  casa: "M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1z",
+  cabide: "M12 7a2.2 2.2 0 1 1 2.2-2.2M12 7v1.6l8.6 6.2a1 1 0 0 1-.6 1.8H4a1 1 0 0 1-.6-1.8L12 8.6",
+  armario: "M5 3h14v18H5zM12 3v18M9.5 11v2.5M14.5 11v2.5M5 21v1M19 21v1",
+  balao: "M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H10l-5 4v-4.2A1.5 1.5 0 0 1 4 14.5z",
+  sacola: "M5 8h14l-1.1 12.1a1 1 0 0 1-1 .9H7.1a1 1 0 0 1-1-.9zM9 8V6.5a3 3 0 0 1 6 0V8",
+  camera: "M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.8-2.5h5.4L16.5 7h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z",
+  imagem: "M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5zM4 16l4.5-4.5 4 4 3-3L20 17M15.5 9h.01",
+  voltar: "M15 5l-7 7 7 7",
+  seta: "M9 5l7 7-7 7",
+  som: "M4 9.5h3.5L12 6v12l-4.5-3.5H4zM16 9.5a3.5 3.5 0 0 1 0 5M18.5 7a7 7 0 0 1 0 10",
+  parar: "M7 7h10v10H7z",
+  mic: "M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3zM5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3",
+  enviar: "M5 12h14M13 6l6 6-6 6",
+  mais: "M12 5v14M5 12h14",
+  lixo: "M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v5M14 11v5",
+  check: "M5 12.5l4.5 4.5L19 7.5",
+  alerta: "M12 4l9 16H3zM12 10v4.5M12 17.5h.01",
+  trocar: "M4.5 10a7.5 7.5 0 0 1 13.4-3.2L20 9M20 4.5V9h-4.5M19.5 14a7.5 7.5 0 0 1-13.4 3.2L4 15M4 19.5V15h4.5",
+  maleta: "M3.5 8.5h17v11h-17zM8.5 8.5V6a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v2.5M3.5 13h17",
+  sol: "M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM12 3v2M12 19v2M5.6 5.6 7 7M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4",
+  taca: "M7.5 3h9l-.8 6a3.7 3.7 0 0 1-7.4 0zM12 12.8V21M8.5 21h7",
+  gravata: "M10 3h4l-1 3.5 2.5 9.5L12 20l-3.5-4L11 6.5z",
+  familia: "M8 10.5a2.8 2.8 0 1 0 0-5.6 2.8 2.8 0 0 0 0 5.6zM16.5 11.5a2.3 2.3 0 1 0 0-4.6 2.3 2.3 0 0 0 0 4.6zM3 20a5 5 0 0 1 10 0M13 20a4 4 0 0 1 8 0",
+  festa: "M12 12 4 7.5v9zM12 12l8-4.5v9zM10.5 10.5h3v3h-3z",
+  cadeado: "M6 11h12v10H6zM8.5 11V7.5a3.5 3.5 0 0 1 7 0V11",
+  usuario: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.5 21a7.5 7.5 0 0 1 15 0",
+  lapis: "M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4",
+  fechar: "M6 6l12 12M18 6 6 18",
+};
+const icone = (n, t = 24) => `<svg class="i" width="${t}" height="${t}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ICONES[n] || ""}"/></svg>`;
+const ROTULO_OUVIR = `${icone("som", 22)}<span>Ouvir</span>`;
+const ROTULO_PARAR = `${icone("parar", 22)}<span>Parar</span>`;
+const ICONE_OCASIAO = { trabalho: "maleta", passeio: "sol", encontro: "taca", entrevista: "gravata", familia: "familia", festa: "festa", casa: "casa" };
+
+/* ===================== Desenhos das roupas (pintados na cor da peça) ===================== */
+
+const CORPO_CAMISETA = `<path d="M40 22 L52 17 Q60 25 68 17 L80 22 L101 37 L92 52 L82 46 L82 102 L38 102 L38 46 L28 52 L19 37 Z"/>`;
+const CORPO_MANGA_LONGA = `<path d="M42 20 L52 16 L60 24 L68 16 L78 20 L95 30 L104 96 L92 99 L84 52 L83 104 L37 104 L36 52 L28 99 L16 96 L25 30 Z"/>`;
+const CORPO_CALCA = `<path d="M36 14 H84 L89 108 H66 L60 46 L54 108 H31 Z"/>`;
+const SOLA = (s) => `<path d="M10 87 H108 V92 Q108 94 106 94 H12 Q10 94 10 92 Z" fill="${s}" stroke="${s}" stroke-width="2"/>`;
+const DESENHOS = {
+  camiseta: { corpo: CORPO_CAMISETA, detalhe: "M52 17 Q60 27 68 17" },
+  polo: { corpo: CORPO_CAMISETA, detalhe: "M52 17 L60 30 L68 17 M60 30 V46", botoes: [[60, 36], [60, 42]] },
+  camisa: { corpo: CORPO_MANGA_LONGA, detalhe: "M52 16 L55 31 L60 24 L65 31 L68 16 M60 26 V104", botoes: [[60, 42], [60, 58], [60, 74], [60, 90]] },
+  sueter: { corpo: CORPO_MANGA_LONGA, detalhe: "M51 17 Q60 28 69 17 M38 96 H82 M18 89 L28 91 M102 89 L92 91" },
+  jaqueta: { corpo: CORPO_MANGA_LONGA, detalhe: "M52 16 L56 26 L64 26 L68 16 M60 26 V104 M42 70 H54 M66 70 H78" },
+  blazer: { corpo: CORPO_MANGA_LONGA, meio: () => `<path d="M52 16 L60 56 L68 16 Z" fill="#f2ede3" stroke="#b9b0a2" stroke-width="1.6" stroke-linejoin="round"/>`, detalhe: "M52 16 L47 42 L60 58 M68 16 L73 42 L60 58 M43 78 H54", botoes: [[60, 66], [60, 80]] },
+  jeans: { corpo: CORPO_CALCA, detalhe: "M36 23 H84 M60 23 V46 M41 23 Q46 34 53 25 M79 23 Q74 34 67 25" },
+  sarja: { corpo: CORPO_CALCA, detalhe: "M36 23 H84 M60 23 V46 M42 23 L46 32 M78 23 L74 32" },
+  social: { corpo: CORPO_CALCA, detalhe: "M36 23 H84 M60 23 V46 M47 30 L44 106 M73 30 L76 106" },
+  bermuda: { corpo: `<path d="M34 22 H86 L93 78 H66 L60 48 L54 78 H27 Z"/>`, detalhe: "M34 31 H86 M60 31 V48" },
+  tenis: { corpo: `<path d="M14 82 Q15 60 32 56 L50 51 Q60 49 68 58 L95 66 Q107 70 106 82 Z"/>`, meio: () => `<path d="M12 82 H108 V89 Q108 94 103 94 H17 Q12 94 12 89 Z" fill="#f4f1ea" stroke="#b9b0a2" stroke-width="2"/>`, detalhe: "M52 54 L60 63 M46 56 L54 65 M40 59 L48 68 M24 74 H44" },
+  mocassim: { corpo: `<path d="M12 87 Q12 68 28 65 L58 61 Q84 60 101 72 Q110 79 106 87 Z"/>`, meio: SOLA, detalhe: "M56 63 Q71 73 88 67 M64 68 L66 72" },
+  sapato: { corpo: `<path d="M12 87 Q13 66 32 62 L56 58 Q82 58 102 71 Q111 78 107 87 Z"/>`, meio: SOLA, detalhe: "M47 60 L59 70 M53 59 L65 69 M30 82 Q50 76 72 82" },
+  chinelo: { corpo: `<path d="M42 12 Q60 6 78 12 Q92 60 80 108 Q60 114 40 108 Q28 60 42 12 Z"/>`, detalhe: "M43 44 Q60 30 77 44 M60 34 V22" },
+};
+const PRODUTO_DESENHO = {
+  cuidado: `<svg viewBox="0 0 120 120" class="roupa" aria-hidden="true"><path d="M30 52 H90 V94 Q90 100 84 100 H36 Q30 100 30 94 Z" fill="#efe6d2" stroke="#8a7e6c" stroke-width="2"/><path d="M27 36 H93 V52 H27 Z" fill="#161513" stroke="#161513" stroke-width="2" stroke-linejoin="round"/><path d="M44 70 H76 M50 80 H70" stroke="#a94c1a" stroke-width="3" stroke-linecap="round"/></svg>`,
+  clube: `<svg viewBox="0 0 120 120" class="roupa" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="#161513"/><circle cx="60" cy="60" r="35" fill="none" stroke="#c46a35" stroke-width="2"/><text x="60" y="71" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-style="italic" font-weight="600" font-size="30" fill="#f4efe6">IM</text></svg>`,
+};
+let idDesenho = 0;
+function tomContorno(hex) {
+  const h = hex.replace("#", "");
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const claro = (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55;
+  const f = (c) => Math.round(claro ? c * 0.62 : c + (255 - c) * 0.32);
+  return `rgb(${f(r)},${f(g)},${f(b)})`;
+}
+function desenhoRoupa(tipo, cor) {
+  if (PRODUTO_DESENHO[tipo]) return PRODUTO_DESENHO[tipo];
+  const D = DESENHOS[tipo] || DESENHOS.camiseta;
+  const listrado = cor === "estampa";
+  const id = "listra" + (++idDesenho);
+  const base = listrado ? "#ece6d8" : (CORES[cor]?.hex || "#a39d92");
+  const s = listrado ? "#2b3b5e" : tomContorno(base);
+  const defs = listrado ? `<defs><pattern id="${id}" patternUnits="userSpaceOnUse" width="7" height="7"><rect width="7" height="7" fill="#ece6d8"/><rect width="2.4" height="7" fill="#2b3b5e"/></pattern></defs>` : "";
+  const botoes = (D.botoes || []).map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.8" fill="${s}"/>`).join("");
+  return `<svg viewBox="0 0 120 120" class="roupa" aria-hidden="true">${defs}<g fill="${listrado ? `url(#${id})` : base}" stroke="${s}" stroke-width="2" stroke-linejoin="round">${D.corpo}</g>${D.meio ? D.meio(s) : ""}<path d="${D.detalhe || ""}" fill="none" stroke="${s}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>${botoes}</svg>`;
+}
+const visualPeca = (p) => p.foto ? `<img src="${p.foto}" alt="${esc(nomePeca(p))}">` : desenhoRoupa(p.tipo, p.cor);
+
+/* ===================== Navegação ===================== */
 
 const app = $("#app");
 let pilha = [];
 let tela = null;
+let direcao = "";
+const RAIZES = ["inicio", "armario", "conversa", "loja"];
+const ABA_DA_TELA = { armario: "armario", verPeca: "armario", confirmarApagar: "armario", conversa: "conversa", loja: "loja" };
+const SEM_ABAS = new Set(["boasvindas", "perfilNome", "perfilIdade", "perfilRotina", "perfilPele", "perfilCorpo", "analisando"]);
+const abaDe = (t) => (t.dados && t.dados.guardar) ? "armario" : (ABA_DA_TELA[t.nome] || "inicio");
 
 function ir(nome, dados = {}, { substituir = false } = {}) {
   pararFala();
   if (tela && !substituir) pilha.push(tela);
   tela = { nome, dados };
+  direcao = "avanca";
   if (!substituir) history.pushState({ n: pilha.length }, "");
-  desenhar();
-  window.scrollTo(0, 0);
+  desenhar(); window.scrollTo(0, 0);
 }
 function voltar() {
   pararFala();
-  if (!pilha.length) { tela = { nome: "inicio", dados: {} }; desenhar(); return; }
-  tela = pilha.pop(); desenhar(); window.scrollTo(0, 0);
+  tela = pilha.length ? pilha.pop() : { nome: "inicio", dados: {} };
+  direcao = "volta";
+  desenhar(); window.scrollTo(0, 0);
 }
-function irInicio() { pararFala(); pilha = []; tela = { nome: "inicio", dados: {} }; desenhar(); window.scrollTo(0, 0); }
-// botão "voltar" do próprio celular também volta uma tela
-window.addEventListener("popstate", () => { if (pilha.length) voltar(); else if (tela?.nome !== "inicio" && E.perfil) irInicio(); });
+function trocarAba(aba) {
+  pararFala();
+  pilha = []; tela = { nome: aba, dados: {} }; direcao = "aba";
+  desenhar(); window.scrollTo(0, 0);
+}
+const irInicio = () => trocarAba("inicio");
+// o botão "voltar" do próprio celular também volta uma tela
+window.addEventListener("popstate", () => { if (pilha.length) voltar(); else if (tela && tela.nome !== "inicio" && E.perfil) irInicio(); });
 
-function topo(titulo, { semVoltar = false } = {}) {
-  return `<header class="topo">${semVoltar ? "" : `<button class="voltar" data-acao="voltar" aria-label="Voltar para a tela anterior">← Voltar</button>`}<h1>${titulo}</h1></header>`;
+function barraAbas() {
+  const atual = abaDe(tela);
+  const itens = [["inicio", "casa", "Início"], ["armario", "armario", "Guarda-roupa"], ["conversa", "balao", "Consultor"], ["loja", "sacola", "Loja"]];
+  return `<nav class="abas" aria-label="Menu principal">${itens.map(([id, ic, nome]) =>
+    `<button class="aba ${atual === id ? "ativa" : ""}" data-acao="aba" data-valor="${id}" ${atual === id ? 'aria-current="page"' : ""}>${icone(ic, 26)}<span>${nome}</span></button>`).join("")}</nav>`;
+}
+function cabecalho(titulo) {
+  return `<header class="cabeca"><button class="voltar" data-acao="voltar">${icone("voltar", 22)}<span>Voltar</span></button><h1>${titulo}</h1></header>`;
+}
+function cabecalhoRaiz(titulo, sub = "", lado = "") {
+  return `<header class="cabeca-raiz"><div class="textos"><h1>${titulo}</h1>${sub ? `<p>${sub}</p>` : ""}</div>${lado}</header>`;
 }
 function desenhar() {
   const T = TELAS[tela.nome] || TELAS.inicio;
-  app.innerHTML = T(tela.dados);
+  const abas = !SEM_ABAS.has(tela.nome);
+  app.innerHTML = `<div class="tela ${direcao ? "anima-" + direcao : ""} ${abas ? "com-abas" : ""}">${T(tela.dados)}</div>${abas ? barraAbas() : ""}`;
+  direcao = "";
   const foco = app.querySelector("[data-foco]");
-  if (foco) foco.focus();
-  if (TELAS_DEPOIS[tela.nome]) TELAS_DEPOIS[tela.nome](tela.dados);
+  if (foco) foco.focus({ preventScroll: true });
+  if (tela.nome === "conversa" && E.conversa.length) window.scrollTo(0, document.body.scrollHeight);
 }
 
-function opcoes(lista, marcado, acao, { uma = false, bola = null } = {}) {
-  return `<div class="grade ${uma ? "uma" : ""}">${lista.map((o) => `
+/* ===================== Pedaços de tela ===================== */
+
+const botaoOuvir = (texto) => `<button class="btn-ouvir" data-acao="falar" data-texto="${esc(texto)}">${ROTULO_OUVIR}</button>`;
+const progresso = (n) => `<div class="progresso" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="${n}"><span style="width:${n * 20}%"></span></div><p class="suave" style="font-size:.85rem">Passo ${n} de 5</p>`;
+function escolhas(lista, marcado, acao) {
+  return `<div class="escolhas">${lista.map((o) => `
     <button class="opcao ${marcado === o.id ? "marcada" : ""}" data-acao="${acao}" data-valor="${esc(o.id)}">
-      ${bola ? `<span class="bola" style="background:${bola(o)}"></span>` : `<span class="ico" aria-hidden="true">${o.ico || ""}</span>`}
-      <span>${esc(o.nome)}${o.dica ? `<br><small>${esc(o.dica)}</small>` : ""}</span>
+      ${o.amostra ? `<span class="amostra" style="background:${o.amostra}"></span>` : ""}
+      <span class="texto"><b>${esc(o.nome)}</b>${o.sub ? `<small>${esc(o.sub)}</small>` : ""}</span>
+      <span class="marca-opcao">${marcado === o.id ? icone("check", 18) : ""}</span>
     </button>`).join("")}</div>`;
 }
-const listaTipos = () => Object.entries(TIPOS).map(([id, t]) => ({ id, nome: t.nome, ico: t.ico }));
-const listaCores = () => Object.entries(CORES).map(([id, c]) => ({ id, nome: c.nome }));
-const imagemPeca = (p, cls = "img") => p.foto
-  ? `<img class="${cls}" src="${p.foto}" alt="${esc(nomePeca(p))}">`
-  : `<div class="${cls}" style="background:${fundoCor(p.cor)}" aria-hidden="true"><span style="filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))">${TIPOS[p.tipo]?.ico || "👕"}</span></div>`;
+const peca = (p, acao = "") => `<${acao ? "button" : "div"} class="peca" ${acao}><div class="tile">${visualPeca(p)}</div><div class="nome">${esc(nomePeca(p))}</div></${acao ? "button" : "div"}>`;
+const dataHoje = () => { const t = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" }); return t.charAt(0).toUpperCase() + t.slice(1); };
+const primeiro = (n) => String(n || "").split(" ")[0];
+
+function ocasiaoDoDia() {
+  const dia = new Date().getDay();
+  if (dia === 0 || dia === 6) return OCASIOES.find((o) => o.id === "passeio");
+  const rotina = E.perfil?.rotina;
+  return OCASIOES.find((o) => o.id === (rotina === "escritorio" || rotina === "proprio" ? "trabalho" : "passeio"));
+}
+let lookGuardado = null;
+function lookDoDia() {
+  const oc = ocasiaoDoDia();
+  const chave = oc.id + "|" + E.pecas.map((p) => p.id).join(",");
+  if (!lookGuardado || lookGuardado.chave !== chave) lookGuardado = { chave, look: montarLooks(oc)[0] };
+  return lookGuardado.look;
+}
+function dicaDoDia() {
+  const blocos = blocosMetodo().filter((b) => b.texto);
+  if (!blocos.length) return null;
+  const hoje = Math.floor(Date.now() / 86400000);
+  const b = blocos[hoje % blocos.length];
+  const frases = b.texto.split(/(?<=\.)\s+/);
+  let texto = frases[0];
+  if (frases[1] && texto.length + frases[1].length < 170) texto += " " + frases[1];
+  return { titulo: b.titulo, texto };
+}
+
+/* ===================== Telas ===================== */
 
 const TELAS = {
   /* ---------- boas-vindas e perfil ---------- */
   boasvindas: () => `
-    <main class="conteudo boas-vindas">
-      <img src="marca/icone.svg" alt="">
-      <div><p class="marca-nome">${esc(nomeApp())}</p><p class="marca-por" style="margin-top:8px">por ${esc(nomeConsultor())}</p></div>
-      <div class="manifesto" style="text-align:left;width:100%"><p class="frase">“${esc(E.consultor.frase)}”</p><div class="traco"></div><p style="opacity:.85">Eu sou o seu consultor de imagem, com o método do ${esc(nomeConsultor().split(" ")[0])}: roupa, cabelo, barba, cuidados e presença.</p></div>
-      <p class="suave">É fácil: é só tocar nos botões grandes.</p>
-      <button class="btn" data-acao="perfil-comecar" data-foco><span class="ico">👉</span> Começar</button>
+    <main class="boas-vindas">
+      <div>
+        <div class="monograma">IM</div>
+        <p class="marca-nome">${esc(nomeApp())}</p>
+        <p class="marca-por">por ${esc(nomeConsultor())}</p>
+      </div>
+      <div class="manifesto">
+        <p class="frase">“${esc(E.consultor.frase)}”</p>
+        <div class="traco"></div>
+        <p style="opacity:.85">Seu consultor de imagem no celular: roupa, cabelo, barba, cuidados e presença, com o método do ${esc(primeiro(nomeConsultor()))}.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <button class="btn acento" data-acao="perfil-comecar" data-foco>Começar ${icone("seta", 22)}</button>
+        <p class="suave centro" style="font-size:.88rem">Leva 1 minuto. São 5 perguntas rápidas.</p>
+      </div>
     </main>`,
   perfilNome: (d) => `
-    ${topo("Sobre você")}
+    ${cabecalho("Sobre você")}
     <main class="conteudo">
-      <p class="passo">Pergunta 1 de 5</p>
-      <h2>Como você gosta de ser chamado?</h2>
-      <input type="text" id="campo-nome" autocomplete="given-name" placeholder="Toque aqui e escreva seu nome" value="${esc(d.p.nome || "")}">
-      <button class="btn" data-acao="perfil-nome">Continuar →</button>
+      ${progresso(1)}
+      <h2 class="titulo">Como você gosta de ser chamado?</h2>
+      <input type="text" id="campo-nome" autocomplete="given-name" placeholder="Seu nome" value="${esc(d.p.nome || "")}">
+      <button class="btn" data-acao="perfil-nome">Continuar ${icone("seta", 22)}</button>
       <button class="btn claro" data-acao="perfil-pular-nome">Prefiro não dizer</button>
     </main>`,
-  perfilIdade: (d) => `${topo("Sobre você")}<main class="conteudo"><p class="passo">Pergunta 2 de 5</p><h2>Qual é a sua idade?</h2>${opcoes(IDADES, d.p.idade, "perfil-idade")}</main>`,
-  perfilRotina: (d) => `${topo("Sobre você")}<main class="conteudo"><p class="passo">Pergunta 3 de 5</p><h2>Como é o seu dia a dia?</h2>${opcoes(ROTINAS, d.p.rotina, "perfil-rotina", { uma: true })}</main>`,
-  perfilPele: (d) => `${topo("Sobre você")}<main class="conteudo"><p class="passo">Pergunta 4 de 5</p><h2>Qual cor de pele é mais parecida com a sua?</h2>
-    <p class="suave">Isso ajuda a escolher as cores de roupa que mais te valorizam.</p>
-    ${opcoes(Object.entries(PELES).map(([id, p]) => ({ id, nome: p.nome, hex: p.hex })), d.p.pele, "perfil-pele", { bola: (o) => o.hex })}</main>`,
-  perfilCorpo: (d) => `${topo("Sobre você")}<main class="conteudo"><p class="passo">Pergunta 5 de 5</p><h2>Como é o seu corpo?</h2>
-    <p class="suave">Só para eu indicar o caimento certo. Fica guardado só no seu celular.</p>${opcoes(CORPOS, d.p.corpo, "perfil-corpo")}</main>`,
+  perfilIdade: (d) => `${cabecalho("Sobre você")}<main class="conteudo">${progresso(2)}<h2 class="titulo">Qual é a sua idade?</h2>
+    ${escolhas(IDADES.map((o) => ({ id: o.id, nome: o.nome })), d.p.idade, "perfil-idade")}</main>`,
+  perfilRotina: (d) => `${cabecalho("Sobre você")}<main class="conteudo">${progresso(3)}<h2 class="titulo">Como é o seu dia a dia?</h2>
+    ${escolhas(ROTINAS.map((o) => ({ id: o.id, nome: o.nome })), d.p.rotina, "perfil-rotina")}</main>`,
+  perfilPele: (d) => `${cabecalho("Sobre você")}<main class="conteudo">${progresso(4)}<h2 class="titulo">Qual tom de pele é mais parecido com o seu?</h2>
+    <p class="suave">Assim eu indico as cores que mais te valorizam.</p>
+    ${escolhas(Object.entries(PELES).map(([id, p]) => ({ id, nome: p.nome, amostra: p.hex })), d.p.pele, "perfil-pele")}</main>`,
+  perfilCorpo: (d) => `${cabecalho("Sobre você")}<main class="conteudo">${progresso(5)}<h2 class="titulo">Como é o seu corpo?</h2>
+    <p class="suave">Só para eu acertar o caimento. Fica guardado apenas no seu celular.</p>
+    ${escolhas([
+      { id: "magro", nome: "Magro", sub: "Ombros e cintura estreitos" },
+      { id: "medio", nome: "Médio", sub: "Nem magro, nem forte" },
+      { id: "forte", nome: "Forte ou com barriga", sub: "Mais volume na cintura" },
+      { id: "atletico", nome: "Musculoso", sub: "Ombros e peito largos" },
+    ], d.p.corpo, "perfil-corpo")}</main>`,
 
   /* ---------- início ---------- */
   inicio: () => {
     const nome = primeiroNome();
+    const oc = ocasiaoDoDia();
+    const look = lookDoDia();
+    const dica = dicaDoDia();
+    const n = E.pecas.length;
     return `
-    <header class="topo"><h1><i>${esc(nomeApp())}</i></h1><button class="voltar" data-acao="ir" data-valor="ajustes" aria-label="Ajustes">⚙️ Ajustes</button></header>
     <main class="conteudo">
-      <h2>${saudacao()}${nome ? ", " + esc(nome) : ""}! 👋</h2>
-      <p class="suave">O que você quer fazer agora? Toque em uma opção.</p>
-      <button class="menu destaque" data-acao="ir" data-valor="foto"><span class="ico">📷</span><span><b>Essa roupa combina comigo?</b><span>Tire uma foto na loja ou em casa</span></span></button>
-      <button class="menu" data-acao="ir" data-valor="ocasiao"><span class="ico">👔</span><span><b>O que eu visto hoje?</b><span>Escolha a ocasião e eu monto a roupa</span></span></button>
-      <button class="menu" data-acao="ir" data-valor="armario"><span class="ico">🚪</span><span><b>Meu guarda-roupa</b><span>${E.pecas.length ? `${E.pecas.length} ${E.pecas.length === 1 ? "peça guardada" : "peças guardadas"}` : "Guarde aqui as roupas que você tem"}</span></span></button>
-      <button class="menu" data-acao="ir" data-valor="conversa"><span class="ico">💬</span><span><b>Perguntar ao consultor</b><span>Cabelo, barba, postura, perfume e mais</span></span></button>
-      <button class="menu" data-acao="ir" data-valor="loja"><span class="ico">🛍️</span><span><b>Loja do ${esc(nomeConsultor().split(" ")[0])}</b><span>Pomada Impossible Hair, Clube do Luke e a linha de roupas</span></span></button>
-      <div class="manifesto"><p class="frase">“${esc(MANIFESTO)}”</p><div class="traco"></div><p class="marca-por" style="color:inherit;opacity:.8">${esc(nomeConsultor())}</p></div>
+      <div class="ola">
+        <div><p class="data">${esc(dataHoje())}</p><h1 class="titulo-grande">${saudacao()}${nome ? ",<br>" + esc(nome) : ""}</h1></div>
+        <button class="avatar" data-acao="ir" data-valor="ajustes" aria-label="Seus dados e ajustes">${nome ? esc(nome[0].toUpperCase()) : icone("usuario", 26)}</button>
+      </div>
+      ${look ? `<button class="card escuro destaque-look" data-acao="ocasiao" data-valor="${oc.id}">
+        <p class="sobre">Sugestão para hoje · ${esc(oc.nome)}</p>
+        <div class="mini-quadro">${look.pecas.map((p) => `<div class="mini-tile">${visualPeca(p)}</div>`).join("")}</div>
+        <p class="frase-look">${esc(nomePeca(look.pecas[0]))} com ${esc(nomePeca(look.pecas.find((p) => TIPOS[p.tipo].grupo === "baixo") || look.pecas[1]).toLowerCase())}</p>
+        <span class="link-claro">Ver o look completo ${icone("seta", 20)}</span>
+      </button>` : ""}
+      <button class="card atalho-grande" data-acao="ir" data-valor="foto">
+        <span class="circulo acento">${icone("camera", 28)}</span>
+        <span class="texto"><b>Essa roupa combina comigo?</b><small>Tire uma foto na loja ou em casa</small></span>
+        ${icone("seta", 22)}
+      </button>
+      <div class="grade-2">
+        <button class="card atalho" data-acao="aba" data-valor="armario"><span class="circulo">${icone("armario", 26)}</span><b>Meu guarda-roupa</b><small>${n ? `${n} ${n === 1 ? "peça guardada" : "peças guardadas"}` : "Guarde suas roupas"}</small></button>
+        <button class="card atalho" data-acao="aba" data-valor="conversa"><span class="circulo">${icone("balao", 26)}</span><b>Tirar uma dúvida</b><small>Cabelo, barba, presença</small></button>
+      </div>
+      <h2 class="secao">Para onde você vai?</h2>
+      <div class="card lista">${OCASIOES.map((o) => `
+        <button class="item" data-acao="ocasiao" data-valor="${o.id}"><span class="circulo pequeno">${icone(ICONE_OCASIAO[o.id], 24)}</span><span class="texto"><b>${esc(o.nome)}</b></span><span class="seta">${icone("seta", 20)}</span></button>`).join("")}
+      </div>
+      ${dica ? `<div class="card">
+        <p class="sobre">Dica de estilo</p>
+        <h3 style="font-family:var(--serifa);font-size:1.3rem">${esc(dica.titulo)}</h3>
+        <p class="suave">${esc(dica.texto)}</p>
+        <button class="btn-texto" data-acao="perguntar" data-texto="${esc("Me explica melhor: " + dica.titulo)}" style="align-self:flex-start">Saber mais ${icone("seta", 18)}</button>
+      </div>` : ""}
+      <div class="manifesto"><p class="frase">“${esc(MANIFESTO)}”</p><div class="traco"></div><p class="assina">${esc(nomeConsultor())}</p></div>
     </main>`;
   },
 
   /* ---------- foto de uma peça ---------- */
   foto: (d) => `
-    ${topo(d.guardar ? "Guardar roupa" : "Essa roupa combina?")}
+    ${cabecalho(d.guardar ? "Guardar uma roupa" : "Essa roupa combina?")}
     <main class="conteudo">
-      <h2>${d.guardar ? "Tire uma foto da roupa que você quer guardar" : "Tire uma foto da roupa"}</h2>
-      <p class="suave">Coloque a roupa esticada na cama ou pendurada, com boa luz. ${d.guardar ? "" : "Pode ser na loja, no provador ou em casa."}</p>
-      <button class="btn" data-acao="tirar-foto" data-valor="camera" data-foco><span class="ico">📷</span> Tirar foto agora</button>
-      <button class="btn claro" data-acao="tirar-foto" data-valor="galeria"><span class="ico">🖼️</span> Escolher uma foto que já tenho</button>
-      <button class="btn claro" data-acao="sem-foto"><span class="ico">✋</span> Sem foto: só escolher o tipo e a cor</button>
+      <div class="card" style="align-items:center;text-align:center;padding:28px 20px;gap:14px">
+        <span class="circulo acento" style="width:76px;height:76px;border-radius:24px">${icone("camera", 36)}</span>
+        <h2 class="titulo">${d.guardar ? "Fotografe a roupa que você quer guardar" : "Fotografe a roupa"}</h2>
+        <p class="suave">Estique a peça na cama ou pendure num cabide, num lugar bem iluminado.${d.guardar ? "" : " Pode ser no provador da loja."}</p>
+      </div>
+      <button class="btn acento" data-acao="tirar-foto" data-valor="camera" data-foco>${icone("camera", 24)} Tirar foto agora</button>
+      <button class="btn claro" data-acao="tirar-foto" data-valor="galeria">${icone("imagem", 24)} Escolher da galeria</button>
+      <button class="btn-texto" data-acao="sem-foto" style="align-self:center">Prefiro escolher sem foto ${icone("seta", 18)}</button>
     </main>`,
-  analisando: () => `${topo("Um momento")}<main class="conteudo"><div class="carregando"><div class="roda"></div>Estou olhando a sua foto…<span class="suave" style="font-weight:500">Isso leva alguns segundos.</span></div></main>`,
+  analisando: () => `<main class="carregando"><div class="roda"></div><h2 class="titulo">Olhando a sua foto…</h2><p class="suave">Só um instante.</p></main>`,
   pecaTipo: (d) => `
-    ${topo("Que roupa é essa?")}
+    ${cabecalho("Que roupa é essa?")}
     <main class="conteudo">
-      ${d.foto ? `<img class="foto-grande" src="${d.foto}" alt="Sua foto">` : ""}
-      <p class="passo">Passo 1 de 2</p>
-      ${d.tipo && d.daIA ? `<h2>Parece ser: ${esc(TIPOS[d.tipo].nome)}</h2><button class="btn" data-acao="tipo" data-valor="${d.tipo}">✔ Isso mesmo</button><p class="suave centro">Se não for, toque na certa:</p>` : `<h2>Que tipo de roupa é essa?</h2>`}
-      ${opcoes(listaTipos(), d.tipo, "tipo")}
+      ${d.foto ? `<img class="foto" src="${d.foto}" alt="Sua foto" style="max-height:30vh">` : ""}
+      ${d.tipo && d.daIA ? `<div class="card sugerido"><div class="tile">${desenhoRoupa(d.tipo, d.cor || "cinza")}</div><div style="flex:1"><p class="suave">Parece ser</p><h2 class="titulo" style="font-size:1.3rem">${esc(TIPOS[d.tipo].nome)}</h2></div></div>
+        <button class="btn" data-acao="tipo" data-valor="${d.tipo}">${icone("check", 22)} Isso mesmo</button><p class="suave centro">Se não for, toque na certa:</p>`
+      : `<h2 class="titulo">Que tipo de roupa é essa?</h2>`}
+      <div class="grade-3">${Object.entries(TIPOS).map(([id, t]) => `
+        <button class="opcao-peca ${d.tipo === id ? "marcada" : ""}" data-acao="tipo" data-valor="${id}"><div class="tile">${desenhoRoupa(id, d.cor && d.cor !== "branco" ? d.cor : "cinza")}</div><b>${esc(t.nome)}</b></button>`).join("")}
+      </div>
     </main>`,
   pecaCor: (d) => `
-    ${topo("Qual é a cor?")}
+    ${cabecalho("Qual é a cor?")}
     <main class="conteudo">
-      ${d.foto ? `<img class="foto-grande" src="${d.foto}" alt="Sua foto" style="max-height:30vh">` : ""}
-      <p class="passo">Passo 2 de 2</p>
-      ${d.cor ? `<h2>A cor parece: ${esc(CORES[d.cor].nome)}</h2><button class="btn" data-acao="cor" data-valor="${d.cor}">✔ Isso mesmo</button><p class="suave centro">Se não for, toque na cor certa:</p>` : `<h2>Qual é a cor principal?</h2>`}
-      ${opcoes(listaCores(), d.cor, "cor", { bola: (o) => fundoCor(o.id) })}
+      ${d.cor ? `<div class="card sugerido"><div class="tile">${d.foto ? `<img src="${d.foto}" alt="">` : desenhoRoupa(d.tipo, d.cor)}</div><div style="flex:1"><p class="suave">A cor parece</p><h2 class="titulo" style="font-size:1.3rem">${esc(CORES[d.cor].nome)}</h2></div></div>
+        <button class="btn" data-acao="cor" data-valor="${d.cor}">${icone("check", 22)} Isso mesmo</button><p class="suave centro">Se não for, toque na cor certa:</p>`
+      : `<h2 class="titulo">Qual é a cor principal?</h2>`}
+      <div class="grade-3">${Object.entries(CORES).map(([id, c]) => `
+        <button class="opcao-cor ${d.cor === id ? "marcada" : ""}" data-acao="cor" data-valor="${id}"><span class="amostra" style="background:${c.hex}"></span><b>${esc(c.nome)}</b></button>`).join("")}
+      </div>
     </main>`,
   resultado: (d) => {
     const p = d.peca;
     const a = avaliarPeca(p);
     const pele = E.perfil && PELES[E.perfil.pele];
-    const titulo = { sim: "✅ Vale a pena!", talvez: "👍 Pode ser uma boa", pense: "🤔 Pense bem antes" }[a.vale];
-    const classe = { sim: "ok", talvez: "ouro", pense: "atencao" }[a.vale];
+    const titulo = { sim: "Vale a pena", talvez: "Pode ser uma boa", pense: "Pense bem antes" }[a.vale];
+    const classe = { sim: "ok", talvez: "acento", pense: "atencao" }[a.vale];
     const jaTem = E.pecas.some((x) => x.id === p.id);
-    const fala = [titulo.replace(/^\S+\s/, ""), d.comentario || "", textoPele(a, pele, p), a.combina.length ? `Combina com ${a.combina.length} ${a.combina.length === 1 ? "peça" : "peças"} do seu guarda-roupa.` : ""].filter(Boolean).join(" ");
+    const fala = [titulo + ".", d.comentario || "", textoPele(a, pele, p), a.combina.length ? `Combina com ${a.combina.length} ${a.combina.length === 1 ? "peça" : "peças"} do seu guarda-roupa.` : ""].filter(Boolean).join(" ");
     return `
-    ${topo("Resultado")}
+    ${cabecalho("Resultado")}
     <main class="conteudo">
-      ${p.foto ? `<img class="foto-grande" src="${p.foto}" alt="${esc(nomePeca(p))}" style="max-height:34vh">` : ""}
-      <div class="caixa ${classe}">
-        <p class="veredito">${titulo}</p>
-        <p style="margin-top:6px"><b>${esc(nomePeca(p))}</b></p>
-        ${d.comentario ? `<p style="margin-top:10px">${esc(d.comentario)}</p>` : ""}
+      <div class="tile grande">${visualPeca(p)}</div>
+      <div class="card veredito ${classe}">
+        <span class="marcador">${icone(a.vale === "pense" ? "alerta" : "check", 26)}</span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><p class="suave">${esc(nomePeca(p))}</p><h2>${titulo}</h2>${d.comentario ? `<p>${esc(d.comentario)}</p>` : ""}</div>
       </div>
-      <button class="btn claro" data-acao="falar" data-texto="${esc(fala)}">🔊 Ouvir</button>
-      ${pele && a.pele ? `<div class="caixa"><h3>🎨 Com a sua cor de pele</h3><p>${esc(textoPele(a, pele, p))}</p></div>` : ""}
-      <div class="caixa"><h3>👕 Com o que combina</h3>
-        ${a.combina.length ? `<p>Combina com ${a.combina.length} ${a.combina.length === 1 ? "peça" : "peças"} que você já tem:</p><div class="pecas" style="margin-top:10px">${a.combina.slice(0, 6).map((x) => `<div class="peca">${imagemPeca(x)}<div class="nome">${esc(nomePeca(x))}</div></div>`).join("")}</div>`
+      <div class="linha-titulo"><span></span>${botaoOuvir(fala)}</div>
+      ${pele && a.pele ? `<div class="card"><p class="sobre">Com o seu tom de pele</p><p>${esc(textoPele(a, pele, p))}</p></div>` : ""}
+      <div class="card"><p class="sobre">Com o que combina</p>
+        ${a.combina.length ? `<p>Combina com ${a.combina.length} ${a.combina.length === 1 ? "peça" : "peças"} que você já tem:</p><div class="grade-3" style="margin-top:4px">${a.combina.slice(0, 6).map((x) => `<div class="tile" title="${esc(nomePeca(x))}">${visualPeca(x)}</div>`).join("")}</div>`
           : E.pecas.length ? `<p>Não achei peças no seu guarda-roupa que combinem bem com ela. Se comprar, vai precisar de outras peças junto.</p>`
-          : `<p>Quando você guardar suas roupas no app, eu mostro aqui com quais ela combina.</p>`}
+          : `<p>Quando você guardar suas roupas, eu mostro aqui com quais ela combina.</p>`}
       </div>
-      <div class="caixa"><h3>📅 Serve para</h3><ul>${a.ocasioes.map((o) => `<li>${o.ico} ${esc(o.nome)}</li>`).join("")}</ul></div>
-      ${jaTem ? "" : `<button class="btn" data-acao="guardar-peca">💾 Guardar no meu guarda-roupa</button>`}
-      <button class="btn claro" data-acao="ir" data-valor="foto">📷 Ver outra roupa</button>
-      <button class="btn claro" data-acao="inicio">🏠 Voltar ao início</button>
+      <div class="card"><p class="sobre">Serve para</p><div class="chips">${a.ocasioes.map((o) => `<span class="chip">${esc(o.nome)}</span>`).join("")}</div></div>
+      ${jaTem ? "" : `<button class="btn" data-acao="guardar-peca">${icone("mais", 22)} Guardar no meu guarda-roupa</button>`}
+      <button class="btn claro" data-acao="ir" data-valor="foto">${icone("camera", 22)} Ver outra roupa</button>
     </main>`;
   },
 
-  /* ---------- look do dia ---------- */
+  /* ---------- look ---------- */
   ocasiao: () => `
-    ${topo("O que eu visto hoje?")}
+    ${cabecalho("Montar um look")}
     <main class="conteudo">
-      <h2>Para onde você vai?</h2>
-      ${opcoes(OCASIOES, null, "ocasiao", { uma: true })}
+      <h2 class="titulo">Para onde você vai?</h2>
+      <div class="card lista">${OCASIOES.map((o) => `
+        <button class="item" data-acao="ocasiao" data-valor="${o.id}"><span class="circulo pequeno">${icone(ICONE_OCASIAO[o.id], 24)}</span><span class="texto"><b>${esc(o.nome)}</b></span><span class="seta">${icone("seta", 20)}</span></button>`).join("")}
+      </div>
     </main>`,
   look: (d) => {
-    const look = d.looks[d.i % d.looks.length];
+    const total = d.looks.length;
+    const look = d.looks[d.i % total];
     const faltam = look.pecas.filter((p) => p.sugerida);
     const texto = explicarLook(look, d.ocasiao);
     return `
-    ${topo(d.ocasiao.ico + " " + esc(d.ocasiao.nome))}
+    ${cabecalho(esc(d.ocasiao.nome))}
     <main class="conteudo">
-      <h2>Sugestão ${d.i % d.looks.length + 1}</h2>
-      <div class="look">${look.pecas.map((p) => `
-        <div class="item ${p.sugerida ? "falta" : ""}">${imagemPeca(p, "mini")}
-          <div><small>${GRUPOS[TIPOS[p.tipo].grupo]}</small><b>${esc(nomePeca(p))}</b>${p.sugerida ? `<span class="etiqueta">Você ainda não tem</span>` : `<span class="etiqueta" style="background:var(--verde-fundo)">✔ Do seu guarda-roupa</span>`}</div>
-        </div>`).join("")}</div>
-      <div class="caixa"><p>${esc(texto)}</p></div>
-      <button class="btn claro" data-acao="falar" data-texto="${esc(texto)}">🔊 Ouvir</button>
-      ${faltam.length ? `<div class="caixa ouro"><h3>Falta no seu guarda-roupa</h3><p>Guarde as suas roupas no app para eu montar com o que você tem. Ou veja as peças recomendadas.</p></div>
-        <button class="btn ouro" data-acao="ir" data-valor="loja">🛍️ Ver na loja do ${esc(nomeConsultor().split(" ")[0])}</button>` : ""}
-      <div class="rodape">
-        <button class="btn claro" data-acao="outro-look">🔄 Outra sugestão</button>
-        <button class="btn" data-acao="usar-look">✅ Vou usar</button>
+      <div class="quadro">${look.pecas.map((p) => `
+        <div class="tile-look ${p.sugerida ? "falta" : ""}"><div class="tile">${visualPeca(p)}</div>
+          <div class="legenda"><small>${GRUPOS[TIPOS[p.tipo].grupo]}</small><b>${esc(nomePeca(p))}</b>
+          <span class="chip ${p.sugerida ? "chip-acento" : "chip-ok"}">${p.sugerida ? "Falta" : "Você tem"}</span></div>
+        </div>`).join("")}
       </div>
+      <div class="card"><div class="linha-titulo"><p class="sobre">Por que funciona</p>${botaoOuvir(texto)}</div><p>${esc(texto)}</p></div>
+      ${faltam.length ? `<div class="card acento"><h3>Falta pouco para esse look</h3><p>Guarde suas roupas no app para eu montar com o que você tem, ou veja as peças na loja.</p>
+        <button class="btn" data-acao="aba" data-valor="loja">${icone("sacola", 22)} Ver na loja do ${esc(primeiro(nomeConsultor()))}</button></div>` : ""}
+      <div class="acoes">
+        <button class="btn claro" data-acao="outro-look">${icone("trocar", 22)} Outra opção</button>
+        <button class="btn" data-acao="usar-look">${icone("check", 22)} Vou usar</button>
+      </div>
+      <p class="suave centro" style="font-size:.85rem">Opção ${d.i % total + 1} de ${total}</p>
     </main>`;
   },
 
   /* ---------- guarda-roupa ---------- */
   armario: () => {
     const grupos = Object.keys(GRUPOS).map((g) => ({ g, itens: E.pecas.filter((p) => TIPOS[p.tipo]?.grupo === g) })).filter((x) => x.itens.length);
+    const n = E.pecas.length;
     return `
-    ${topo("Meu guarda-roupa")}
+    ${cabecalhoRaiz("Guarda-roupa", n ? `${n} ${n === 1 ? "peça guardada" : "peças guardadas"}` : "Suas roupas, num lugar só")}
     <main class="conteudo">
-      <button class="btn" data-acao="nova-peca" data-foco><span class="ico">➕</span> Guardar uma roupa</button>
-      ${E.pecas.length ? grupos.map(({ g, itens }) => `<p class="grupo-titulo">${GRUPOS[g]}</p>
-        <div class="pecas">${itens.map((p) => `<button class="peca" data-acao="ver-peca" data-valor="${p.id}">${imagemPeca(p)}<div class="nome">${esc(nomePeca(p))}</div></button>`).join("")}</div>`).join("")
-      : `<div class="caixa centro"><p style="font-size:2.5rem">🚪</p><h3>Seu guarda-roupa está vazio</h3><p class="suave">Tire foto das roupas que você mais usa. Comece por 3 ou 4: camisas, calças e sapatos.</p></div>`}
+      <button class="btn acento" data-acao="nova-peca" data-foco>${icone("mais", 24)} Guardar uma roupa</button>
+      ${n ? grupos.map(({ g, itens }) => `<h2 class="secao">${GRUPOS[g]}</h2>
+        <div class="pecas">${itens.map((p) => peca(p, `data-acao="ver-peca" data-valor="${p.id}"`)).join("")}</div>`).join("")
+      : `<div class="card" style="align-items:center;text-align:center;padding:28px 20px">
+          <div class="grade-3" style="width:100%;max-width:300px">${["camisa", "jeans", "mocassim"].map((t, i) => `<div class="tile">${desenhoRoupa(t, ["branco", "jeans", "marrom"][i])}</div>`).join("")}</div>
+          <h3 style="margin-top:8px">Comece pelas roupas que você mais usa</h3>
+          <p class="suave">Três ou quatro peças já bastam para eu montar os primeiros looks: uma camisa, uma calça e um sapato.</p>
+        </div>`}
     </main>`;
   },
   verPeca: (d) => {
     const p = E.pecas.find((x) => x.id === d.id);
     if (!p) return TELAS.armario();
     return `
-    ${topo(esc(nomePeca(p)))}
+    ${cabecalho(esc(nomePeca(p)))}
     <main class="conteudo">
-      ${p.foto ? `<img class="foto-grande" src="${p.foto}" alt="">` : `<div class="caixa centro" style="background:${fundoCor(p.cor)};font-size:5rem">${TIPOS[p.tipo].ico}</div>`}
-      <button class="btn" data-acao="avaliar-peca" data-valor="${p.id}">👀 Com o que essa roupa combina?</button>
-      <button class="btn claro" data-acao="apagar-peca" data-valor="${p.id}">🗑️ Tirar do guarda-roupa</button>
+      <div class="tile grande">${visualPeca(p)}</div>
+      <button class="btn" data-acao="avaliar-peca" data-valor="${p.id}">${icone("cabide", 22)} Com o que essa roupa combina?</button>
+      <button class="btn claro" data-acao="apagar-peca" data-valor="${p.id}">${icone("lixo", 22)} Tirar do guarda-roupa</button>
     </main>`;
   },
   confirmarApagar: (d) => `
-    ${topo("Tirar do guarda-roupa?")}
+    ${cabecalho("Tirar do guarda-roupa")}
     <main class="conteudo">
-      <h2>Tem certeza que quer tirar essa roupa do app?</h2>
-      <p class="suave">A roupa de verdade continua com você, só sai da lista.</p>
-      <button class="btn" data-acao="apagar-sim" data-valor="${d.id}">Sim, tirar</button>
+      <div class="card"><h2 class="titulo">Tirar essa roupa da lista?</h2><p class="suave">A roupa de verdade continua com você. Ela só sai do app.</p></div>
+      <button class="btn" data-acao="apagar-sim" data-valor="${d.id}">Sim, tirar da lista</button>
       <button class="btn claro" data-acao="voltar">Não, deixar como está</button>
     </main>`,
 
@@ -963,21 +1228,23 @@ const TELAS = {
     const msgs = E.conversa;
     const sug = ["Como usar pomada no cabelo?", "Como ter mais presença?", "Roupa elegante para o calor", "Como fazer tom sobre tom?", "Gola alta: com o que usar?", "Como me vestir para um casamento?"];
     return `
-    ${topo("Perguntar ao consultor")}
+    ${cabecalhoRaiz("Consultor", `Método ${esc(nomeConsultor())}`, `<div class="selo" style="width:52px;height:52px;font-size:1.05rem">IM</div>`)}
     <main class="conteudo">
       <div class="conversa" id="conversa">
-        <div class="bolha ia">Oi${primeiroNome() ? ", " + esc(primeiroNome()) : ""}! Aqui é o consultor do método ${esc(nomeConsultor())}. Pode me perguntar qualquer coisa sobre roupa, cabelo, barba, cuidados, postura ou como se portar. ${Reconhecedor ? "Se preferir, toque em 🎤 Falar e fale a sua pergunta." : ""}</div>
-        ${msgs.map((m, i) => bolha(m, i)).join("")}
+        ${bolhaHTML({ de: "ia", texto: `Oi${primeiroNome() ? ", " + primeiroNome() : ""}! Me pergunte o que quiser sobre roupa, cabelo, barba, cuidados ou presença. Pode escrever, falar ou mandar uma foto.` }, -1)}
+        ${msgs.map((m, i) => bolhaHTML(m, i)).join("")}
+        ${msgs.length ? "" : `<div class="card lista" id="sugestoes">${sug.map((s) => `<button class="item" data-acao="perguntar" data-texto="${esc(s)}"><span class="texto"><b>${esc(s)}</b></span><span class="seta">${icone("seta", 20)}</span></button>`).join("")}</div>`}
+        ${msgs.length ? `<button class="btn-texto" data-acao="limpar-conversa" style="align-self:center">${icone("trocar", 18)} Começar uma conversa nova</button>` : ""}
       </div>
-      ${msgs.length ? "" : `<p class="suave">Ou toque numa dessas perguntas:</p><div class="sugestoes">${sug.map((s) => `<button class="sugestao" data-acao="perguntar" data-texto="${esc(s)}">${esc(s)}</button>`).join("")}</div>`}
-      ${msgs.length ? `<button class="btn claro" data-acao="limpar-conversa" style="min-height:56px;font-size:.95rem">🧹 Começar conversa nova</button>` : ""}
     </main>
     <div class="escrever">
-      <textarea id="pergunta" rows="2" placeholder="Escreva sua pergunta aqui"></textarea>
-      <div class="linha">
-        ${Reconhecedor ? `<button class="btn claro" data-acao="microfone">🎤 Falar</button>` : `<span></span>`}
-        <button class="btn claro" data-acao="foto-conversa">📷 Foto</button>
-        <button class="btn" data-acao="enviar">Enviar ➤</button>
+      <div class="campo-msg">
+        <textarea id="pergunta" rows="1" placeholder="Escreva sua dúvida" aria-label="Sua dúvida"></textarea>
+        <button class="enviar" data-acao="enviar" aria-label="Enviar">${icone("enviar", 24)}</button>
+      </div>
+      <div class="extras">
+        ${Reconhecedor ? `<button data-acao="microfone">${icone("mic", 22)}<span>Falar</span></button>` : ""}
+        <button data-acao="foto-conversa">${icone("camera", 22)}<span>Mandar foto</span></button>
       </div>
     </div>`;
   },
@@ -985,94 +1252,109 @@ const TELAS = {
   /* ---------- loja ---------- */
   loja: () => {
     const lista = E.consultor.produtos.map((p, i) => ({ ...p, i }));
-    const cartao = (p) => `
-        <div class="caixa produto">
-          <div class="mini" style="background:${ICONE_PRODUTO[p.tipo] ? "var(--marca)" : fundoCor(p.cor)}">${ICONE_PRODUTO[p.tipo] || TIPOS[p.tipo]?.ico || "🛍️"}</div>
-          <div style="flex:1"><b>${esc(p.nome)}</b>${p.preco ? `<span class="suave">${esc(p.preco)}</span>` : ""}
-            ${E.pecas.some((x) => x.tipo === p.tipo && x.cor === p.cor) ? `<br><span class="etiqueta" style="background:var(--verde-fundo)">✔ Você já tem parecida</span>` : ""}
-          </div>
-        </div>
-        <button class="btn ${p.link ? "" : "claro"}" data-acao="comprar" data-valor="${p.i}">${p.link ? (p.link.includes("instagram.com") ? "📲 Ver no Instagram do " + esc(nomeConsultor().split(" ")[0]) : "🛒 Quero comprar") : "Em breve"}</button>`;
-    const agora = lista.filter((p) => p.link || ICONE_PRODUTO[p.tipo]);
+    const cartao = (p) => {
+      const tem = E.pecas.some((x) => x.tipo === p.tipo && x.cor === p.cor);
+      const insta = p.link && p.link.includes("instagram.com");
+      return `<div class="peca" style="padding:8px 8px 12px">
+        <div class="tile">${desenhoRoupa(p.tipo, p.cor)}</div>
+        <div class="nome" style="padding:0 6px">${esc(p.nome)}</div>
+        ${p.preco ? `<p class="suave" style="padding:0 6px;font-size:.85rem">${esc(p.preco)}</p>` : ""}
+        ${tem ? `<span class="chip chip-ok" style="margin:0 6px">Você já tem</span>` : ""}
+        ${p.link ? `<button class="btn" data-acao="comprar" data-valor="${p.i}" style="min-height:52px;font-size:.9rem;padding:8px">${insta ? "Ver no Instagram" : "Quero comprar"}</button>`
+          : `<span class="chip" style="margin:0 6px">Em breve</span>`}
+      </div>`;
+    };
+    const agora = lista.filter((p) => p.link || PRODUTO_DESENHO[p.tipo]);
     const breve = lista.filter((p) => !agora.includes(p));
     return `
-    ${topo("Loja do " + esc(nomeConsultor().split(" ")[0]))}
+    ${cabecalhoRaiz("Loja do " + esc(primeiro(nomeConsultor())), "Escolhido a dedo pelo " + esc(nomeConsultor()))}
     <main class="conteudo">
-      <h2>Escolhido pelo ${esc(nomeConsultor())}</h2>
-      ${agora.map(cartao).join("")}
-      ${breve.length ? `<div class="separador"></div><h2>Linha de roupas <span style="color:var(--ouro)">· em breve</span></h2>
-      <p class="suave">Peças básicas que combinam entre si e com o que você já tem.</p>${breve.map(cartao).join("")}` : ""}
+      ${agora.length ? `<div class="pecas">${agora.map(cartao).join("")}</div>` : ""}
+      ${breve.length ? `<div class="card escuro" style="margin-top:6px"><p class="sobre">Em breve</p><h3 style="font-family:var(--serifa);font-size:1.35rem">A linha de roupas</h3><p style="opacity:.85">Peças básicas que combinam entre si e com o que você já tem.</p></div>
+        <div class="pecas">${breve.map(cartao).join("")}</div>` : ""}
     </main>`;
   },
 
   /* ---------- ajustes ---------- */
-  ajustes: () => `
-    ${topo("Ajustes")}
+  ajustes: () => {
+    const p = E.perfil || {};
+    const resumo = [IDADES.find((x) => x.id === p.idade)?.nome, PELES[p.pele] ? "pele " + PELES[p.pele].nome.toLowerCase() : "", CORPOS.find((x) => x.id === p.corpo)?.nome].filter(Boolean).join(" · ");
+    return `
+    ${cabecalho("Seus dados e ajustes")}
     <main class="conteudo">
-      <h2>Tamanho da letra</h2>
-      ${opcoes([{ id: "1", nome: "Normal" }, { id: "2", nome: "Grande" }, { id: "3", nome: "Muito grande" }], String(E.ajustes.letra), "letra")}
-      <div class="separador"></div>
-      <button class="btn claro" data-acao="refazer-perfil">👤 Mudar minhas informações</button>
-      <button class="btn claro" data-acao="ir" data-valor="area">🔐 Área do consultor</button>
-      <button class="btn claro" data-acao="ir" data-valor="apagarTudo">🗑️ Apagar tudo do app</button>
-      <p class="suave centro" style="font-size:.8rem">Suas fotos e respostas ficam guardadas só neste celular.</p>
-    </main>`,
+      <button class="card atalho-grande" data-acao="refazer-perfil">
+        <span class="avatar">${p.nome ? esc(p.nome[0].toUpperCase()) : icone("usuario", 26)}</span>
+        <span class="texto"><b>${esc(p.nome || "Você")}</b><small>${esc(resumo || "Toque para preencher")}</small></span>
+        ${icone("lapis", 22)}
+      </button>
+      <div class="card"><p class="sobre">Tamanho da letra</p>
+        <div class="segmentos" role="group" aria-label="Tamanho da letra">${[1, 2, 3].map((n) => `<button class="${E.ajustes.letra === n ? "ativo" : ""}" data-acao="letra" data-valor="${n}" aria-pressed="${E.ajustes.letra === n}" style="font-size:${[1, 1.3, 1.65][n - 1]}rem">Aa</button>`).join("")}</div>
+      </div>
+      <div class="card lista">
+        <button class="item" data-acao="ir" data-valor="area"><span class="circulo pequeno">${icone("cadeado", 22)}</span><span class="texto"><b>Área do consultor</b><small>Para quem configura o app</small></span><span class="seta">${icone("seta", 20)}</span></button>
+        <button class="item" data-acao="ir" data-valor="apagarTudo"><span class="circulo pequeno">${icone("lixo", 22)}</span><span class="texto"><b>Apagar meus dados</b><small>Roupas, conversas e respostas</small></span><span class="seta">${icone("seta", 20)}</span></button>
+      </div>
+      <p class="suave centro" style="font-size:.82rem">Suas fotos e respostas ficam guardadas só neste celular.</p>
+    </main>`;
+  },
   apagarTudo: () => `
-    ${topo("Apagar tudo")}
+    ${cabecalho("Apagar meus dados")}
     <main class="conteudo">
-      <h2>Apagar todas as suas roupas, conversas e informações?</h2>
-      <p class="suave">Não dá para desfazer.</p>
+      <div class="card atencao"><h2 class="titulo">Apagar suas roupas, conversas e respostas?</h2><p>Não dá para desfazer.</p></div>
       <button class="btn" data-acao="apagar-tudo-sim">Sim, apagar tudo</button>
       <button class="btn claro" data-acao="voltar">Não, voltar</button>
     </main>`,
   area: () => `
-    ${topo("Área do consultor")}
+    ${cabecalho("Área do consultor")}
     <main class="conteudo">
-      <p class="suave">Esta área é para quem configura o app (o consultor ou a equipe dele).</p>
-      <div><label class="rotulo" for="c-app">Nome do app</label><input type="text" id="c-app" value="${esc(nomeApp())}"></div>
-      <div><label class="rotulo" for="c-nome">Nome do consultor</label><input type="text" id="c-nome" value="${esc(E.consultor.nome)}"></div>
-      <div><label class="rotulo" for="c-frase">Frase de boas-vindas</label><input type="text" id="c-frase" value="${esc(E.consultor.frase)}"></div>
-      <div class="caixa ouro">
-        <h3>🧠 Inteligência completa</h3>
-        <p>Com uma chave da API da Anthropic, o app reconhece roupas pela foto sozinho e conversa sobre qualquer assunto de estilo usando o método abaixo. Sem a chave, o app continua funcionando com as regras do método.</p>
-        <p style="margin-top:8px;font-size:.85rem" class="suave">Use só para demonstração: a chave fica guardada neste celular. No app final, ela fica num servidor.</p>
+      <p class="suave">Para quem configura o app: o consultor ou a equipe dele.</p>
+      <div class="card">
+        <div><label class="rotulo" for="c-app">Nome do app</label><input type="text" id="c-app" value="${esc(nomeApp())}"></div>
+        <div><label class="rotulo" for="c-nome">Nome do consultor</label><input type="text" id="c-nome" value="${esc(E.consultor.nome)}"></div>
+        <div><label class="rotulo" for="c-frase">Frase de boas-vindas</label><input type="text" id="c-frase" value="${esc(E.consultor.frase)}"></div>
       </div>
-      <div><label class="rotulo" for="c-chave">Chave da API</label><input type="password" id="c-chave" autocomplete="off" placeholder="sk-ant-..." value="${esc(E.ajustes.chave)}"></div>
-      <div><label class="rotulo" for="c-metodo">Método do consultor</label>
-        <p class="suave" style="font-size:.85rem;margin-bottom:6px">Cada assunto começa com "## Título" e uma linha "palavras:" (usadas para responder sem internet). O texto inicial é um rascunho feito a partir do estilo que aparece no perfil: o consultor confere e troca pelos ensinamentos dele.</p>
-        <textarea class="campo" id="c-metodo">${esc(E.consultor.metodo)}</textarea></div>
-      <button class="btn claro" data-acao="metodo-padrao" style="min-height:56px;font-size:.95rem">↩️ Voltar ao texto de exemplo</button>
-      <h2>Produtos da linha</h2>
-      <p class="suave" style="font-size:.85rem">Uma linha por produto: nome | tipo | cor | preço | link. Produtos com link aparecem como "disponível". Tipos: ${Object.keys(TIPOS).join(", ")}, cuidado, clube. Cores: ${Object.keys(CORES).join(", ")}.</p>
-      <textarea class="campo" id="c-produtos" style="min-height:200px">${esc(E.consultor.produtos.map((p) => [p.nome, p.tipo, p.cor, p.preco, p.link].join(" | ")).join("\n"))}</textarea>
-      <button class="btn" data-acao="salvar-area">💾 Salvar</button>
+      <div class="card acento">
+        <h3>Respostas completas</h3>
+        <p>Com uma chave da API da Anthropic, o app reconhece a roupa pela foto e responde qualquer dúvida de estilo usando o método abaixo. Sem a chave, ele funciona com as regras do método.</p>
+        <p class="suave" style="font-size:.85rem">Só para demonstração: a chave fica guardada neste celular. No app final, ela fica num servidor.</p>
+        <div><label class="rotulo" for="c-chave">Chave da API</label><input type="password" id="c-chave" autocomplete="off" placeholder="sk-ant-..." value="${esc(E.ajustes.chave)}"></div>
+      </div>
+      <div class="card">
+        <label class="rotulo" for="c-metodo">Método do consultor</label>
+        <p class="suave" style="font-size:.85rem">Cada assunto começa com "## Título" e uma linha "palavras:" (usadas para responder sem internet). O texto inicial é um rascunho feito a partir do estilo que aparece no perfil: o consultor confere e troca pelos ensinamentos dele.</p>
+        <textarea class="campo" id="c-metodo">${esc(E.consultor.metodo)}</textarea>
+        <button class="btn-texto" data-acao="metodo-padrao">${icone("trocar", 18)} Voltar ao texto inicial</button>
+      </div>
+      <div class="card">
+        <label class="rotulo" for="c-produtos">Produtos da loja</label>
+        <p class="suave" style="font-size:.85rem">Uma linha por produto: nome | tipo | cor | preço | link. Tipos: ${Object.keys(TIPOS).join(", ")}, cuidado, clube. Cores: ${Object.keys(CORES).join(", ")}.</p>
+        <textarea class="campo" id="c-produtos" style="min-height:200px">${esc(E.consultor.produtos.map((p) => [p.nome, p.tipo, p.cor, p.preco, p.link].join(" | ")).join("\n"))}</textarea>
+      </div>
+      <button class="btn" data-acao="salvar-area">${icone("check", 22)} Salvar</button>
     </main>`,
 };
 
 function textoPele(a, pele, p) {
   if (!pele || !a.pele) return "";
   const cor = CORES[p.cor].nome.toLowerCase();
-  if (a.pele === "boa") return `O ${cor} valoriza a pele ${pele.nome.toLowerCase()}. Usar perto do rosto deixa você com aparência mais saudável.`;
-  if (a.pele === "evitar") return `O ${cor} pode deixar a pele ${pele.nome.toLowerCase()} mais apagada perto do rosto. Se gostar muito, use em peças de baixo ou com um casaco por cima. Cores que te valorizam: ${pele.boas.slice(0, 4).map((c) => CORES[c].nome.toLowerCase()).join(", ")}.`;
-  return `É uma cor tranquila para o seu tom de pele.`;
+  if (a.pele === "boa") return `O ${cor} valoriza a pele ${pele.nome.toLowerCase()}. Perto do rosto, deixa você com aparência mais saudável.`;
+  if (a.pele === "evitar") return `O ${cor} pode deixar a pele ${pele.nome.toLowerCase()} mais apagada perto do rosto. Se gostar muito, use em peças de baixo ou com um casaco por cima. As cores que mais te valorizam: ${pele.boas.slice(0, 4).map((c) => CORES[c].nome.toLowerCase()).join(", ")}.`;
+  return "É uma cor tranquila para o seu tom de pele.";
 }
 
-function bolha(m, i) {
-  return `<div class="bolha ${m.de}">${m.foto ? `<img src="${m.foto}" alt="Foto enviada">` : ""}${esc(m.texto)}${m.de === "ia" ? `<br><button class="ouvir" data-acao="falar-msg" data-valor="${i}">🔊 Ouvir</button>` : ""}</div>`;
+function bolhaHTML(m, i) {
+  if (m.de === "eu") return `<div class="msg eu"><div class="bolha">${m.foto ? `<img src="${m.foto}" alt="Foto enviada">` : ""}${esc(m.texto)}</div></div>`;
+  return `<div class="msg ia"><div class="selo">IM</div><div class="bolha">${esc(m.texto)}${i >= 0 ? `<br><button class="btn-ouvir" data-acao="falar-msg" data-valor="${i}">${ROTULO_OUVIR}</button>` : ""}</div></div>`;
 }
-
-const TELAS_DEPOIS = {
-  conversa: () => { const c = $(".bolha:last-child"); if (E.conversa.length && c) c.scrollIntoView({ block: "end" }); },
-};
 
 /* ===================== Ações ===================== */
 
 let rascunhoPerfil = {};
 let pecaAtual = null;
-const comFotoPendente = { foto: null };
 
 const ACOES = {
   voltar, inicio: irInicio,
+  aba: (v) => trocarAba(v),
   ir: (v) => ir(v),
   "perfil-comecar": () => { rascunhoPerfil = { ...(E.perfil || {}) }; ir("perfilNome", { p: rascunhoPerfil }); },
   "perfil-nome": () => { rascunhoPerfil.nome = ($("#campo-nome").value || "").trim().slice(0, 40); ir("perfilIdade", { p: rascunhoPerfil }); },
@@ -1082,7 +1364,7 @@ const ACOES = {
   "perfil-pele": (v) => { rascunhoPerfil.pele = v; ir("perfilCorpo", { p: rascunhoPerfil }); },
   "perfil-corpo": (v) => {
     rascunhoPerfil.corpo = v; E.perfil = rascunhoPerfil; salvar();
-    irInicio(); aviso(`Pronto${primeiroNome() ? ", " + primeiroNome() : ""}! Agora é só escolher o que quer fazer.`);
+    irInicio(); aviso(`Tudo pronto${primeiroNome() ? ", " + primeiroNome() : ""}. Escolha por onde começar.`);
   },
   "refazer-perfil": () => { rascunhoPerfil = { ...(E.perfil || {}) }; ir("perfilNome", { p: rascunhoPerfil }); },
 
@@ -1094,7 +1376,7 @@ const ACOES = {
     if (!r) return;
     pecaAtual = { id: novoId(), foto: await miniatura(r.grande), tipo: null, cor: r.cor, guardar, comentario: "" };
     if (temIA()) {
-      ir("analisando");
+      ir("analisando", { guardar });
       try {
         const ia = await analisarFotoIA(r.grande);
         if (tela.nome !== "analisando") return;
@@ -1104,47 +1386,50 @@ const ACOES = {
         aviso(mensagemErroIA(e));
       }
       if (tela.nome !== "analisando") return;
-      tela = { nome: "pecaTipo", dados: { ...pecaAtual, daIA: !!pecaAtual.tipo } }; desenhar(); window.scrollTo(0, 0);
+      tela = { nome: "pecaTipo", dados: { ...pecaAtual, daIA: !!pecaAtual.tipo } }; direcao = "avanca"; desenhar(); window.scrollTo(0, 0);
     } else ir("pecaTipo", { ...pecaAtual });
   },
   "sem-foto": () => { pecaAtual = { id: novoId(), foto: null, tipo: null, cor: null, guardar: !!tela.dados.guardar, comentario: "" }; ir("pecaTipo", { ...pecaAtual }); },
   tipo: (v) => { pecaAtual.tipo = v; ir("pecaCor", { ...pecaAtual }); },
   cor: (v) => {
     pecaAtual.cor = v;
-    const peca = { id: pecaAtual.id, tipo: pecaAtual.tipo, cor: pecaAtual.cor, foto: pecaAtual.foto };
+    const nova = { id: pecaAtual.id, tipo: pecaAtual.tipo, cor: pecaAtual.cor, foto: pecaAtual.foto };
     if (pecaAtual.guardar) {
-      E.pecas.push(peca);
+      E.pecas.push(nova);
       if (!salvar()) { E.pecas.pop(); return; }
-      pilha = [{ nome: "inicio", dados: {} }]; tela = { nome: "armario", dados: {} }; desenhar(); window.scrollTo(0, 0);
-      aviso("✔ Roupa guardada!");
-    } else ir("resultado", { peca, comentario: pecaAtual.comentario });
+      trocarAba("armario");
+      aviso("Roupa guardada no seu guarda-roupa.");
+    } else ir("resultado", { peca: nova, comentario: pecaAtual.comentario });
   },
   "guardar-peca": () => {
     const p = tela.dados.peca;
     E.pecas.push({ id: p.id, tipo: p.tipo, cor: p.cor, foto: p.foto });
     if (!salvar()) { E.pecas.pop(); return; }
-    desenhar(); aviso("✔ Guardada no seu guarda-roupa!");
+    desenhar(); aviso("Guardada no seu guarda-roupa.");
   },
   "ver-peca": (v) => ir("verPeca", { id: v }),
   "avaliar-peca": (v) => { const p = E.pecas.find((x) => x.id === v); if (p) ir("resultado", { peca: p }); },
   "apagar-peca": (v) => ir("confirmarApagar", { id: v }),
-  "apagar-sim": (v) => { E.pecas = E.pecas.filter((p) => p.id !== v); salvar(); pilha = [{ nome: "inicio", dados: {} }]; tela = { nome: "armario", dados: {} }; desenhar(); aviso("Roupa tirada da lista."); },
+  "apagar-sim": (v) => { E.pecas = E.pecas.filter((p) => p.id !== v); salvar(); trocarAba("armario"); aviso("Roupa tirada da lista."); },
 
   ocasiao: (v) => {
     const oc = OCASIOES.find((o) => o.id === v);
     const looks = montarLooks(oc);
-    if (!looks.length) { aviso("Não consegui montar uma roupa. Guarde mais peças no guarda-roupa."); return; }
+    if (!looks.length) { aviso("Não consegui montar um look. Guarde mais peças no guarda-roupa."); return; }
     ir("look", { ocasiao: oc, looks, i: 0 });
   },
-  "outro-look": () => { pararFala(); tela.dados.i++; desenhar(); window.scrollTo(0, 0); },
-  "usar-look": () => { irInicio(); aviso("Ótima escolha! Você vai ficar muito bem. 👍"); },
+  "outro-look": () => { pararFala(); tela.dados.i++; direcao = "avanca"; desenhar(); window.scrollTo(0, 0); },
+  "usar-look": () => { irInicio(); aviso("Ótima escolha. Você vai ficar muito bem."); },
 
   falar: (v, el) => falar(el.dataset.texto || "", el),
   "falar-msg": (v, el) => { const m = E.conversa[Number(v)]; if (m) falar(m.texto, el); },
 
-  perguntar: (v, el) => enviarPergunta(el.dataset.texto),
+  perguntar: (v, el) => {
+    if (tela.nome !== "conversa") trocarAba("conversa");
+    enviarPergunta(el.dataset.texto);
+  },
   enviar: () => enviarPergunta($("#pergunta").value),
-  "limpar-conversa": () => { E.conversa = []; salvar(); desenhar(); },
+  "limpar-conversa": () => { E.conversa = []; salvar(); desenhar(); window.scrollTo(0, 0); },
   microfone: (v, el) => ouvirMicrofone(el),
   "foto-conversa": async () => {
     const r = await pedirFoto("camera");
@@ -1165,7 +1450,7 @@ const ACOES = {
     E = padrao(); E.consultor = consultor; E.ajustes.chave = chave; salvar(); aplicarLetra();
     pilha = []; tela = { nome: "boasvindas", dados: {} }; desenhar();
   },
-  "metodo-padrao": () => { $("#c-metodo").value = METODO_PADRAO; aviso("Texto de exemplo colocado. Toque em Salvar."); },
+  "metodo-padrao": () => { $("#c-metodo").value = METODO_PADRAO; aviso("Texto inicial colocado. Toque em Salvar."); },
   "salvar-area": () => {
     E.consultor.app = ($("#c-app").value || "").trim() || "Impossible Man";
     E.consultor.nome = ($("#c-nome").value || "").trim() || "consultor";
@@ -1173,9 +1458,9 @@ const ACOES = {
     E.ajustes.chave = ($("#c-chave").value || "").trim();
     E.consultor.metodo = $("#c-metodo").value;
     E.consultor.produtos = $("#c-produtos").value.split("\n").map((l) => l.split("|").map((x) => x.trim())).filter((c) => c[0]).map(([nome, tipo, cor, preco, link]) => ({
-      nome, tipo: TIPOS[tipo] || ICONE_PRODUTO[tipo] ? tipo : "camiseta", cor: CORES[cor] ? cor : "cinza", preco: preco || "", link: /^https?:\/\//.test(link || "") ? link : "",
+      nome, tipo: TIPOS[tipo] || PRODUTO_DESENHO[tipo] ? tipo : "camiseta", cor: CORES[cor] ? cor : "cinza", preco: preco || "", link: /^https?:\/\//.test(link || "") ? link : "",
     }));
-    if (salvar()) { aviso("✔ Salvo!"); voltar(); }
+    if (salvar()) { aviso("Salvo."); voltar(); }
   },
 };
 
@@ -1188,21 +1473,25 @@ app.addEventListener("click", (ev) => {
 app.addEventListener("keydown", (ev) => {
   if (ev.target.id === "campo-nome" && ev.key === "Enter") ACOES["perfil-nome"]();
 });
+app.addEventListener("input", (ev) => {
+  // a caixa de texto cresce conforme a pessoa escreve
+  if (ev.target.id === "pergunta") { ev.target.style.height = "auto"; ev.target.style.height = Math.min(ev.target.scrollHeight, 140) + "px"; }
+});
 
 /* ===================== Conversa ===================== */
 
 let enviando = false;
 async function enviarPergunta(texto, foto = null) {
   texto = String(texto || "").trim();
-  if (!texto || enviando) { if (!texto) aviso("Escreva ou fale a sua pergunta primeiro."); return; }
+  if (!texto || enviando) { if (!texto) aviso("Escreva ou fale a sua dúvida primeiro."); return; }
   enviando = true;
-  const minha = { de: "eu", texto };
-  E.conversa.push(minha);
+  E.conversa.push({ de: "eu", texto });
   const conv = $("#conversa");
-  conv.insertAdjacentHTML("beforeend", `<div class="bolha eu">${foto ? `<img src="${foto}" alt="Foto enviada">` : ""}${esc(texto)}</div><div class="bolha ia" id="pensando"><span class="roda" style="width:28px;height:28px;border-width:4px;display:inline-block;vertical-align:middle"></span> Pensando…</div>`);
-  $("#pensando").scrollIntoView({ block: "end" });
+  const sug = $("#sugestoes"); if (sug) sug.remove();
+  conv.insertAdjacentHTML("beforeend", `<div class="msg eu"><div class="bolha">${foto ? `<img src="${foto}" alt="Foto enviada">` : ""}${esc(texto)}</div></div>
+    <div class="msg ia" id="pensando"><div class="selo">IM</div><div class="bolha" aria-label="Escrevendo"><span class="digitando"><i></i><i></i><i></i></span></div></div>`);
+  window.scrollTo(0, document.body.scrollHeight);
   $("#pergunta").value = "";
-  document.querySelectorAll(".sugestoes, .sugestoes + p").forEach((n) => n.remove());
 
   let resposta;
   if (temIA()) {
@@ -1216,8 +1505,8 @@ async function enviarPergunta(texto, foto = null) {
       resposta = mensagemErroIA(e) + (String(e.message).match(/chave|ocupado|recusa/) ? "" : "\n\n" + responderSemInternet(texto));
     }
   } else {
-    await new Promise((r) => setTimeout(r, 500));
-    resposta = foto ? "Para eu analisar fotos, a inteligência completa precisa estar ligada (na Área do consultor). Mas posso te ajudar com uma dica:\n\n" + responderSemInternet(texto) : responderSemInternet(texto);
+    await new Promise((r) => setTimeout(r, 900));
+    resposta = foto ? "Para eu olhar fotos aqui na conversa, as respostas completas precisam estar ligadas na Área do consultor. Mas já te adianto uma dica:\n\n" + responderSemInternet(texto) : responderSemInternet(texto);
   }
   E.conversa.push({ de: "ia", texto: resposta || "Desculpe, não consegui responder agora." });
   if (E.conversa.length > 60) E.conversa = E.conversa.slice(-60);
@@ -1233,14 +1522,14 @@ function ouvirMicrofone(botao) {
   if (!Reconhecedor) return;
   const r = new Reconhecedor();
   r.lang = "pt-BR"; r.interimResults = false; r.maxAlternatives = 1;
-  botao.textContent = "👂 Ouvindo…"; botao.disabled = true;
+  botao.innerHTML = `${icone("mic", 22)}<span>Ouvindo…</span>`; botao.disabled = true;
   r.onresult = (ev) => {
     const texto = ev.results[0][0].transcript;
     $("#pergunta").value = texto;
     enviarPergunta(texto);
   };
-  r.onerror = () => aviso("Não consegui ouvir. Toque em 🎤 Falar e fale perto do celular.");
-  r.onend = () => { botao.textContent = "🎤 Falar"; botao.disabled = false; };
+  r.onerror = () => aviso("Não consegui ouvir. Toque em Falar e fale perto do celular.");
+  r.onend = () => { botao.innerHTML = `${icone("mic", 22)}<span>Falar</span>`; botao.disabled = false; };
   try { r.start(); } catch (e) { r.onend(); }
 }
 

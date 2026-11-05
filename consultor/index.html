@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="pt-BR" data-letra="2">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alinhado</title>
+<meta name="description" content="Seu consultor de estilo no celular: roupa, cabelo, barba, cuidados e postura.">
+<meta name="theme-color" content="#1d2a44">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Alinhado">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="marca/icone.svg">
+<link rel="icon" href="marca/icone.svg" type="image/svg+xml">
+<style>
+  /* Pensado para quem nunca mexeu em celular: letra grande, botões enormes,
+     uma decisão por tela, sempre um "Voltar" visível, nada escondido em gestos. */
+  :root {
+    --fundo: #f6f1e7; --cartao: #ffffff; --texto: #1a1f2b; --suave: #4f5666;
+    --linha: #d9d0bf; --marca: #1d2a44; --marca-txt: #ffffff; --ouro: #b07d2b;
+    --ouro-fundo: #f3e6cc; --verde: #1f7a4a; --verde-fundo: #ddf1e4;
+    --alerta: #9a4a12; --alerta-fundo: #fbe7d4; --sombra: 0 2px 0 rgba(29,42,68,.08), 0 6px 18px rgba(29,42,68,.08);
+    --raio: 20px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --fundo: #10141d; --cartao: #1b2130; --texto: #f4f1ea; --suave: #b9bfcc; --linha: #333c50;
+      --marca: #e9d9b8; --marca-txt: #10141d; --ouro: #e0b25e; --ouro-fundo: #3a301d;
+      --verde: #7fd6a4; --verde-fundo: #183526; --alerta: #f3b483; --alerta-fundo: #3d2616;
+      --sombra: 0 2px 0 rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --fundo: #10141d; --cartao: #1b2130; --texto: #f4f1ea; --suave: #b9bfcc; --linha: #333c50;
+    --marca: #e9d9b8; --marca-txt: #10141d; --ouro: #e0b25e; --ouro-fundo: #3a301d;
+    --verde: #7fd6a4; --verde-fundo: #183526; --alerta: #f3b483; --alerta-fundo: #3d2616;
+    --sombra: 0 2px 0 rgba(0,0,0,.3);
+  }
+  html[data-letra="1"] { font-size: 18px; }
+  html[data-letra="2"] { font-size: 21px; }
+  html[data-letra="3"] { font-size: 25px; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--fundo); color: var(--texto); overflow-x: hidden; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.45;
+    -webkit-font-smoothing: antialiased; }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
+  img { max-width: 100%; display: block; }
+
+  .app { max-width: 560px; margin: 0 auto; min-height: 100dvh; display: flex; flex-direction: column;
+    padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+  .topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; background: var(--fundo); border-bottom: 2px solid var(--linha); }
+  .topo h1 { margin: 0; font-size: 1.1rem; flex: 1; min-width: 0; line-height: 1.2; }
+  .voltar { min-height: 56px; padding: 0 18px; border-radius: 16px; border: 2px solid var(--marca);
+    background: var(--cartao); font-weight: 700; font-size: 1rem; color: var(--marca); flex: none; }
+  .conteudo { flex: 1; padding: 18px 16px 40px; display: flex; flex-direction: column; gap: 16px; }
+
+  h2 { font-size: 1.45rem; line-height: 1.2; margin: 6px 0 0; }
+  p { margin: 0; }
+  .suave { color: var(--suave); }
+  .centro { text-align: center; }
+
+  /* botões grandes */
+  .btn { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%;
+    min-height: 72px; padding: 14px 20px; border-radius: var(--raio); border: 0; font-weight: 700;
+    font-size: 1.1rem; background: var(--marca); color: var(--marca-txt); box-shadow: var(--sombra); text-align: center; }
+  .btn.claro { background: var(--cartao); color: var(--marca); border: 2px solid var(--marca); box-shadow: none; }
+  .btn.ouro { background: var(--ouro); color: #fff; }
+  .btn .ico { font-size: 1.5rem; line-height: 1; }
+  .btn:active, .opcao:active, .menu:active { transform: scale(.98); }
+  .btn[disabled] { opacity: .5; }
+
+  /* cartões do menu principal */
+  .menu { display: flex; align-items: center; gap: 16px; width: 100%; text-align: left; padding: 18px;
+    min-height: 104px; border-radius: var(--raio); background: var(--cartao); border: 2px solid var(--linha);
+    box-shadow: var(--sombra); }
+  .menu .ico { width: 64px; height: 64px; flex: none; border-radius: 18px; display: grid; place-items: center;
+    font-size: 2rem; background: var(--ouro-fundo); }
+  .menu b { display: block; font-size: 1.15rem; line-height: 1.25; }
+  .menu span { display: block; color: var(--suave); font-size: .9rem; margin-top: 2px; }
+  .menu.destaque { background: var(--marca); border-color: var(--marca); color: var(--marca-txt); }
+  .menu.destaque span { color: inherit; opacity: .85; }
+  .menu.destaque .ico { background: rgba(255,255,255,.16); }
+
+  /* opções em grade (escolhas por toque, sem digitar) */
+  .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grade.uma { grid-template-columns: 1fr; }
+  .opcao { min-height: 96px; border-radius: var(--raio); border: 3px solid var(--linha); background: var(--cartao);
+    padding: 12px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    font-weight: 700; font-size: 1rem; line-height: 1.2; text-align: center; }
+  .grade.uma .opcao { flex-direction: row; justify-content: flex-start; gap: 14px; min-height: 76px; padding: 12px 16px; text-align: left; }
+  .opcao .ico { font-size: 2rem; line-height: 1; }
+  .opcao small { font-weight: 500; color: var(--suave); font-size: .8rem; }
+  .opcao.marcada { border-color: var(--ouro); background: var(--ouro-fundo); }
+  .opcao.marcada::after { content: "✔"; color: var(--ouro); font-size: 1.2rem; }
+  .bola { width: 46px; height: 46px; border-radius: 50%; border: 2px solid rgba(0,0,0,.18); flex: none; }
+
+  .caixa { background: var(--cartao); border: 2px solid var(--linha); border-radius: var(--raio); padding: 18px; }
+  .caixa.ok { background: var(--verde-fundo); border-color: var(--verde); }
+  .caixa.atencao { background: var(--alerta-fundo); border-color: var(--alerta); }
+  .caixa.ouro { background: var(--ouro-fundo); border-color: var(--ouro); }
+  .caixa h3 { margin: 0 0 6px; font-size: 1.15rem; }
+  .caixa ul { margin: 6px 0 0; padding-left: 1.2em; }
+  .caixa li { margin: 4px 0; }
+  .veredito { font-size: 1.4rem; font-weight: 800; }
+
+  .foto-grande { width: 100%; max-height: 52vh; object-fit: contain; border-radius: var(--raio); background: var(--cartao);
+    border: 2px solid var(--linha); }
+  .passo { font-weight: 700; color: var(--ouro); font-size: .9rem; text-transform: uppercase; letter-spacing: .5px; }
+
+  /* peças (guarda-roupa e look) */
+  .pecas { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  .peca { background: var(--cartao); border: 2px solid var(--linha); border-radius: 18px; overflow: hidden; text-align: left; padding: 0; }
+  .peca .img, .look .mini, .produto .mini { box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+  .peca .img { aspect-ratio: 1; width: 100%; object-fit: cover; display: grid; place-items: center; font-size: 3rem; }
+  .peca .nome { padding: 8px 10px 10px; font-weight: 700; font-size: .9rem; line-height: 1.2; }
+  .look { display: flex; flex-direction: column; gap: 10px; }
+  .look .item { display: flex; gap: 14px; align-items: center; background: var(--cartao); border: 2px solid var(--linha);
+    border-radius: 18px; padding: 10px; }
+  .look .item.falta { border-style: dashed; border-color: var(--ouro); }
+  .look .mini { width: 84px; height: 84px; border-radius: 14px; object-fit: cover; flex: none; display: grid; place-items: center; font-size: 2.4rem; }
+  .look .item b { display: block; font-size: 1.05rem; line-height: 1.2; }
+  .look .item small { color: var(--suave); }
+  .etiqueta { display: inline-block; margin-top: 4px; padding: 2px 10px; border-radius: 999px; background: var(--ouro-fundo);
+    color: var(--texto); font-size: .78rem; font-weight: 700; }
+  .grupo-titulo { font-weight: 800; font-size: 1.1rem; margin: 8px 0 -4px; }
+
+  /* conversa */
+  .conversa { display: flex; flex-direction: column; gap: 12px; }
+  .bolha { max-width: 88%; padding: 14px 16px; border-radius: 20px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .bolha.eu { align-self: flex-end; background: var(--marca); color: var(--marca-txt); border-bottom-right-radius: 6px; }
+  .bolha.ia { align-self: flex-start; background: var(--cartao); border: 2px solid var(--linha); border-bottom-left-radius: 6px; }
+  .bolha img { border-radius: 12px; margin-bottom: 8px; max-height: 220px; }
+  .bolha .ouvir { margin-top: 10px; min-height: 48px; padding: 0 16px; border-radius: 14px; border: 2px solid var(--linha);
+    background: var(--fundo); font-weight: 700; font-size: .9rem; }
+  .sugestoes { display: flex; flex-direction: column; gap: 10px; }
+  .sugestao { text-align: left; min-height: 60px; padding: 12px 16px; border-radius: 16px; border: 2px solid var(--linha);
+    background: var(--cartao); font-weight: 600; }
+  .escrever { position: sticky; bottom: 0; background: var(--fundo); padding: 10px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top: 2px solid var(--linha); display: flex; flex-direction: column; gap: 10px; }
+  .escrever textarea { width: 100%; min-height: 64px; max-height: 160px; resize: none; padding: 14px 16px; border-radius: 16px;
+    border: 2px solid var(--linha); background: var(--cartao); font-size: 1.05rem; }
+  .escrever .linha { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 8px; }
+  .escrever .btn { min-height: 60px; font-size: .95rem; padding: 8px; gap: 6px; }
+
+  input[type=text], input[type=password], textarea.campo { width: 100%; min-height: 64px; padding: 14px 16px; border-radius: 16px;
+    border: 2px solid var(--linha); background: var(--cartao); font-size: 1.05rem; }
+  textarea.campo { min-height: 260px; font-size: .85rem; line-height: 1.5; }
+  label.rotulo { font-weight: 700; display: block; margin-bottom: 6px; }
+
+  .carregando { display: flex; flex-direction: column; align-items: center; gap: 18px; padding: 40px 0; text-align: center; font-size: 1.2rem; font-weight: 700; }
+  .roda { width: 64px; height: 64px; border-radius: 50%; border: 7px solid var(--linha); border-top-color: var(--ouro); animation: gira 1s linear infinite; }
+  @keyframes gira { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .roda { animation-duration: 3s; } }
+
+  .aviso { position: fixed; left: 16px; right: 16px; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 50; max-width: 528px; margin: 0 auto;
+    background: var(--marca); color: var(--marca-txt); padding: 18px 20px; border-radius: 18px; font-weight: 700; font-size: 1.05rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25); text-align: center; }
+  .rodape { display: flex; gap: 10px; }
+  .rodape .btn { min-height: 64px; font-size: 1rem; }
+  .boas-vindas { text-align: center; display: flex; flex-direction: column; gap: 18px; align-items: center; padding-top: 18px; }
+  .boas-vindas img { width: 120px; height: 120px; border-radius: 28px; }
+  .produto { display: flex; gap: 14px; align-items: center; }
+  .produto .mini { width: 84px; height: 84px; border-radius: 14px; flex: none; display: grid; place-items: center; font-size: 2.4rem; border: 2px solid var(--linha); }
+  .produto b { display: block; line-height: 1.25; }
+  .separador { height: 2px; background: var(--linha); margin: 6px 0; }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<input type="file" id="arquivo-camera" accept="image/*" capture="environment" hidden>
+<input type="file" id="arquivo-galeria" accept="image/*" hidden>
+
+<script>
+"use strict";
+
+/* ===================== Catálogo: tipos de peça, cores, tons de pele ===================== */
+
+// formal: faixa de formalidade em que a peça funciona (1 = em casa ... 5 = festa/casamento)
+const TIPOS = {
+  camiseta:   { nome: "Camiseta",            grupo: "cima",   formal: [1, 3], ico: "👕", fem: true },
+  polo:       { nome: "Camisa polo",         grupo: "cima",   formal: [2, 3], ico: "👕", fem: true },
+  camisa:     { nome: "Camisa de botão",     grupo: "cima",   formal: [2, 5], ico: "👔", fem: true },
+  sueter:     { nome: "Suéter ou tricô",     grupo: "camada", formal: [2, 4], ico: "🧶" },
+  jaqueta:    { nome: "Jaqueta",             grupo: "camada", formal: [1, 3], ico: "🧥", fem: true },
+  blazer:     { nome: "Blazer ou paletó",    grupo: "camada", formal: [3, 5], ico: "🧥" },
+  jeans:      { nome: "Calça jeans",         grupo: "baixo",  formal: [1, 3], ico: "👖", fem: true },
+  sarja:      { nome: "Calça de sarja",      grupo: "baixo",  formal: [2, 4], ico: "👖", fem: true },
+  social:     { nome: "Calça social",        grupo: "baixo",  formal: [4, 5], ico: "👖", fem: true },
+  bermuda:    { nome: "Bermuda",             grupo: "baixo",  formal: [1, 2], ico: "🩳", fem: true },
+  tenis:      { nome: "Tênis",               grupo: "pes",    formal: [1, 3], ico: "👟" },
+  mocassim:   { nome: "Mocassim ou sapatênis", grupo: "pes",  formal: [2, 4], ico: "👞" },
+  sapato:     { nome: "Sapato social",       grupo: "pes",    formal: [4, 5], ico: "👞" },
+  chinelo:    { nome: "Chinelo ou sandália", grupo: "pes",    formal: [1, 1], ico: "🩴" },
+};
+const GRUPOS = { cima: "Parte de cima", camada: "Por cima (casaco)", baixo: "Parte de baixo", pes: "Nos pés" };
+
+// neutro: combina com quase tudo. tom: claro / medio / escuro (para contraste)
+const CORES = {
+  branco:   { nome: "Branco",        hex: "#f7f6f1", neutro: true,  tom: "claro"  },
+  preto:    { nome: "Preto",         hex: "#1c1c1e", neutro: true,  tom: "escuro" },
+  cinza:    { nome: "Cinza",         hex: "#8b8f96", neutro: true,  tom: "medio"  },
+  marinho:  { nome: "Azul-marinho",  hex: "#1f2f52", neutro: true,  tom: "escuro" },
+  azulclaro:{ nome: "Azul-claro",    hex: "#a9cbe8", neutro: true,  tom: "claro"  },
+  jeans:    { nome: "Azul jeans",    hex: "#4b6c93", neutro: true,  tom: "medio"  },
+  bege:     { nome: "Bege ou cáqui", hex: "#d9c4a0", neutro: true,  tom: "claro"  },
+  marrom:   { nome: "Marrom",        hex: "#6b4428", neutro: true,  tom: "escuro" },
+  oliva:    { nome: "Verde-oliva",   hex: "#6b6b3a", neutro: true,  tom: "medio"  },
+  vinho:    { nome: "Vinho",         hex: "#6d1f30", neutro: false, tom: "escuro" },
+  verde:    { nome: "Verde",         hex: "#2e7d4f", neutro: false, tom: "medio"  },
+  vermelho: { nome: "Vermelho",      hex: "#c0392b", neutro: false, tom: "medio"  },
+  mostarda: { nome: "Mostarda",      hex: "#c9a227", neutro: false, tom: "medio"  },
+  laranja:  { nome: "Laranja",       hex: "#e07b39", neutro: false, tom: "medio"  },
+  rosa:     { nome: "Rosa",          hex: "#e9a9b8", neutro: false, tom: "claro"  },
+  estampa:  { nome: "Estampado ou xadrez", hex: "repeating-linear-gradient(45deg,#1f2f52 0 8px,#d9c4a0 8px 16px)", neutro: false, tom: "medio" },
+};
+
+// Dicas simples de colorimetria (cores perto do rosto)
+const PELES = {
+  clara:  { nome: "Clara",  hex: "#f1d3bd", boas: ["marinho", "vinho", "cinza", "azulclaro", "verde", "preto"], evitar: ["bege", "mostarda", "laranja"] },
+  media:  { nome: "Média",  hex: "#d6a57f", boas: ["branco", "oliva", "marinho", "vinho", "verde", "azulclaro"], evitar: ["laranja"] },
+  morena: { nome: "Morena", hex: "#a8714a", boas: ["branco", "azulclaro", "mostarda", "oliva", "vinho", "bege", "rosa"], evitar: ["marrom"] },
+  negra:  { nome: "Negra",  hex: "#6b4128", boas: ["branco", "mostarda", "azulclaro", "rosa", "vermelho", "verde", "bege", "laranja"], evitar: ["marrom"] },
+};
+
+const OCASIOES = [
+  { id: "trabalho",  nome: "Trabalho",                 ico: "💼", nivel: 3 },
+  { id: "passeio",   nome: "Passeio ou fim de semana", ico: "🌳", nivel: 2 },
+  { id: "encontro",  nome: "Encontro ou jantar",       ico: "🍷", nivel: 3 },
+  { id: "entrevista",nome: "Entrevista ou reunião importante", ico: "🤝", nivel: 4 },
+  { id: "familia",   nome: "Igreja ou almoço de família", ico: "⛪", nivel: 3 },
+  { id: "festa",     nome: "Festa ou casamento",       ico: "🎉", nivel: 5 },
+  { id: "casa",      nome: "Ficar em casa",            ico: "🏠", nivel: 1 },
+];
+
+// Peças básicas usadas quando o guarda-roupa ainda não tem o que precisa
+const BASICOS = [
+  ["camiseta", "branco"], ["camiseta", "marinho"], ["polo", "marinho"], ["camisa", "branco"], ["camisa", "azulclaro"],
+  ["sueter", "cinza"], ["blazer", "marinho"], ["jaqueta", "jeans"], ["jeans", "jeans"], ["sarja", "bege"], ["social", "cinza"],
+  ["bermuda", "bege"], ["tenis", "branco"], ["mocassim", "marrom"], ["sapato", "preto"], ["sapato", "marrom"], ["chinelo", "preto"],
+].map(([tipo, cor], i) => ({ id: "b" + i, tipo, cor, sugerida: true }));
+
+/* ===================== Método do consultor (conteúdo inicial, editável) ===================== */
+
+// Cada bloco começa com "## Título" e uma linha "palavras:" (para achar a resposta sem internet).
+// Este texto é só um ponto de partida: o consultor troca pelo método dele na Área do consultor.
+const METODO_PADRAO = `## Caimento é o mais importante
+palavras: caimento, tamanho, larga, largo, apertada, apertado, justa, folgada, numero, numeração, manga, comprimento
+Roupa boa é roupa que veste bem. O ombro da camisa termina no seu ombro, a manga vai até o pulso e a calça encosta de leve no sapato, sem sobrar pano. Uma peça simples no tamanho certo vale mais do que uma peça cara larga ou apertada. Se precisar, leve a uma costureira: um ajuste pequeno muda tudo.
+
+## Cores que combinam com tudo
+palavras: cor, cores, combinar, combina, neutro, neutra, preto, branco, cinza, marinho, bege
+Comece pelas cores neutras: branco, azul-marinho, cinza, bege, marrom e jeans. Elas combinam entre si. Use no máximo uma cor forte por vez (vinho, verde, mostarda) e deixe o resto neutro. Assim você não erra.
+
+## Sapato e cinto
+palavras: sapato, cinto, tenis, tênis, mocassim, sapatenis, meia, meias
+O cinto acompanha a cor do sapato: sapato marrom com cinto marrom, sapato preto com cinto preto. Sapato marrom combina com azul, bege e cinza. Sapato preto vai melhor com cinza, preto e azul-marinho. Meia escura combina com calça escura; com bermuda, use meia invisível.
+
+## Guarda-roupa inteligente (cápsula)
+palavras: armario, armário, guarda-roupa, comprar, compras, básico, basico, peças, poucas
+Com poucas peças boas você monta muitos looks: duas camisetas lisas (branca e azul-marinho), uma camisa branca, uma camisa azul-clara, uma polo, uma calça jeans escura, uma calça de sarja bege, um tênis branco limpo e um sapato marrom. Antes de comprar algo novo, pergunte: isso combina com pelo menos três coisas que eu já tenho?
+
+## Casamento e festa
+palavras: casamento, festa, formatura, padrinho, convidado, evento, terno, gravata, noite, dia
+Casamento de dia: terno em tons claros ou azul, gravata opcional. Casamento à noite: terno escuro (azul-marinho, cinza-escuro ou preto), camisa branca e sapato social. Na dúvida, azul-marinho com camisa branca é sempre certo. Sapato engraxado faz diferença.
+
+## Entrevista e reunião
+palavras: entrevista, emprego, reunião, reuniao, trabalho, escritório, escritorio, chefe, cliente
+Vista-se um pouco mais arrumado do que o ambiente pede. Calça de sarja ou social, camisa de botão lisa (branca ou azul-clara) e sapato fechado limpo. Evite estampas chamativas. Roupa passada, unhas cortadas e cabelo arrumado contam tanto quanto a roupa.
+
+## Encontro
+palavras: encontro, date, namorada, namoro, jantar, conquistar, primeiro
+Arrumado, mas à vontade: calça jeans escura sem rasgos, camisa de botão ou polo, sapatênis ou tênis limpo. Perfume na medida certa (duas borrifadas). Postura reta e olhar nos olhos valem mais que qualquer roupa.
+
+## Cabelo e formato do rosto
+palavras: cabelo, corte, rosto, careca, calvicie, calvície, entradas, penteado, barbeiro
+Rosto redondo: cabelo com mais volume em cima e laterais mais curtas alonga o rosto. Rosto comprido: evite muito volume em cima. Rosto quadrado: quase todo corte funciona. Se o cabelo está rareando, cortar mais curto ou raspar deixa a imagem mais forte e mais jovem do que tentar esconder. Mantenha o corte em dia: a cada 3 ou 4 semanas.
+
+## Barba
+palavras: barba, bigode, cavanhaque, barbear, aparar, falhada
+Barba aparada passa cuidado; barba sem cuidado passa desleixo. Faça a linha do pescoço (dois dedos acima do pomo de adão) e a da bochecha. Se a barba é falhada, uma barba curta por igual ou rosto liso fica melhor. Use um óleo ou hidratante para não coçar.
+
+## Cuidados com a pele
+palavras: pele, rosto, creme, hidratante, protetor, solar, espinha, oleosa, ruga, rugas, skincare
+Rotina simples: lave o rosto de manhã e à noite com sabonete próprio para rosto, passe hidratante e, de dia, protetor solar. Só isso já melhora muito a aparência em poucas semanas. Beba água.
+
+## Perfume
+palavras: perfume, cheiro, colonia, colônia, fragrancia, fragrância
+Perfume é para quem chega perto sentir, não para a sala inteira. Duas borrifadas: pescoço e peito. De dia, perfumes leves e frescos; à noite, mais amadeirados. Não esfregue os pulsos, isso estraga o cheiro.
+
+## Postura e presença
+palavras: postura, coluna, corcunda, presença, confiança, confianca, timidez, tímido, olhar, aperto, mão, comportamento, educação
+Ombros para trás, queixo paralelo ao chão, passos calmos. Olhe nos olhos ao conversar e dê um aperto de mão firme, sem esmagar. Celular guardado quando estiver com alguém. Presença é o que as pessoas lembram depois.
+
+## Corpo mais forte ou acima do peso
+palavras: gordo, barriga, acima, peso, forte, gordinho, emagrecer, disfarçar
+Prefira roupas que não apertem e não sobrem. Cores escuras e uma cor só da cabeça aos pés alongam a silhueta. Camisa para fora com a barra reta, ou para dentro com cinto da cor da calça. Evite listras horizontais grossas e tecidos muito brilhantes.
+
+## Homem mais baixo ou mais alto
+palavras: baixo, baixinho, alto, altura, estatura, magro
+Mais baixo: roupas mais justas ao corpo (sem apertar), calça sem sobra na barra e cores parecidas em cima e embaixo. Mais alto e magro: camadas (camisa com suéter ou jaqueta) e contraste entre cima e baixo equilibram a figura.
+
+## Estilo depois dos 50 e 60
+palavras: idade, velho, idoso, maduro, 50, 60, 70, aposentado, senhor, coroa
+Elegância não tem idade. Prefira tecidos de qualidade, cores sóbrias e conforto: sapato macio, calça de sarja com caimento reto, camisa de botão ou polo. Evite roupas muito juvenis ou muito largas. Um bom corte de cabelo, óculos que combinem com o rosto e roupa bem passada rejuvenescem.
+
+## Óculos, relógio e acessórios
+palavras: oculos, óculos, relogio, relógio, anel, pulseira, corrente, acessorio, acessório, bone, boné, chapéu
+Menos é mais. Um relógio bonito e simples vale mais que muitos acessórios. Óculos: o formato deve contrastar com o rosto (rosto redondo pede armação mais quadrada, rosto quadrado pede armação mais arredondada). Boné não combina com roupas mais arrumadas.
+
+## Conservar as roupas
+palavras: lavar, passar, ferro, conservar, desbotar, encolher, mancha, amassado, amassada
+Lave com água fria e do avesso para a cor durar. Pendure camisas em cabides. Roupa amassada derruba qualquer look: passe ou use um vaporizador. Tênis e sapato limpos são metade da aparência.`;
+
+const PRODUTOS_PADRAO = [
+  { nome: "Camisa Oxford branca",       tipo: "camisa",   cor: "branco",  preco: "", link: "" },
+  { nome: "Camisa Oxford azul-clara",   tipo: "camisa",   cor: "azulclaro", preco: "", link: "" },
+  { nome: "Polo piquet azul-marinho",   tipo: "polo",     cor: "marinho", preco: "", link: "" },
+  { nome: "Calça chino bege",           tipo: "sarja",    cor: "bege",    preco: "", link: "" },
+  { nome: "Calça jeans escura reta",    tipo: "jeans",    cor: "jeans",   preco: "", link: "" },
+  { nome: "Blazer azul-marinho",        tipo: "blazer",   cor: "marinho", preco: "", link: "" },
+  { nome: "Mocassim de couro marrom",   tipo: "mocassim", cor: "marrom",  preco: "", link: "" },
+  { nome: "Sapato social preto",        tipo: "sapato",   cor: "preto",   preco: "", link: "" },
+  { nome: "Tênis branco de couro",      tipo: "tenis",    cor: "branco",  preco: "", link: "" },
+];
+
+/* ===================== Dados guardados no celular ===================== */
+
+const CHAVE = "alinhado:v1";
+const MODELO_PADRAO = "claude-opus-5-5";
+
+function padrao() {
+  return {
+    perfil: null,
+    pecas: [],
+    conversa: [],
+    ajustes: { letra: 2, vozAuto: false, chave: "", modelo: MODELO_PADRAO },
+    consultor: { nome: "Lucas", metodo: METODO_PADRAO, produtos: PRODUTOS_PADRAO.map((p) => ({ ...p })) },
+  };
+}
+function carregar() {
+  const base = padrao();
+  try {
+    const j = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if (j && typeof j === "object") {
+      return {
+        perfil: j.perfil || null,
+        pecas: Array.isArray(j.pecas) ? j.pecas : [],
+        conversa: Array.isArray(j.conversa) ? j.conversa : [],
+        ajustes: { ...base.ajustes, ...(j.ajustes || {}) },
+        consultor: { ...base.consultor, ...(j.consultor || {}) },
+      };
+    }
+  } catch (e) {}
+  return base;
+}
+let E = carregar();
+function salvar() {
+  try { localStorage.setItem(CHAVE, JSON.stringify(E)); return true; }
+  catch (e) { aviso("O celular está sem espaço para guardar. Apague algumas roupas antigas."); return false; }
+}
+
+/* ===================== Utilidades ===================== */
+
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const norm = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+const novoId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const nomeConsultor = () => E.consultor.nome || "consultor";
+const primeiroNome = () => (E.perfil && E.perfil.nome) ? E.perfil.nome.split(" ")[0] : "";
+// concordância: "camisa branca", "sapato branco"
+const FEMININO = { branco: "branca", preto: "preta", vermelho: "vermelha", estampa: "estampada ou xadrez" };
+const nomeCor = (cor, fem) => { const n = (CORES[cor]?.nome || "").toLowerCase(); return fem && FEMININO[cor] ? FEMININO[cor] : n; };
+const nomePeca = (p) => (p.tipo === "jeans" && p.cor === "jeans") ? "Calça jeans" : `${TIPOS[p.tipo]?.nome || "Peça"} ${nomeCor(p.cor, TIPOS[p.tipo]?.fem)}`.trim();
+const fundoCor = (cor) => CORES[cor]?.hex || "#ccc";
+function aplicarLetra() { document.documentElement.dataset.letra = String(E.ajustes.letra || 2); }
+
+let avisoTimer;
+function aviso(texto) {
+  let el = $(".aviso");
+  if (!el) { el = document.createElement("div"); el.className = "aviso"; el.setAttribute("role", "status"); document.body.appendChild(el); }
+  el.textContent = texto; el.hidden = false;
+  clearTimeout(avisoTimer); avisoTimer = setTimeout(() => (el.hidden = true), 3200);
+}
+
+function saudacao() {
+  const h = new Date().getHours();
+  return h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite";
+}
+
+/* ===================== Voz: ouvir e falar ===================== */
+
+const temVoz = "speechSynthesis" in window;
+const Reconhecedor = window.SpeechRecognition || window.webkitSpeechRecognition;
+function falar(texto, botao) {
+  if (!temVoz) { aviso("Este celular não consegue ler em voz alta."); return; }
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+    document.querySelectorAll("[data-falando]").forEach((b) => { b.textContent = "🔊 Ouvir"; delete b.dataset.falando; });
+    if (botao && botao.dataset.era === "1") { delete botao.dataset.era; return; }
+  }
+  const u = new SpeechSynthesisUtterance(texto.replace(/[•✔✅🤔⚠️]/g, ""));
+  u.lang = "pt-BR"; u.rate = 0.95;
+  const voz = speechSynthesis.getVoices().find((v) => v.lang && v.lang.toLowerCase().startsWith("pt"));
+  if (voz) u.voice = voz;
+  if (botao) {
+    botao.textContent = "⏹ Parar"; botao.dataset.falando = "1"; botao.dataset.era = "1";
+    u.onend = u.onerror = () => { botao.textContent = "🔊 Ouvir"; delete botao.dataset.falando; delete botao.dataset.era; };
+  }
+  speechSynthesis.speak(u);
+}
+function pararFala() { if (temVoz) speechSynthesis.cancel(); }
+
+/* ===================== Fotos ===================== */
+
+let esperaFoto = null;
+function pedirFoto(deOnde) {
+  return new Promise((ok) => {
+    esperaFoto = ok;
+    const inp = deOnde === "galeria" ? $("#arquivo-galeria") : $("#arquivo-camera");
+    inp.value = ""; inp.click();
+  });
+}
+["#arquivo-camera", "#arquivo-galeria"].forEach((s) => {
+  $(s).addEventListener("change", async (ev) => {
+    const f = ev.target.files && ev.target.files[0];
+    const ok = esperaFoto; esperaFoto = null;
+    if (!f || !ok) return;
+    try { ok(await reduzirFoto(f)); } catch (e) { aviso("Não consegui abrir essa foto. Tente outra."); }
+  });
+});
+// Diminui a foto para caber no celular e para enviar rápido
+function reduzirFoto(arquivo, lado = 720) {
+  return new Promise((ok, falha) => {
+    const url = URL.createObjectURL(arquivo);
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, lado / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      ok({ grande: c.toDataURL("image/jpeg", 0.8), cor: corDominante(c) });
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); falha(); };
+    img.src = url;
+  });
+}
+function miniatura(dataUrl, lado = 300) {
+  return new Promise((ok) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, lado / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      ok(c.toDataURL("image/jpeg", 0.72));
+    };
+    img.onerror = () => ok(dataUrl);
+    img.src = dataUrl;
+  });
+}
+// Olha o meio da foto (onde costuma estar a roupa) e acha a cor mais próxima da nossa lista
+function corDominante(canvas) {
+  try {
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width, h = canvas.height;
+    const d = ctx.getImageData(Math.round(w * 0.3), Math.round(h * 0.3), Math.max(1, Math.round(w * 0.4)), Math.max(1, Math.round(h * 0.4))).data;
+    const contagem = {};
+    for (let i = 0; i < d.length; i += 16) {
+      const k = `${d[i] >> 5},${d[i + 1] >> 5},${d[i + 2] >> 5}`;
+      contagem[k] = (contagem[k] || 0) + 1;
+    }
+    const [melhor] = Object.entries(contagem).sort((a, b) => b[1] - a[1])[0];
+    const [r, g, b] = melhor.split(",").map((n) => n * 32 + 16);
+    let perto = "cinza", dist = Infinity;
+    for (const [id, c] of Object.entries(CORES)) {
+      if (id === "estampa") continue;
+      const [cr, cg, cb] = [1, 3, 5].map((p) => parseInt(c.hex.slice(p, p + 2), 16));
+      const dd = (r - cr) ** 2 * 2 + (g - cg) ** 2 * 4 + (b - cb) ** 2 * 3;
+      if (dd < dist) { dist = dd; perto = id; }
+    }
+    return perto;
+  } catch (e) { return null; }
+}
+
+/* ===================== Inteligência: combinações sem internet ===================== */
+
+function serveNaOcasiao(p, nivel) { const f = TIPOS[p.tipo]?.formal || [1, 5]; return f[0] <= nivel && nivel <= f[1]; }
+
+function notaLook(pecas) {
+  let nota = 0; const motivos = [];
+  const cores = pecas.map((p) => p.cor);
+  const fortes = cores.filter((c) => c && !CORES[c]?.neutro);
+  if (fortes.length > 1) nota -= 3 * (fortes.length - 1);
+  if (cores.filter((c) => c === "estampa").length > 1) nota -= 5;
+  const cima = pecas.find((p) => TIPOS[p.tipo].grupo === "cima");
+  const baixo = pecas.find((p) => TIPOS[p.tipo].grupo === "baixo");
+  const pes = pecas.find((p) => TIPOS[p.tipo].grupo === "pes");
+  const camada = pecas.find((p) => TIPOS[p.tipo].grupo === "camada");
+  if (cima && baixo) {
+    const tc = CORES[cima.cor]?.tom, tb = CORES[baixo.cor]?.tom;
+    if (cima.cor === baixo.cor && cima.cor !== "preto") nota -= 1.5;
+    else if (tc !== tb) { nota += 1; motivos.push("o contraste entre a parte de cima e a de baixo deixa o visual bonito"); }
+    if (cima.cor === "marinho" && baixo.cor === "preto") nota -= 1;
+  }
+  if (camada && camada.cor === "jeans" && baixo && baixo.cor === "jeans") nota -= 3;
+  if (pes && baixo) {
+    if (pes.cor === "marrom" && ["preto"].includes(baixo.cor)) nota -= 1.5;
+    if (pes.cor === "preto" && ["bege", "marrom", "oliva"].includes(baixo.cor)) nota -= 1;
+    if (pes.cor === "marrom" && ["marinho", "bege", "cinza", "jeans"].includes(baixo.cor)) { nota += 1; motivos.push("o calçado marrom combina muito bem com essa calça"); }
+    if (pes.cor === "branco" && TIPOS[pes.tipo].nome === "Tênis") nota += 0.3;
+  }
+  const pele = E.perfil && PELES[E.perfil.pele];
+  const rosto = camada || cima;
+  if (pele && rosto) {
+    if (pele.boas.includes(rosto.cor)) { nota += 1.2; motivos.push(`o ${CORES[rosto.cor].nome.toLowerCase()} perto do rosto valoriza o seu tom de pele`); }
+    if (pele.evitar.includes(rosto.cor)) nota -= 1.2;
+  }
+  if (fortes.length === 1) motivos.push(`só uma cor forte (${CORES[fortes[0]].nome.toLowerCase()}) e o resto neutro: elegante sem exagero`);
+  if (fortes.length === 0) motivos.push("as cores são neutras e combinam entre si, então não tem erro");
+  nota -= pecas.filter((p) => p.sugerida).length * 2.5; // prefere o que a pessoa já tem
+  return { nota, motivos };
+}
+
+function montarLooks(ocasiao) {
+  const nivel = ocasiao.nivel;
+  const meus = E.pecas.filter((p) => serveNaOcasiao(p, nivel));
+  const sugeridas = BASICOS.filter((p) => serveNaOcasiao(p, nivel));
+  const pool = (g) => {
+    const m = meus.filter((p) => TIPOS[p.tipo].grupo === g);
+    return m.length ? m : sugeridas.filter((p) => TIPOS[p.tipo].grupo === g);
+  };
+  const cimas = pool("cima"), baixos = pool("baixo"), pes = pool("pes");
+  let camadas = [null];
+  if (nivel >= 4) camadas = pool("camada").filter((p) => p.tipo === "blazer").concat(nivel === 5 ? [] : [null]);
+  else if (nivel >= 2) camadas = [null, ...meus.filter((p) => TIPOS[p.tipo].grupo === "camada")];
+  if (!camadas.length) camadas = [null];
+  const looks = [];
+  for (const a of cimas) for (const b of baixos) for (const c of pes) for (const d of camadas) {
+    if (looks.length > 3000) break;
+    if (nivel === 5 && a.tipo !== "camisa") continue;
+    const pecas = [a, d, b, c].filter(Boolean);
+    const { nota, motivos } = notaLook(pecas);
+    looks.push({ pecas, nota: nota + Math.random() * 0.3, motivos });
+  }
+  looks.sort((x, y) => y.nota - x.nota);
+  return looks;
+}
+
+function explicarLook(look, ocasiao) {
+  const partes = [];
+  const nome = primeiroNome();
+  const lista = look.pecas.map((p) => nomePeca(p).toLowerCase());
+  partes.push(`${nome ? nome + ", para " : "Para "}${ocasiao.nome.toLowerCase()}: ${lista.slice(0, -1).join(", ")} e ${lista.at(-1)}.`);
+  if (look.motivos.length) partes.push("Por que funciona: " + look.motivos.slice(0, 2).join("; ") + ".");
+  const pes = look.pecas.find((p) => TIPOS[p.tipo].grupo === "pes");
+  if (pes && ["sapato", "mocassim"].includes(pes.tipo)) partes.push(`Use cinto ${CORES[pes.cor].nome.toLowerCase()}, da mesma cor do sapato.`);
+  if (E.perfil?.corpo === "forte") partes.push("Dica: peças que não apertam e cores escuras alongam a silhueta.");
+  if (E.perfil?.idade === "60+" && ocasiao.nivel <= 3) partes.push("Priorize o conforto: sapato macio e calça com caimento reto.");
+  return partes.join(" ");
+}
+
+function avaliarPeca(peca) {
+  const pele = E.perfil && PELES[E.perfil.pele];
+  const grupo = TIPOS[peca.tipo].grupo;
+  const pertoRosto = grupo === "cima" || grupo === "camada";
+  const resultado = { pele: null, combina: [], ocasioes: [] };
+  if (pele && pertoRosto) {
+    if (pele.boas.includes(peca.cor)) resultado.pele = "boa";
+    else if (pele.evitar.includes(peca.cor)) resultado.pele = "evitar";
+    else resultado.pele = "ok";
+  }
+  resultado.ocasioes = OCASIOES.filter((o) => serveNaOcasiao(peca, o.nivel));
+  for (const outra of E.pecas) {
+    if (outra.id === peca.id || TIPOS[outra.tipo].grupo === grupo) continue;
+    const { nota } = notaLook([peca, outra]);
+    const servemJuntas = OCASIOES.some((o) => serveNaOcasiao(peca, o.nivel) && serveNaOcasiao(outra, o.nivel));
+    if (nota >= -0.5 && servemJuntas) resultado.combina.push(outra);
+  }
+  let pontos = Math.min(resultado.combina.length, 4);
+  if (resultado.pele === "boa") pontos += 2;
+  if (resultado.pele === "evitar") pontos -= 2;
+  if (CORES[peca.cor]?.neutro) pontos += 1;
+  resultado.vale = E.pecas.length < 3 ? (resultado.pele === "evitar" ? "pense" : "sim") : (pontos >= 3 ? "sim" : pontos >= 1 ? "talvez" : "pense");
+  return resultado;
+}
+
+/* ===================== Método: respostas sem internet ===================== */
+
+function blocosMetodo() {
+  return String(E.consultor.metodo || "").split(/^##\s+/m).map((b) => b.trim()).filter(Boolean).map((b) => {
+    const linhas = b.split("\n");
+    const titulo = linhas.shift().trim();
+    let palavras = [];
+    if (linhas[0] && /^palavras:/i.test(linhas[0])) palavras = linhas.shift().replace(/^palavras:/i, "").split(",").map((p) => norm(p.trim())).filter(Boolean);
+    return { titulo, palavras, texto: linhas.join("\n").trim() };
+  });
+}
+function responderSemInternet(pergunta) {
+  const q = norm(pergunta);
+  const ranking = blocosMetodo().map((b) => {
+    let n = 0;
+    for (const p of b.palavras) if (p && q.includes(p)) n += p.length > 4 ? 2 : 1;
+    if (q.includes(norm(b.titulo))) n += 3;
+    return { b, n };
+  }).filter((x) => x.n > 0).sort((a, b) => b.n - a.n);
+  if (!ranking.length) {
+    return "Essa eu ainda não sei responder sem a inteligência completa ligada. Posso ajudar com: roupa para ocasiões, cores, sapato e cinto, cabelo, barba, pele, perfume, postura e estilo para cada idade. Tente perguntar de outro jeito.";
+  }
+  const top = ranking[0].b;
+  let r = top.texto;
+  if (ranking[1] && ranking[1].n >= ranking[0].n) r += "\n\n" + ranking[1].b.texto;
+  const nome = primeiroNome();
+  return (nome ? nome + ", " : "") + r.charAt(0).toLowerCase() + r.slice(1);
+}
+
+/* ===================== Inteligência artificial (Claude) ===================== */
+
+const temIA = () => !!(E.ajustes.chave && E.ajustes.chave.trim());
+
+function contextoPessoa() {
+  const p = E.perfil || {};
+  const pele = PELES[p.pele]?.nome || "não informado";
+  const pecas = E.pecas.length ? E.pecas.map((x) => "- " + nomePeca(x)).join("\n") : "(vazio)";
+  return `PESSOA ATENDIDA
+Nome: ${p.nome || "não informado"}
+Faixa de idade: ${p.idade || "não informada"}
+Dia a dia: ${ROTINAS.find((r) => r.id === p.rotina)?.nome || "não informado"}
+Tom de pele: ${pele}
+Corpo: ${CORPOS.find((c) => c.id === p.corpo)?.nome || "não informado"}
+Roupas que ela já tem no guarda-roupa:
+${pecas}`;
+}
+function instrucoesSistema() {
+  return `Você é o consultor virtual de imagem e estilo masculino do app Alinhado, que segue o método do consultor ${nomeConsultor()}. Você não é o ${nomeConsultor()} em pessoa e não inventa frases dele: aplica o método abaixo.
+
+Quem usa o app são homens de todas as idades, inclusive pessoas mais velhas que quase não usam celular. Por isso:
+- Escreva em português do Brasil simples, como numa conversa. Frases curtas. Nada de termos técnicos ou estrangeiros sem explicar.
+- Responda em no máximo 120 palavras, com uma orientação prática que a pessoa consiga fazer hoje.
+- Não use markdown, asteriscos, títulos ou tabelas. Se precisar listar, use linhas começando com "• ".
+- Trate a pessoa pelo nome quando souber.
+- Você cobre roupa, combinação de peças, cabelo, barba, cuidados com a pele, perfume, postura, comportamento e imagem em geral.
+- Ao comentar fotos de pessoas, fale só de estilo, roupa, cabelo e postura, com respeito e sem críticas ao corpo.
+- Quando faltar uma peça para o que você sugerir, pode dizer que há sugestões na tela "Peças recomendadas" do app, sem insistir em vender.
+- Se a pergunta não tiver relação com imagem e estilo, responda com gentileza que você ajuda com estilo e aparência.
+
+MÉTODO DO CONSULTOR
+${E.consultor.metodo}
+
+${contextoPessoa()}`;
+}
+
+async function chamarClaude({ mensagens, sistema, esquema, maxTokens = 4000 }) {
+  const corpo = {
+    model: E.ajustes.modelo || MODELO_PADRAO,
+    max_tokens: maxTokens,
+    system: sistema,
+    messages: mensagens,
+    output_config: { effort: "low", ...(esquema ? { format: { type: "json_schema", schema: esquema } } : {}) },
+    fallbacks: "default",
+  };
+  const cabecalhos = {
+    "content-type": "application/json",
+    "x-api-key": E.ajustes.chave.trim(),
+    "anthropic-version": "2026-10-21",
+    "anthropic-beta": "server-side-fallback-2026-07-01",
+    // o app roda direto no celular, sem servidor próprio (só para a demonstração)
+    "anthropic-dangerous-direct-browser-access": "true",
+  };
+  let r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: cabecalhos, body: JSON.stringify(corpo) });
+  if (r.status === 400) {
+    // se a conta não aceitar o recurso de reserva, tenta de novo sem ele
+    const txt = await r.text();
+    if (/fallback/i.test(txt)) {
+      delete corpo.fallbacks; delete cabecalhos["anthropic-beta"];
+      r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: cabecalhos, body: JSON.stringify(corpo) });
+    } else throw new Error("pedido: " + txt.slice(0, 200));
+  }
+  if (r.status === 401 || r.status === 403) throw new Error("chave");
+  if (r.status === 429) throw new Error("ocupado");
+  if (!r.ok) throw new Error("http " + r.status);
+  const j = await r.json();
+  if (j.stop_reason === "refusal") throw new Error("recusa");
+  return (j.content || []).filter((b) => b.type === "text").map((b) => b.text).join("").trim();
+}
+function mensagemErroIA(e) {
+  const m = String(e && e.message || e);
+  if (m === "chave") return "A chave da inteligência não funcionou. Peça para quem configurou o app conferir em Ajustes.";
+  if (m === "ocupado") return "A inteligência está ocupada agora. Espere um minuto e tente de novo.";
+  if (m === "recusa") return "Não consigo ajudar com esse pedido. Tente perguntar de outro jeito.";
+  if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return "Parece que o celular está sem internet. Confira a conexão e tente de novo.";
+  return "Algo deu errado com a inteligência. Vou responder com o que eu já sei.";
+}
+const fotoParaBloco = (dataUrl) => ({ type: "image", source: { type: "base64", media_type: "image/jpeg", data: dataUrl.split(",")[1] } });
+
+const ESQUEMA_PECA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["e_roupa", "tipo", "cor", "comentario"],
+  properties: {
+    e_roupa: { type: "boolean", description: "true se a foto mostra uma peça de roupa ou calçado masculino" },
+    tipo: { type: "string", enum: Object.keys(TIPOS) },
+    cor: { type: "string", enum: Object.keys(CORES) },
+    comentario: { type: "string", description: "Até 70 palavras, linguagem simples, sem markdown: se vale a pena para esta pessoa, com o que combina (de preferência peças do guarda-roupa dela) e para quais ocasiões." },
+  },
+};
+async function analisarFotoIA(foto) {
+  const texto = await chamarClaude({
+    sistema: instrucoesSistema(),
+    esquema: ESQUEMA_PECA,
+    maxTokens: 2000,
+    mensagens: [{ role: "user", content: [fotoParaBloco(foto), { type: "text", text: "Identifique a peça principal desta foto (tipo e cor, usando as opções disponíveis) e diga em linguagem simples se ela combina comigo e com o que eu tenho." }] }],
+  });
+  return JSON.parse(texto);
+}
+
+/* ===================== Perfil (perguntas iniciais) ===================== */
+
+const IDADES = [
+  { id: "ate25", nome: "Até 25 anos", ico: "🧑" }, { id: "26-40", nome: "26 a 40 anos", ico: "👨" },
+  { id: "41-60", nome: "41 a 60 anos", ico: "🧔" }, { id: "60+", nome: "Mais de 60", ico: "👴" },
+];
+const ROTINAS = [
+  { id: "escritorio", nome: "Trabalho em escritório ou atendo clientes", ico: "💼" },
+  { id: "pratico", nome: "Trabalho na rua, obra ou de uniforme", ico: "🦺" },
+  { id: "proprio", nome: "Tenho meu próprio negócio", ico: "🏪" },
+  { id: "aposentado", nome: "Sou aposentado ou fico mais em casa", ico: "🏡" },
+];
+const CORPOS = [
+  { id: "magro", nome: "Magro", ico: "🧍" }, { id: "medio", nome: "Médio", ico: "🧍‍♂️" },
+  { id: "forte", nome: "Forte ou com barriga", ico: "🫃" }, { id: "atletico", nome: "Musculoso", ico: "💪" },
+];
+
+/* ===================== Telas ===================== */
+
+const app = $("#app");
+let pilha = [];
+let tela = null;
+
+function ir(nome, dados = {}, { substituir = false } = {}) {
+  pararFala();
+  if (tela && !substituir) pilha.push(tela);
+  tela = { nome, dados };
+  if (!substituir) history.pushState({ n: pilha.length }, "");
+  desenhar();
+  window.scrollTo(0, 0);
+}
+function voltar() {
+  pararFala();
+  if (!pilha.length) { tela = { nome: "inicio", dados: {} }; desenhar(); return; }
+  tela = pilha.pop(); desenhar(); window.scrollTo(0, 0);
+}
+function irInicio() { pararFala(); pilha = []; tela = { nome: "inicio", dados: {} }; desenhar(); window.scrollTo(0, 0); }
+// botão "voltar" do próprio celular também volta uma tela
+window.addEventListener("popstate", () => { if (pilha.length) voltar(); else if (tela?.nome !== "inicio" && E.perfil) irInicio(); });
+
+function topo(titulo, { semVoltar = false } = {}) {
+  return `<header class="topo">${semVoltar ? "" : `<button class="voltar" data-acao="voltar" aria-label="Voltar para a tela anterior">← Voltar</button>`}<h1>${titulo}</h1></header>`;
+}
+function desenhar() {
+  const T = TELAS[tela.nome] || TELAS.inicio;
+  app.innerHTML = T(tela.dados);
+  const foco = app.querySelector("[data-foco]");
+  if (foco) foco.focus();
+  if (TELAS_DEPOIS[tela.nome]) TELAS_DEPOIS[tela.nome](tela.dados);
+}
+
+function opcoes(lista, marcado, acao, { uma = false, bola = null } = {}) {
+  return `<div class="grade ${uma ? "uma" : ""}">${lista.map((o) => `
+    <button class="opcao ${marcado === o.id ? "marcada" : ""}" data-acao="${acao}" data-valor="${esc(o.id)}">
+      ${bola ? `<span class="bola" style="background:${bola(o)}"></span>` : `<span class="ico" aria-hidden="true">${o.ico || ""}</span>`}
+      <span>${esc(o.nome)}${o.dica ? `<br><small>${esc(o.dica)}</small>` : ""}</span>
+    </button>`).join("")}</div>`;
+}
+const listaTipos = () => Object.entries(TIPOS).map(([id, t]) => ({ id, nome: t.nome, ico: t.ico }));
+const listaCores = () => Object.entries(CORES).map(([id, c]) => ({ id, nome: c.nome }));
+const imagemPeca = (p, cls = "img") => p.foto
+  ? `<img class="${cls}" src="${p.foto}" alt="${esc(nomePeca(p))}">`
+  : `<div class="${cls}" style="background:${fundoCor(p.cor)}" aria-hidden="true"><span style="filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))">${TIPOS[p.tipo]?.ico || "👕"}</span></div>`;
+
+const TELAS = {
+  /* ---------- boas-vindas e perfil ---------- */
+  boasvindas: () => `
+    <main class="conteudo boas-vindas">
+      <img src="marca/icone.svg" alt="">
+      <h2>Olá! Eu sou o seu consultor de estilo.</h2>
+      <p class="suave">Vou te ajudar a se vestir bem e cuidar da sua imagem, do jeito do método do ${esc(nomeConsultor())}.</p>
+      <p class="suave">É fácil: é só tocar nos botões grandes.</p>
+      <button class="btn" data-acao="perfil-comecar" data-foco><span class="ico">👉</span> Começar</button>
+    </main>`,
+  perfilNome: (d) => `
+    ${topo("Sobre você")}
+    <main class="conteudo">
+      <p class="passo">Pergunta 1 de 5</p>
+      <h2>Como você gosta de ser chamado?</h2>
+      <input type="text" id="campo-nome" autocomplete="given-name" placeholder="Toque aqui e escreva seu nome" value="${esc(d.p.nome || "")}">
+      <button class="btn" data-acao="perfil-nome">Continuar →</button>
+      <button class="btn claro" data-acao="perfil-pular-nome">Prefiro não dizer</button>
+    </main>`,
+  perfilIdade: (d) => `${topo("Sobre você")}<main class="conteudo"><p class="passo">Pergunta 2 de 5</p><h2>Qual é a sua idade?</h2>${opcoes(IDADES, d.p.idade, "perfil-idade")}</main>`,
+  perfilRotina: (d) => `${topo("Sobre você")}<main class="conteudo"><p class="passo">Pergunta 3 de 5</p><h2>Como é o seu dia a dia?</h2>${opcoes(ROTINAS, d.p.rotina, "perfil-rotina", { uma: true })}</main>`,
+  perfilPele: (d) => `${topo("Sobre você")}<main class="conteudo"><p class="passo">Pergunta 4 de 5</p><h2>Qual cor de pele é mais parecida com a sua?</h2>
+    <p class="suave">Isso ajuda a escolher as cores de roupa que mais te valorizam.</p>
+    ${opcoes(Object.entries(PELES).map(([id, p]) => ({ id, nome: p.nome, hex: p.hex })), d.p.pele, "perfil-pele", { bola: (o) => o.hex })}</main>`,
+  perfilCorpo: (d) => `${topo("Sobre você")}<main class="conteudo"><p class="passo">Pergunta 5 de 5</p><h2>Como é o seu corpo?</h2>
+    <p class="suave">Só para eu indicar o caimento certo. Fica guardado só no seu celular.</p>${opcoes(CORPOS, d.p.corpo, "perfil-corpo")}</main>`,
+
+  /* ---------- início ---------- */
+  inicio: () => {
+    const nome = primeiroNome();
+    return `
+    <header class="topo"><h1>Alinhado</h1><button class="voltar" data-acao="ir" data-valor="ajustes" aria-label="Ajustes">⚙️ Ajustes</button></header>
+    <main class="conteudo">
+      <h2>${saudacao()}${nome ? ", " + esc(nome) : ""}! 👋</h2>
+      <p class="suave">O que você quer fazer agora? Toque em uma opção.</p>
+      <button class="menu destaque" data-acao="ir" data-valor="foto"><span class="ico">📷</span><span><b>Essa roupa combina comigo?</b><span>Tire uma foto na loja ou em casa</span></span></button>
+      <button class="menu" data-acao="ir" data-valor="ocasiao"><span class="ico">👔</span><span><b>O que eu visto hoje?</b><span>Escolha a ocasião e eu monto a roupa</span></span></button>
+      <button class="menu" data-acao="ir" data-valor="armario"><span class="ico">🚪</span><span><b>Meu guarda-roupa</b><span>${E.pecas.length ? `${E.pecas.length} ${E.pecas.length === 1 ? "peça guardada" : "peças guardadas"}` : "Guarde aqui as roupas que você tem"}</span></span></button>
+      <button class="menu" data-acao="ir" data-valor="conversa"><span class="ico">💬</span><span><b>Perguntar ao consultor</b><span>Cabelo, barba, postura, perfume e mais</span></span></button>
+      <button class="menu" data-acao="ir" data-valor="loja"><span class="ico">🛍️</span><span><b>Peças recomendadas</b><span>A linha indicada pelo ${esc(nomeConsultor())}</span></span></button>
+    </main>`;
+  },
+
+  /* ---------- foto de uma peça ---------- */
+  foto: (d) => `
+    ${topo(d.guardar ? "Guardar roupa" : "Essa roupa combina?")}
+    <main class="conteudo">
+      <h2>${d.guardar ? "Tire uma foto da roupa que você quer guardar" : "Tire uma foto da roupa"}</h2>
+      <p class="suave">Coloque a roupa esticada na cama ou pendurada, com boa luz. ${d.guardar ? "" : "Pode ser na loja, no provador ou em casa."}</p>
+      <button class="btn" data-acao="tirar-foto" data-valor="camera" data-foco><span class="ico">📷</span> Tirar foto agora</button>
+      <button class="btn claro" data-acao="tirar-foto" data-valor="galeria"><span class="ico">🖼️</span> Escolher uma foto que já tenho</button>
+      <button class="btn claro" data-acao="sem-foto"><span class="ico">✋</span> Sem foto: só escolher o tipo e a cor</button>
+    </main>`,
+  analisando: () => `${topo("Um momento")}<main class="conteudo"><div class="carregando"><div class="roda"></div>Estou olhando a sua foto…<span class="suave" style="font-weight:500">Isso leva alguns segundos.</span></div></main>`,
+  pecaTipo: (d) => `
+    ${topo("Que roupa é essa?")}
+    <main class="conteudo">
+      ${d.foto ? `<img class="foto-grande" src="${d.foto}" alt="Sua foto">` : ""}
+      <p class="passo">Passo 1 de 2</p>
+      ${d.tipo && d.daIA ? `<h2>Parece ser: ${esc(TIPOS[d.tipo].nome)}</h2><button class="btn" data-acao="tipo" data-valor="${d.tipo}">✔ Isso mesmo</button><p class="suave centro">Se não for, toque na certa:</p>` : `<h2>Que tipo de roupa é essa?</h2>`}
+      ${opcoes(listaTipos(), d.tipo, "tipo")}
+    </main>`,
+  pecaCor: (d) => `
+    ${topo("Qual é a cor?")}
+    <main class="conteudo">
+      ${d.foto ? `<img class="foto-grande" src="${d.foto}" alt="Sua foto" style="max-height:30vh">` : ""}
+      <p class="passo">Passo 2 de 2</p>
+      ${d.cor ? `<h2>A cor parece: ${esc(CORES[d.cor].nome)}</h2><button class="btn" data-acao="cor" data-valor="${d.cor}">✔ Isso mesmo</button><p class="suave centro">Se não for, toque na cor certa:</p>` : `<h2>Qual é a cor principal?</h2>`}
+      ${opcoes(listaCores(), d.cor, "cor", { bola: (o) => fundoCor(o.id) })}
+    </main>`,
+  resultado: (d) => {
+    const p = d.peca;
+    const a = avaliarPeca(p);
+    const pele = E.perfil && PELES[E.perfil.pele];
+    const titulo = { sim: "✅ Vale a pena!", talvez: "👍 Pode ser uma boa", pense: "🤔 Pense bem antes" }[a.vale];
+    const classe = { sim: "ok", talvez: "ouro", pense: "atencao" }[a.vale];
+    const jaTem = E.pecas.some((x) => x.id === p.id);
+    const fala = [titulo.replace(/^\S+\s/, ""), d.comentario || "", textoPele(a, pele, p), a.combina.length ? `Combina com ${a.combina.length} ${a.combina.length === 1 ? "peça" : "peças"} do seu guarda-roupa.` : ""].filter(Boolean).join(" ");
+    return `
+    ${topo("Resultado")}
+    <main class="conteudo">
+      ${p.foto ? `<img class="foto-grande" src="${p.foto}" alt="${esc(nomePeca(p))}" style="max-height:34vh">` : ""}
+      <div class="caixa ${classe}">
+        <p class="veredito">${titulo}</p>
+        <p style="margin-top:6px"><b>${esc(nomePeca(p))}</b></p>
+        ${d.comentario ? `<p style="margin-top:10px">${esc(d.comentario)}</p>` : ""}
+      </div>
+      <button class="btn claro" data-acao="falar" data-texto="${esc(fala)}">🔊 Ouvir</button>
+      ${pele && a.pele ? `<div class="caixa"><h3>🎨 Com a sua cor de pele</h3><p>${esc(textoPele(a, pele, p))}</p></div>` : ""}
+      <div class="caixa"><h3>👕 Com o que combina</h3>
+        ${a.combina.length ? `<p>Combina com ${a.combina.length} ${a.combina.length === 1 ? "peça" : "peças"} que você já tem:</p><div class="pecas" style="margin-top:10px">${a.combina.slice(0, 6).map((x) => `<div class="peca">${imagemPeca(x)}<div class="nome">${esc(nomePeca(x))}</div></div>`).join("")}</div>`
+          : E.pecas.length ? `<p>Não achei peças no seu guarda-roupa que combinem bem com ela. Se comprar, vai precisar de outras peças junto.</p>`
+          : `<p>Quando você guardar suas roupas no app, eu mostro aqui com quais ela combina.</p>`}
+      </div>
+      <div class="caixa"><h3>📅 Serve para</h3><ul>${a.ocasioes.map((o) => `<li>${o.ico} ${esc(o.nome)}</li>`).join("")}</ul></div>
+      ${jaTem ? "" : `<button class="btn" data-acao="guardar-peca">💾 Guardar no meu guarda-roupa</button>`}
+      <button class="btn claro" data-acao="ir" data-valor="foto">📷 Ver outra roupa</button>
+      <button class="btn claro" data-acao="inicio">🏠 Voltar ao início</button>
+    </main>`;
+  },
+
+  /* ---------- look do dia ---------- */
+  ocasiao: () => `
+    ${topo("O que eu visto hoje?")}
+    <main class="conteudo">
+      <h2>Para onde você vai?</h2>
+      ${opcoes(OCASIOES, null, "ocasiao", { uma: true })}
+    </main>`,
+  look: (d) => {
+    const look = d.looks[d.i % d.looks.length];
+    const faltam = look.pecas.filter((p) => p.sugerida);
+    const texto = explicarLook(look, d.ocasiao);
+    return `
+    ${topo(d.ocasiao.ico + " " + esc(d.ocasiao.nome))}
+    <main class="conteudo">
+      <h2>Sugestão ${d.i % d.looks.length + 1}</h2>
+      <div class="look">${look.pecas.map((p) => `
+        <div class="item ${p.sugerida ? "falta" : ""}">${imagemPeca(p, "mini")}
+          <div><small>${GRUPOS[TIPOS[p.tipo].grupo]}</small><b>${esc(nomePeca(p))}</b>${p.sugerida ? `<span class="etiqueta">Você ainda não tem</span>` : `<span class="etiqueta" style="background:var(--verde-fundo)">✔ Do seu guarda-roupa</span>`}</div>
+        </div>`).join("")}</div>
+      <div class="caixa"><p>${esc(texto)}</p></div>
+      <button class="btn claro" data-acao="falar" data-texto="${esc(texto)}">🔊 Ouvir</button>
+      ${faltam.length ? `<div class="caixa ouro"><h3>Falta no seu guarda-roupa</h3><p>Guarde as suas roupas no app para eu montar com o que você tem. Ou veja as peças recomendadas.</p></div>
+        <button class="btn ouro" data-acao="ir" data-valor="loja">🛍️ Ver peças recomendadas</button>` : ""}
+      <div class="rodape">
+        <button class="btn claro" data-acao="outro-look">🔄 Outra sugestão</button>
+        <button class="btn" data-acao="usar-look">✅ Vou usar</button>
+      </div>
+    </main>`;
+  },
+
+  /* ---------- guarda-roupa ---------- */
+  armario: () => {
+    const grupos = Object.keys(GRUPOS).map((g) => ({ g, itens: E.pecas.filter((p) => TIPOS[p.tipo]?.grupo === g) })).filter((x) => x.itens.length);
+    return `
+    ${topo("Meu guarda-roupa")}
+    <main class="conteudo">
+      <button class="btn" data-acao="nova-peca" data-foco><span class="ico">➕</span> Guardar uma roupa</button>
+      ${E.pecas.length ? grupos.map(({ g, itens }) => `<p class="grupo-titulo">${GRUPOS[g]}</p>
+        <div class="pecas">${itens.map((p) => `<button class="peca" data-acao="ver-peca" data-valor="${p.id}">${imagemPeca(p)}<div class="nome">${esc(nomePeca(p))}</div></button>`).join("")}</div>`).join("")
+      : `<div class="caixa centro"><p style="font-size:2.5rem">🚪</p><h3>Seu guarda-roupa está vazio</h3><p class="suave">Tire foto das roupas que você mais usa. Comece por 3 ou 4: camisas, calças e sapatos.</p></div>`}
+    </main>`;
+  },
+  verPeca: (d) => {
+    const p = E.pecas.find((x) => x.id === d.id);
+    if (!p) return TELAS.armario();
+    return `
+    ${topo(esc(nomePeca(p)))}
+    <main class="conteudo">
+      ${p.foto ? `<img class="foto-grande" src="${p.foto}" alt="">` : `<div class="caixa centro" style="background:${fundoCor(p.cor)};font-size:5rem">${TIPOS[p.tipo].ico}</div>`}
+      <button class="btn" data-acao="avaliar-peca" data-valor="${p.id}">👀 Com o que essa roupa combina?</button>
+      <button class="btn claro" data-acao="apagar-peca" data-valor="${p.id}">🗑️ Tirar do guarda-roupa</button>
+    </main>`;
+  },
+  confirmarApagar: (d) => `
+    ${topo("Tirar do guarda-roupa?")}
+    <main class="conteudo">
+      <h2>Tem certeza que quer tirar essa roupa do app?</h2>
+      <p class="suave">A roupa de verdade continua com você, só sai da lista.</p>
+      <button class="btn" data-acao="apagar-sim" data-valor="${d.id}">Sim, tirar</button>
+      <button class="btn claro" data-acao="voltar">Não, deixar como está</button>
+    </main>`,
+
+  /* ---------- conversa ---------- */
+  conversa: () => {
+    const msgs = E.conversa;
+    const sug = ["Qual corte de cabelo combina comigo?", "Como me vestir para um casamento?", "Como cuidar da barba?", "Como melhorar minha postura?", "Que perfume usar no dia a dia?"];
+    return `
+    ${topo("Perguntar ao consultor")}
+    <main class="conteudo">
+      <div class="conversa" id="conversa">
+        <div class="bolha ia">Oi${primeiroNome() ? ", " + esc(primeiroNome()) : ""}! Pode me perguntar qualquer coisa sobre roupa, cabelo, barba, cuidados, postura ou como se portar. ${Reconhecedor ? "Se preferir, toque em 🎤 Falar e fale a sua pergunta." : ""}</div>
+        ${msgs.map((m, i) => bolha(m, i)).join("")}
+      </div>
+      ${msgs.length ? "" : `<p class="suave">Ou toque numa dessas perguntas:</p><div class="sugestoes">${sug.map((s) => `<button class="sugestao" data-acao="perguntar" data-texto="${esc(s)}">${esc(s)}</button>`).join("")}</div>`}
+      ${msgs.length ? `<button class="btn claro" data-acao="limpar-conversa" style="min-height:56px;font-size:.95rem">🧹 Começar conversa nova</button>` : ""}
+    </main>
+    <div class="escrever">
+      <textarea id="pergunta" rows="2" placeholder="Escreva sua pergunta aqui"></textarea>
+      <div class="linha">
+        ${Reconhecedor ? `<button class="btn claro" data-acao="microfone">🎤 Falar</button>` : `<span></span>`}
+        <button class="btn claro" data-acao="foto-conversa">📷 Foto</button>
+        <button class="btn" data-acao="enviar">Enviar ➤</button>
+      </div>
+    </div>`;
+  },
+
+  /* ---------- loja ---------- */
+  loja: () => `
+    ${topo("Peças recomendadas")}
+    <main class="conteudo">
+      <h2>A linha indicada pelo ${esc(nomeConsultor())}</h2>
+      <p class="suave">Peças básicas que combinam entre si e com o que você já tem.</p>
+      ${E.consultor.produtos.map((p, i) => `
+        <div class="caixa produto">
+          <div class="mini" style="background:${fundoCor(p.cor)}">${TIPOS[p.tipo]?.ico || "🛍️"}</div>
+          <div style="flex:1"><b>${esc(p.nome)}</b>${p.preco ? `<span class="suave">${esc(p.preco)}</span>` : ""}
+            ${E.pecas.some((x) => x.tipo === p.tipo && x.cor === p.cor) ? `<br><span class="etiqueta" style="background:var(--verde-fundo)">✔ Você já tem parecida</span>` : ""}
+          </div>
+        </div>
+        <button class="btn ${p.link ? "" : "claro"}" data-acao="comprar" data-valor="${i}">${p.link ? "🛒 Quero comprar" : "Em breve"}</button>`).join("")}
+    </main>`,
+
+  /* ---------- ajustes ---------- */
+  ajustes: () => `
+    ${topo("Ajustes")}
+    <main class="conteudo">
+      <h2>Tamanho da letra</h2>
+      ${opcoes([{ id: "1", nome: "Normal" }, { id: "2", nome: "Grande" }, { id: "3", nome: "Muito grande" }], String(E.ajustes.letra), "letra")}
+      <div class="separador"></div>
+      <button class="btn claro" data-acao="refazer-perfil">👤 Mudar minhas informações</button>
+      <button class="btn claro" data-acao="ir" data-valor="area">🔐 Área do consultor</button>
+      <button class="btn claro" data-acao="ir" data-valor="apagarTudo">🗑️ Apagar tudo do app</button>
+      <p class="suave centro" style="font-size:.8rem">Suas fotos e respostas ficam guardadas só neste celular.</p>
+    </main>`,
+  apagarTudo: () => `
+    ${topo("Apagar tudo")}
+    <main class="conteudo">
+      <h2>Apagar todas as suas roupas, conversas e informações?</h2>
+      <p class="suave">Não dá para desfazer.</p>
+      <button class="btn" data-acao="apagar-tudo-sim">Sim, apagar tudo</button>
+      <button class="btn claro" data-acao="voltar">Não, voltar</button>
+    </main>`,
+  area: () => `
+    ${topo("Área do consultor")}
+    <main class="conteudo">
+      <p class="suave">Esta área é para quem configura o app (o consultor ou a equipe dele).</p>
+      <div><label class="rotulo" for="c-nome">Nome do consultor</label><input type="text" id="c-nome" value="${esc(E.consultor.nome)}"></div>
+      <div class="caixa ouro">
+        <h3>🧠 Inteligência completa</h3>
+        <p>Com uma chave da API da Anthropic, o app reconhece roupas pela foto sozinho e conversa sobre qualquer assunto de estilo usando o método abaixo. Sem a chave, o app continua funcionando com as regras do método.</p>
+        <p style="margin-top:8px;font-size:.85rem" class="suave">Use só para demonstração: a chave fica guardada neste celular. No app final, ela fica num servidor.</p>
+      </div>
+      <div><label class="rotulo" for="c-chave">Chave da API</label><input type="password" id="c-chave" autocomplete="off" placeholder="sk-ant-..." value="${esc(E.ajustes.chave)}"></div>
+      <div><label class="rotulo" for="c-metodo">Método do consultor</label>
+        <p class="suave" style="font-size:.85rem;margin-bottom:6px">Cada assunto começa com "## Título" e uma linha "palavras:" (usadas para responder sem internet). O texto inicial é só um exemplo: troque pelos ensinamentos do consultor.</p>
+        <textarea class="campo" id="c-metodo">${esc(E.consultor.metodo)}</textarea></div>
+      <button class="btn claro" data-acao="metodo-padrao" style="min-height:56px;font-size:.95rem">↩️ Voltar ao texto de exemplo</button>
+      <h2>Produtos da linha</h2>
+      <p class="suave" style="font-size:.85rem">Uma linha por produto: nome | tipo | cor | preço | link. Tipos: ${Object.keys(TIPOS).join(", ")}. Cores: ${Object.keys(CORES).join(", ")}.</p>
+      <textarea class="campo" id="c-produtos" style="min-height:200px">${esc(E.consultor.produtos.map((p) => [p.nome, p.tipo, p.cor, p.preco, p.link].join(" | ")).join("\n"))}</textarea>
+      <button class="btn" data-acao="salvar-area">💾 Salvar</button>
+    </main>`,
+};
+
+function textoPele(a, pele, p) {
+  if (!pele || !a.pele) return "";
+  const cor = CORES[p.cor].nome.toLowerCase();
+  if (a.pele === "boa") return `O ${cor} valoriza a pele ${pele.nome.toLowerCase()}. Usar perto do rosto deixa você com aparência mais saudável.`;
+  if (a.pele === "evitar") return `O ${cor} pode deixar a pele ${pele.nome.toLowerCase()} mais apagada perto do rosto. Se gostar muito, use em peças de baixo ou com um casaco por cima. Cores que te valorizam: ${pele.boas.slice(0, 4).map((c) => CORES[c].nome.toLowerCase()).join(", ")}.`;
+  return `É uma cor tranquila para o seu tom de pele.`;
+}
+
+function bolha(m, i) {
+  return `<div class="bolha ${m.de}">${m.foto ? `<img src="${m.foto}" alt="Foto enviada">` : ""}${esc(m.texto)}${m.de === "ia" ? `<br><button class="ouvir" data-acao="falar-msg" data-valor="${i}">🔊 Ouvir</button>` : ""}</div>`;
+}
+
+const TELAS_DEPOIS = {
+  conversa: () => { const c = $(".bolha:last-child"); if (E.conversa.length && c) c.scrollIntoView({ block: "end" }); },
+};
+
+/* ===================== Ações ===================== */
+
+let rascunhoPerfil = {};
+let pecaAtual = null;
+const comFotoPendente = { foto: null };
+
+const ACOES = {
+  voltar, inicio: irInicio,
+  ir: (v) => ir(v),
+  "perfil-comecar": () => { rascunhoPerfil = { ...(E.perfil || {}) }; ir("perfilNome", { p: rascunhoPerfil }); },
+  "perfil-nome": () => { rascunhoPerfil.nome = ($("#campo-nome").value || "").trim().slice(0, 40); ir("perfilIdade", { p: rascunhoPerfil }); },
+  "perfil-pular-nome": () => { rascunhoPerfil.nome = ""; ir("perfilIdade", { p: rascunhoPerfil }); },
+  "perfil-idade": (v) => { rascunhoPerfil.idade = v; ir("perfilRotina", { p: rascunhoPerfil }); },
+  "perfil-rotina": (v) => { rascunhoPerfil.rotina = v; ir("perfilPele", { p: rascunhoPerfil }); },
+  "perfil-pele": (v) => { rascunhoPerfil.pele = v; ir("perfilCorpo", { p: rascunhoPerfil }); },
+  "perfil-corpo": (v) => {
+    rascunhoPerfil.corpo = v; E.perfil = rascunhoPerfil; salvar();
+    irInicio(); aviso(`Pronto${primeiroNome() ? ", " + primeiroNome() : ""}! Agora é só escolher o que quer fazer.`);
+  },
+  "refazer-perfil": () => { rascunhoPerfil = { ...(E.perfil || {}) }; ir("perfilNome", { p: rascunhoPerfil }); },
+
+  // fluxo da foto: guardar = true quando vem do guarda-roupa
+  "nova-peca": () => ir("foto", { guardar: true }),
+  "tirar-foto": async (v) => {
+    const guardar = !!tela.dados.guardar;
+    const r = await pedirFoto(v);
+    if (!r) return;
+    pecaAtual = { id: novoId(), foto: await miniatura(r.grande), tipo: null, cor: r.cor, guardar, comentario: "" };
+    if (temIA()) {
+      ir("analisando");
+      try {
+        const ia = await analisarFotoIA(r.grande);
+        if (tela.nome !== "analisando") return;
+        if (ia.e_roupa === false) aviso("Não reconheci uma roupa nessa foto. Escolha o tipo abaixo.");
+        else { pecaAtual.tipo = ia.tipo; pecaAtual.cor = ia.cor; pecaAtual.comentario = guardar ? "" : ia.comentario; }
+      } catch (e) {
+        aviso(mensagemErroIA(e));
+      }
+      if (tela.nome !== "analisando") return;
+      tela = { nome: "pecaTipo", dados: { ...pecaAtual, daIA: !!pecaAtual.tipo } }; desenhar(); window.scrollTo(0, 0);
+    } else ir("pecaTipo", { ...pecaAtual });
+  },
+  "sem-foto": () => { pecaAtual = { id: novoId(), foto: null, tipo: null, cor: null, guardar: !!tela.dados.guardar, comentario: "" }; ir("pecaTipo", { ...pecaAtual }); },
+  tipo: (v) => { pecaAtual.tipo = v; ir("pecaCor", { ...pecaAtual }); },
+  cor: (v) => {
+    pecaAtual.cor = v;
+    const peca = { id: pecaAtual.id, tipo: pecaAtual.tipo, cor: pecaAtual.cor, foto: pecaAtual.foto };
+    if (pecaAtual.guardar) {
+      E.pecas.push(peca);
+      if (!salvar()) { E.pecas.pop(); return; }
+      pilha = [{ nome: "inicio", dados: {} }]; tela = { nome: "armario", dados: {} }; desenhar(); window.scrollTo(0, 0);
+      aviso("✔ Roupa guardada!");
+    } else ir("resultado", { peca, comentario: pecaAtual.comentario });
+  },
+  "guardar-peca": () => {
+    const p = tela.dados.peca;
+    E.pecas.push({ id: p.id, tipo: p.tipo, cor: p.cor, foto: p.foto });
+    if (!salvar()) { E.pecas.pop(); return; }
+    desenhar(); aviso("✔ Guardada no seu guarda-roupa!");
+  },
+  "ver-peca": (v) => ir("verPeca", { id: v }),
+  "avaliar-peca": (v) => { const p = E.pecas.find((x) => x.id === v); if (p) ir("resultado", { peca: p }); },
+  "apagar-peca": (v) => ir("confirmarApagar", { id: v }),
+  "apagar-sim": (v) => { E.pecas = E.pecas.filter((p) => p.id !== v); salvar(); pilha = [{ nome: "inicio", dados: {} }]; tela = { nome: "armario", dados: {} }; desenhar(); aviso("Roupa tirada da lista."); },
+
+  ocasiao: (v) => {
+    const oc = OCASIOES.find((o) => o.id === v);
+    const looks = montarLooks(oc);
+    if (!looks.length) { aviso("Não consegui montar uma roupa. Guarde mais peças no guarda-roupa."); return; }
+    ir("look", { ocasiao: oc, looks, i: 0 });
+  },
+  "outro-look": () => { pararFala(); tela.dados.i++; desenhar(); window.scrollTo(0, 0); },
+  "usar-look": () => { irInicio(); aviso("Ótima escolha! Você vai ficar muito bem. 👍"); },
+
+  falar: (v, el) => falar(el.dataset.texto || "", el),
+  "falar-msg": (v, el) => { const m = E.conversa[Number(v)]; if (m) falar(m.texto, el); },
+
+  perguntar: (v, el) => enviarPergunta(el.dataset.texto),
+  enviar: () => enviarPergunta($("#pergunta").value),
+  "limpar-conversa": () => { E.conversa = []; salvar(); desenhar(); },
+  microfone: (v, el) => ouvirMicrofone(el),
+  "foto-conversa": async () => {
+    const r = await pedirFoto("camera");
+    if (!r) return;
+    const texto = ($("#pergunta").value || "").trim() || "O que você acha? Me dá uma dica.";
+    enviarPergunta(texto, r.grande);
+  },
+
+  comprar: (v) => {
+    const p = E.consultor.produtos[Number(v)];
+    if (p && p.link) window.open(p.link, "_blank", "noopener");
+    else aviso("Esse produto chega em breve.");
+  },
+
+  letra: (v) => { E.ajustes.letra = Number(v); salvar(); aplicarLetra(); desenhar(); },
+  "apagar-tudo-sim": () => {
+    const consultor = E.consultor, chave = E.ajustes.chave;
+    E = padrao(); E.consultor = consultor; E.ajustes.chave = chave; salvar(); aplicarLetra();
+    pilha = []; tela = { nome: "boasvindas", dados: {} }; desenhar();
+  },
+  "metodo-padrao": () => { $("#c-metodo").value = METODO_PADRAO; aviso("Texto de exemplo colocado. Toque em Salvar."); },
+  "salvar-area": () => {
+    E.consultor.nome = ($("#c-nome").value || "").trim() || "consultor";
+    E.ajustes.chave = ($("#c-chave").value || "").trim();
+    E.consultor.metodo = $("#c-metodo").value;
+    E.consultor.produtos = $("#c-produtos").value.split("\n").map((l) => l.split("|").map((x) => x.trim())).filter((c) => c[0]).map(([nome, tipo, cor, preco, link]) => ({
+      nome, tipo: TIPOS[tipo] ? tipo : "camiseta", cor: CORES[cor] ? cor : "cinza", preco: preco || "", link: /^https?:\/\//.test(link || "") ? link : "",
+    }));
+    if (salvar()) { aviso("✔ Salvo!"); voltar(); }
+  },
+};
+
+app.addEventListener("click", (ev) => {
+  const el = ev.target.closest("[data-acao]");
+  if (!el) return;
+  const f = ACOES[el.dataset.acao];
+  if (f) f(el.dataset.valor, el);
+});
+app.addEventListener("keydown", (ev) => {
+  if (ev.target.id === "campo-nome" && ev.key === "Enter") ACOES["perfil-nome"]();
+});
+
+/* ===================== Conversa ===================== */
+
+let enviando = false;
+async function enviarPergunta(texto, foto = null) {
+  texto = String(texto || "").trim();
+  if (!texto || enviando) { if (!texto) aviso("Escreva ou fale a sua pergunta primeiro."); return; }
+  enviando = true;
+  const minha = { de: "eu", texto };
+  E.conversa.push(minha);
+  const conv = $("#conversa");
+  conv.insertAdjacentHTML("beforeend", `<div class="bolha eu">${foto ? `<img src="${foto}" alt="Foto enviada">` : ""}${esc(texto)}</div><div class="bolha ia" id="pensando"><span class="roda" style="width:28px;height:28px;border-width:4px;display:inline-block;vertical-align:middle"></span> Pensando…</div>`);
+  $("#pensando").scrollIntoView({ block: "end" });
+  $("#pergunta").value = "";
+  document.querySelectorAll(".sugestoes, .sugestoes + p").forEach((n) => n.remove());
+
+  let resposta;
+  if (temIA()) {
+    try {
+      const historico = E.conversa.slice(-12, -1).map((m) => ({ role: m.de === "eu" ? "user" : "assistant", content: m.texto }));
+      // a conversa precisa começar com a pessoa falando
+      while (historico.length && historico[0].role !== "user") historico.shift();
+      const atual = foto ? [fotoParaBloco(foto), { type: "text", text: texto }] : texto;
+      resposta = await chamarClaude({ sistema: instrucoesSistema(), mensagens: [...historico, { role: "user", content: atual }] });
+    } catch (e) {
+      resposta = mensagemErroIA(e) + (String(e.message).match(/chave|ocupado|recusa/) ? "" : "\n\n" + responderSemInternet(texto));
+    }
+  } else {
+    await new Promise((r) => setTimeout(r, 500));
+    resposta = foto ? "Para eu analisar fotos, a inteligência completa precisa estar ligada (na Área do consultor). Mas posso te ajudar com uma dica:\n\n" + responderSemInternet(texto) : responderSemInternet(texto);
+  }
+  E.conversa.push({ de: "ia", texto: resposta || "Desculpe, não consegui responder agora." });
+  if (E.conversa.length > 60) E.conversa = E.conversa.slice(-60);
+  salvar();
+  enviando = false;
+  if (tela.nome === "conversa") {
+    desenhar();
+    if (E.ajustes.vozAuto) falar(resposta);
+  }
+}
+
+function ouvirMicrofone(botao) {
+  if (!Reconhecedor) return;
+  const r = new Reconhecedor();
+  r.lang = "pt-BR"; r.interimResults = false; r.maxAlternatives = 1;
+  botao.textContent = "👂 Ouvindo…"; botao.disabled = true;
+  r.onresult = (ev) => {
+    const texto = ev.results[0][0].transcript;
+    $("#pergunta").value = texto;
+    enviarPergunta(texto);
+  };
+  r.onerror = () => aviso("Não consegui ouvir. Toque em 🎤 Falar e fale perto do celular.");
+  r.onend = () => { botao.textContent = "🎤 Falar"; botao.disabled = false; };
+  try { r.start(); } catch (e) { r.onend(); }
+}
+
+/* ===================== Início ===================== */
+
+aplicarLetra();
+history.replaceState({ n: 0 }, "");
+tela = { nome: E.perfil ? "inicio" : "boasvindas", dados: {} };
+desenhar();
+if (temVoz) speechSynthesis.getVoices();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>

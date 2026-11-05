@@ -1,0 +1,20 @@
+{
+  "name": "Alinhado — seu consultor de estilo",
+  "short_name": "Alinhado",
+  "description": "Seu consultor de estilo no celular: roupa, cabelo, barba, cuidados e postura.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f1e7",
+  "theme_color": "#1d2a44",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "marca/icone.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

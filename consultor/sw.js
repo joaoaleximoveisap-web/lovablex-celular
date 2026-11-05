@@ -1,5 +1,5 @@
 // Guarda o app para abrir rápido e funcionar sem internet (menos a inteligência completa).
-const CACHE = "alinhado-v1";
+const CACHE = "impossible-v2";
 const CASCA = ["./", "./index.html", "./manifest.webmanifest", "./marca/icone.svg"];
 
 self.addEventListener("install", (e) => {
@@ -7,7 +7,7 @@ self.addEventListener("install", (e) => {
 });
 self.addEventListener("activate", (e) => {
   e.waitUntil(caches.keys()
-    .then((nomes) => Promise.all(nomes.filter((n) => n.startsWith("alinhado-") && n !== CACHE).map((n) => caches.delete(n))))
+    .then((nomes) => Promise.all(nomes.filter((n) => (n.startsWith("alinhado-") || n.startsWith("impossible-")) && n !== CACHE).map((n) => caches.delete(n))))
     .then(() => self.clients.claim()));
 });
 self.addEventListener("fetch", (e) => {

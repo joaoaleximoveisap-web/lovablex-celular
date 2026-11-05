@@ -1,7 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#1d2a44"/>
-  <path d="M176 120 L256 176 L336 120 L404 156 L372 236 L336 222 L336 396 L176 396 L176 222 L140 236 L108 156 Z" fill="#f4ead8"/>
-  <path d="M232 160 L256 176 L280 160 L268 200 L256 300 L244 200 Z" fill="#c8963e"/>
-  <circle cx="256" cy="330" r="10" fill="#1d2a44"/>
-  <circle cx="256" cy="366" r="10" fill="#1d2a44"/>
+  <rect width="512" height="512" rx="112" fill="#111111"/>
+  <text x="256" y="300" text-anchor="middle" font-family="Didot, 'Bodoni 72', 'Playfair Display', Georgia, serif" font-style="italic" font-weight="600" font-size="210" fill="#f4efe6">IM</text>
+  <rect x="206" y="352" width="100" height="10" fill="#e07a3f"/>
 </svg>

@@ -3,35 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Alinhado</title>
-<meta name="description" content="Seu consultor de estilo no celular: roupa, cabelo, barba, cuidados e postura.">
-<meta name="theme-color" content="#1d2a44">
+<title>Impossible Man</title>
+<meta name="description" content="O consultor de imagem do Lucas Chacon no seu celular: roupa, cabelo, barba, cuidados e presença.">
+<meta name="theme-color" content="#111111">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Alinhado">
+<meta name="apple-mobile-web-app-title" content="Impossible">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="marca/icone.svg">
 <link rel="icon" href="marca/icone.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap">
 <style>
   /* Pensado para quem nunca mexeu em celular: letra grande, botões enormes,
      uma decisão por tela, sempre um "Voltar" visível, nada escondido em gestos. */
   :root {
-    --fundo: #f6f1e7; --cartao: #ffffff; --texto: #1a1f2b; --suave: #4f5666;
-    --linha: #d9d0bf; --marca: #1d2a44; --marca-txt: #ffffff; --ouro: #b07d2b;
-    --ouro-fundo: #f3e6cc; --verde: #1f7a4a; --verde-fundo: #ddf1e4;
-    --alerta: #9a4a12; --alerta-fundo: #fbe7d4; --sombra: 0 2px 0 rgba(29,42,68,.08), 0 6px 18px rgba(29,42,68,.08);
-    --raio: 20px;
+    --fundo: #f3eee5; --cartao: #fffdf9; --texto: #141414; --suave: #4d4a45;
+    --linha: #d8cfc0; --marca: #141414; --marca-txt: #f6f1e8; --ouro: #b4531f;
+    --ouro-fundo: #f4e2d3; --verde: #1f6b45; --verde-fundo: #dcefe2;
+    --alerta: #9a4a12; --alerta-fundo: #fbe7d4; --sombra: 0 2px 0 rgba(20,20,20,.06), 0 6px 18px rgba(20,20,20,.08);
+    --raio: 18px; --serifa: "Playfair Display", "Didot", "Bodoni 72", Georgia, "Times New Roman", serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --fundo: #10141d; --cartao: #1b2130; --texto: #f4f1ea; --suave: #b9bfcc; --linha: #333c50;
-      --marca: #e9d9b8; --marca-txt: #10141d; --ouro: #e0b25e; --ouro-fundo: #3a301d;
+      --fundo: #0d0d0d; --cartao: #1a1a1a; --texto: #f4efe6; --suave: #bdb6aa; --linha: #34312c;
+      --marca: #f4efe6; --marca-txt: #0d0d0d; --ouro: #ee8a4f; --ouro-fundo: #3a2416;
       --verde: #7fd6a4; --verde-fundo: #183526; --alerta: #f3b483; --alerta-fundo: #3d2616;
       --sombra: 0 2px 0 rgba(0,0,0,.3);
     }
   }
   :root[data-theme="dark"] {
-    --fundo: #10141d; --cartao: #1b2130; --texto: #f4f1ea; --suave: #b9bfcc; --linha: #333c50;
-    --marca: #e9d9b8; --marca-txt: #10141d; --ouro: #e0b25e; --ouro-fundo: #3a301d;
+    --fundo: #0d0d0d; --cartao: #1a1a1a; --texto: #f4efe6; --suave: #bdb6aa; --linha: #34312c;
+    --marca: #f4efe6; --marca-txt: #0d0d0d; --ouro: #ee8a4f; --ouro-fundo: #3a2416;
     --verde: #7fd6a4; --verde-fundo: #183526; --alerta: #f3b483; --alerta-fundo: #3d2616;
     --sombra: 0 2px 0 rgba(0,0,0,.3);
   }
@@ -51,12 +53,19 @@
     padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
   .topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px;
     padding: 12px 16px; background: var(--fundo); border-bottom: 2px solid var(--linha); }
-  .topo h1 { margin: 0; font-size: 1.1rem; flex: 1; min-width: 0; line-height: 1.2; }
+  .topo h1 { margin: 0; font-size: 1.15rem; flex: 1; min-width: 0; line-height: 1.2; }
   .voltar { min-height: 56px; padding: 0 18px; border-radius: 16px; border: 2px solid var(--marca);
     background: var(--cartao); font-weight: 700; font-size: 1rem; color: var(--marca); flex: none; }
   .conteudo { flex: 1; padding: 18px 16px 40px; display: flex; flex-direction: column; gap: 16px; }
 
-  h2 { font-size: 1.45rem; line-height: 1.2; margin: 6px 0 0; }
+  h2 { font-size: 1.55rem; line-height: 1.15; margin: 6px 0 0; font-family: var(--serifa); font-weight: 700; letter-spacing: -.2px; }
+  .topo h1, .veredito, .marca-nome { font-family: var(--serifa); }
+  .marca-nome { font-size: 2.3rem; line-height: 1; margin: 0; font-style: italic; font-weight: 600; letter-spacing: -.5px; }
+  .marca-por { font-size: .8rem; letter-spacing: 3px; text-transform: uppercase; color: var(--suave); }
+  .frase { font-family: var(--serifa); font-size: 1.25rem; line-height: 1.35; font-style: italic; }
+  .frase cite { display: block; margin-top: 8px; font-family: inherit; font-style: normal; font-size: .8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--ouro); }
+  .manifesto { background: var(--marca); color: var(--marca-txt); border-radius: var(--raio); padding: 22px 20px; }
+  .traco { width: 48px; height: 3px; background: var(--ouro); margin: 12px 0; }
   p { margin: 0; }
   .suave { color: var(--suave); }
   .centro { text-align: center; }
@@ -160,7 +169,7 @@
   .rodape { display: flex; gap: 10px; }
   .rodape .btn { min-height: 64px; font-size: 1rem; }
   .boas-vindas { text-align: center; display: flex; flex-direction: column; gap: 18px; align-items: center; padding-top: 18px; }
-  .boas-vindas img { width: 120px; height: 120px; border-radius: 28px; }
+  .boas-vindas img { width: 104px; height: 104px; border-radius: 24px; }
   .produto { display: flex; gap: 14px; align-items: center; }
   .produto .mini { width: 84px; height: 84px; border-radius: 14px; flex: none; display: grid; place-items: center; font-size: 2.4rem; border: 2px solid var(--linha); }
   .produto b { display: block; line-height: 1.25; }
@@ -204,7 +213,9 @@ const CORES = {
   marinho:  { nome: "Azul-marinho",  hex: "#1f2f52", neutro: true,  tom: "escuro" },
   azulclaro:{ nome: "Azul-claro",    hex: "#a9cbe8", neutro: true,  tom: "claro"  },
   jeans:    { nome: "Azul jeans",    hex: "#4b6c93", neutro: true,  tom: "medio"  },
+  creme:    { nome: "Creme ou off-white", hex: "#efe6d2", neutro: true, tom: "claro" },
   bege:     { nome: "Bege ou cáqui", hex: "#d9c4a0", neutro: true,  tom: "claro"  },
+  caramelo: { nome: "Caramelo",      hex: "#a0673a", neutro: true,  tom: "medio"  },
   marrom:   { nome: "Marrom",        hex: "#6b4428", neutro: true,  tom: "escuro" },
   oliva:    { nome: "Verde-oliva",   hex: "#6b6b3a", neutro: true,  tom: "medio"  },
   vinho:    { nome: "Vinho",         hex: "#6d1f30", neutro: false, tom: "escuro" },
@@ -238,96 +249,92 @@ const OCASIOES = [
 const BASICOS = [
   ["camiseta", "branco"], ["camiseta", "marinho"], ["polo", "marinho"], ["camisa", "branco"], ["camisa", "azulclaro"],
   ["sueter", "cinza"], ["blazer", "marinho"], ["jaqueta", "jeans"], ["jeans", "jeans"], ["sarja", "bege"], ["social", "cinza"],
-  ["bermuda", "bege"], ["tenis", "branco"], ["mocassim", "marrom"], ["sapato", "preto"], ["sapato", "marrom"], ["chinelo", "preto"],
+  ["camisa", "creme"], ["social", "caramelo"], ["bermuda", "branco"], ["bermuda", "bege"], ["tenis", "branco"], ["mocassim", "marrom"], ["sapato", "preto"], ["sapato", "marrom"], ["chinelo", "preto"],
 ].map(([tipo, cor], i) => ({ id: "b" + i, tipo, cor, sugerida: true }));
 
 /* ===================== Método do consultor (conteúdo inicial, editável) ===================== */
 
 // Cada bloco começa com "## Título" e uma linha "palavras:" (para achar a resposta sem internet).
-// Este texto é só um ponto de partida: o consultor troca pelo método dele na Área do consultor.
-const METODO_PADRAO = `## Caimento é o mais importante
-palavras: caimento, tamanho, larga, largo, apertada, apertado, justa, folgada, numero, numeração, manga, comprimento
-Roupa boa é roupa que veste bem. O ombro da camisa termina no seu ombro, a manga vai até o pulso e a calça encosta de leve no sapato, sem sobrar pano. Uma peça simples no tamanho certo vale mais do que uma peça cara larga ou apertada. Se precisar, leve a uma costureira: um ajuste pequeno muda tudo.
+// RASCUNHO montado a partir do estilo que o Lucas mostra no perfil. Ele valida e troca na Área do consultor.
+const METODO_PADRAO = `## Presença vem antes da roupa
+palavras: presença, presenca, autoridade, confiança, confianca, postura, timidez, tímido, olhar, aperto, mão, comportamento, imagem, valor, cobrar, respeito
+Imagem é identidade, não vaidade. A roupa é a extensão de quem você é, não um disfarce. Antes de pensar na peça: ombros para trás, queixo paralelo ao chão, passos calmos, olhar nos olhos e aperto de mão firme. Celular guardado quando estiver com alguém. Quando você se cuida, as pessoas percebem o seu valor antes mesmo de você falar.
 
-## Cores que combinam com tudo
-palavras: cor, cores, combinar, combina, neutro, neutra, preto, branco, cinza, marinho, bege
-Comece pelas cores neutras: branco, azul-marinho, cinza, bege, marrom e jeans. Elas combinam entre si. Use no máximo uma cor forte por vez (vinho, verde, mostarda) e deixe o resto neutro. Assim você não erra.
+## Caimento é o que faz a roupa parecer cara
+palavras: caimento, tamanho, larga, largo, apertada, apertado, justa, folgada, numero, numeração, manga, comprimento, cara, barata, qualidade
+Uma peça simples no tamanho certo vale mais do que uma peça cara mal ajustada. O ombro da camisa termina no seu ombro, a manga vai até o pulso e a calça encosta de leve no sapato. Se precisar, leve a uma costureira: um ajuste pequeno muda tudo.
 
-## Sapato e cinto
-palavras: sapato, cinto, tenis, tênis, mocassim, sapatenis, meia, meias
-O cinto acompanha a cor do sapato: sapato marrom com cinto marrom, sapato preto com cinto preto. Sapato marrom combina com azul, bege e cinza. Sapato preto vai melhor com cinza, preto e azul-marinho. Meia escura combina com calça escura; com bermuda, use meia invisível.
+## Tom sobre tom
+palavras: tom, monocromático, monocromatico, mesma cor, combinar, combina, cor, cores, neutro, neutra, bege, creme, off-white
+Vestir tons parecidos da cabeça aos pés é elegante e alonga a silhueta: creme com bege, branco com off-white, azul-marinho com azul-escuro, marrom com caramelo. Comece pelos neutros (branco, creme, bege, caramelo, marrom, marinho e cinza) e use no máximo uma cor forte por vez.
 
-## Guarda-roupa inteligente (cápsula)
-palavras: armario, armário, guarda-roupa, comprar, compras, básico, basico, peças, poucas
-Com poucas peças boas você monta muitos looks: duas camisetas lisas (branca e azul-marinho), uma camisa branca, uma camisa azul-clara, uma polo, uma calça jeans escura, uma calça de sarja bege, um tênis branco limpo e um sapato marrom. Antes de comprar algo novo, pergunte: isso combina com pelo menos três coisas que eu já tenho?
+## Verão elegante: linho e tons claros
+palavras: verão, verao, calor, praia, linho, viagem, italia, itália, europa, bermuda, branco, férias, ferias, sol
+No calor, linho e algodão leve em tons claros: camisa de linho branca ou creme com os primeiros botões abertos, bermuda de alfaiataria ou calça clara e mocassim sem meia aparente. Óculos escuros e relógio completam. É o visual mais elegante do verão sem precisar de terno.
+
+## Camisa listrada e camisa aberta
+palavras: listrada, listra, listras, camisa, aberta, camiseta por baixo, sobreposição, sobreposicao
+Camisa de listras finas é coringa: fechada com calça de alfaiataria fica arrumada; aberta sobre uma camiseta branca ou creme vira um casual com estilo. Para a camisa ficar boa: costura do ombro no lugar certo e tecido que não fica transparente.
+
+## Gola alta e tricô
+palavras: gola alta, golaalta, tricô, trico, suéter, sueter, frio, inverno, malha, polo de tricô, zíper, ziper
+No frio, a gola alta em cinza, preto, marinho ou verde-oliva é sofisticada e simples: use com calça escura ou de alfaiataria. A polo de tricô (com botão ou zíper) é o meio-termo perfeito entre camiseta e camisa: serve para o trabalho, para um jantar e para o fim de semana.
+
+## Calça de alfaiataria
+palavras: calça, calca, alfaiataria, social, sarja, chino, pregas, jeans, marrom, caramelo
+Calça de alfaiataria em bege, caramelo, marrom, cinza ou preto deixa qualquer camiseta mais arrumada. O jeans claro e reto fica ótimo com polo, tricô ou camisa branca. Evite calça muito apertada ou com sobra de tecido na barra.
+
+## Sapato, cinto e meia
+palavras: sapato, cinto, tenis, tênis, mocassim, sapatenis, loafer, meia, meias, sandália, sandalia, calçado
+O mocassim é o calçado mais versátil: vai com bermuda, jeans e alfaiataria. Tênis branco limpo para o casual. O cinto acompanha a cor do sapato. Com mocassim e bermuda, use meia invisível. Calçado limpo é metade da aparência.
+
+## Cabelo e pomada
+palavras: cabelo, pomada, penteado, topete, volume, corte, rosto, entradas, careca, calvicie, calvície, barbeiro, finalizar, impossible
+Cabelo com volume e penteado para trás passa presença. Com o cabelo seco, aqueça uma pequena quantidade de pomada nas mãos, espalhe da raiz às pontas e penteie com os dedos para trás e para o lado. Pouca quantidade: dá para colocar mais, tirar é difícil. A Pomada Impossible Hair é a que o Lucas indica. Mantenha o corte em dia, a cada 3 ou 4 semanas.
+
+## Barba desenhada
+palavras: barba, bigode, cavanhaque, barbear, aparar, falhada, desenhada
+Barba bem desenhada passa cuidado. Faça a linha do pescoço (dois dedos acima do pomo de adão) e limpe a linha da bochecha. Mantenha o comprimento por igual. Se a barba é falhada, mais curta fica melhor. Óleo ou hidratante evita coceira.
+
+## Cuidados com a pele e perfume
+palavras: pele, rosto, creme, hidratante, protetor, solar, espinha, oleosa, ruga, rugas, skincare, perfume, cheiro, colonia, colônia, fragrancia, fragrância
+Rotina simples: lave o rosto de manhã e à noite, use hidratante e, de dia, protetor solar. Perfume é para quem chega perto sentir: duas borrifadas, pescoço e peito. De dia, leve e fresco; à noite, mais amadeirado.
+
+## Relógio, óculos e acessórios
+palavras: relógio, relogio, óculos, oculos, pulseira, anel, corrente, acessorio, acessório, bone, boné, chapéu
+Um relógio bonito faz mais que muitos acessórios. Uma ou duas pulseiras discretas combinam com o casual. Óculos escuros com armação que contraste com o formato do rosto. Boné só no esporte e no lazer.
 
 ## Casamento e festa
-palavras: casamento, festa, formatura, padrinho, convidado, evento, terno, gravata, noite, dia
-Casamento de dia: terno em tons claros ou azul, gravata opcional. Casamento à noite: terno escuro (azul-marinho, cinza-escuro ou preto), camisa branca e sapato social. Na dúvida, azul-marinho com camisa branca é sempre certo. Sapato engraxado faz diferença.
+palavras: casamento, festa, formatura, padrinho, convidado, evento, terno, gravata, noite, blazer
+De dia: terno em tons claros (bege, cinza-claro, azul) com camisa branca e mocassim. À noite: terno escuro (azul-marinho ou cinza-escuro), camisa branca e sapato social. Na dúvida, azul-marinho com camisa branca é sempre certo.
 
-## Entrevista e reunião
-palavras: entrevista, emprego, reunião, reuniao, trabalho, escritório, escritorio, chefe, cliente
-Vista-se um pouco mais arrumado do que o ambiente pede. Calça de sarja ou social, camisa de botão lisa (branca ou azul-clara) e sapato fechado limpo. Evite estampas chamativas. Roupa passada, unhas cortadas e cabelo arrumado contam tanto quanto a roupa.
-
-## Encontro
-palavras: encontro, date, namorada, namoro, jantar, conquistar, primeiro
-Arrumado, mas à vontade: calça jeans escura sem rasgos, camisa de botão ou polo, sapatênis ou tênis limpo. Perfume na medida certa (duas borrifadas). Postura reta e olhar nos olhos valem mais que qualquer roupa.
-
-## Cabelo e formato do rosto
-palavras: cabelo, corte, rosto, careca, calvicie, calvície, entradas, penteado, barbeiro
-Rosto redondo: cabelo com mais volume em cima e laterais mais curtas alonga o rosto. Rosto comprido: evite muito volume em cima. Rosto quadrado: quase todo corte funciona. Se o cabelo está rareando, cortar mais curto ou raspar deixa a imagem mais forte e mais jovem do que tentar esconder. Mantenha o corte em dia: a cada 3 ou 4 semanas.
-
-## Barba
-palavras: barba, bigode, cavanhaque, barbear, aparar, falhada
-Barba aparada passa cuidado; barba sem cuidado passa desleixo. Faça a linha do pescoço (dois dedos acima do pomo de adão) e a da bochecha. Se a barba é falhada, uma barba curta por igual ou rosto liso fica melhor. Use um óleo ou hidratante para não coçar.
-
-## Cuidados com a pele
-palavras: pele, rosto, creme, hidratante, protetor, solar, espinha, oleosa, ruga, rugas, skincare
-Rotina simples: lave o rosto de manhã e à noite com sabonete próprio para rosto, passe hidratante e, de dia, protetor solar. Só isso já melhora muito a aparência em poucas semanas. Beba água.
-
-## Perfume
-palavras: perfume, cheiro, colonia, colônia, fragrancia, fragrância
-Perfume é para quem chega perto sentir, não para a sala inteira. Duas borrifadas: pescoço e peito. De dia, perfumes leves e frescos; à noite, mais amadeirados. Não esfregue os pulsos, isso estraga o cheiro.
-
-## Postura e presença
-palavras: postura, coluna, corcunda, presença, confiança, confianca, timidez, tímido, olhar, aperto, mão, comportamento, educação
-Ombros para trás, queixo paralelo ao chão, passos calmos. Olhe nos olhos ao conversar e dê um aperto de mão firme, sem esmagar. Celular guardado quando estiver com alguém. Presença é o que as pessoas lembram depois.
+## Entrevista e reunião importante
+palavras: entrevista, emprego, reunião, reuniao, trabalho, escritório, escritorio, chefe, cliente, negócio, negocio, venda, vender
+Vista-se um pouco mais arrumado do que o ambiente pede. Calça de alfaiataria, camisa lisa ou de listras finas, ou polo de tricô, e sapato limpo. Roupa passada, unhas cortadas e cabelo arrumado. Cuide da sua imagem para poder cobrar o que você vale.
 
 ## Corpo mais forte ou acima do peso
 palavras: gordo, barriga, acima, peso, forte, gordinho, emagrecer, disfarçar
-Prefira roupas que não apertem e não sobrem. Cores escuras e uma cor só da cabeça aos pés alongam a silhueta. Camisa para fora com a barra reta, ou para dentro com cinto da cor da calça. Evite listras horizontais grossas e tecidos muito brilhantes.
-
-## Homem mais baixo ou mais alto
-palavras: baixo, baixinho, alto, altura, estatura, magro
-Mais baixo: roupas mais justas ao corpo (sem apertar), calça sem sobra na barra e cores parecidas em cima e embaixo. Mais alto e magro: camadas (camisa com suéter ou jaqueta) e contraste entre cima e baixo equilibram a figura.
+Peças que não apertem e não sobrem. Tom sobre tom e cores escuras alongam a silhueta. Camisa para fora com a barra reta ou para dentro com cinto da cor da calça. Evite listras horizontais grossas e tecidos brilhantes.
 
 ## Estilo depois dos 50 e 60
 palavras: idade, velho, idoso, maduro, 50, 60, 70, aposentado, senhor, coroa
-Elegância não tem idade. Prefira tecidos de qualidade, cores sóbrias e conforto: sapato macio, calça de sarja com caimento reto, camisa de botão ou polo. Evite roupas muito juvenis ou muito largas. Um bom corte de cabelo, óculos que combinem com o rosto e roupa bem passada rejuvenescem.
-
-## Óculos, relógio e acessórios
-palavras: oculos, óculos, relogio, relógio, anel, pulseira, corrente, acessorio, acessório, bone, boné, chapéu
-Menos é mais. Um relógio bonito e simples vale mais que muitos acessórios. Óculos: o formato deve contrastar com o rosto (rosto redondo pede armação mais quadrada, rosto quadrado pede armação mais arredondada). Boné não combina com roupas mais arrumadas.
-
-## Conservar as roupas
-palavras: lavar, passar, ferro, conservar, desbotar, encolher, mancha, amassado, amassada
-Lave com água fria e do avesso para a cor durar. Pendure camisas em cabides. Roupa amassada derruba qualquer look: passe ou use um vaporizador. Tênis e sapato limpos são metade da aparência.`;
+Elegância não tem idade. Tecidos de qualidade, cores sóbrias e conforto: mocassim macio, calça de alfaiataria com caimento reto, camisa de botão ou polo de tricô. Evite roupas muito juvenis ou muito largas. Bom corte de cabelo e roupa bem passada rejuvenescem.`;
 
 const PRODUTOS_PADRAO = [
-  { nome: "Camisa Oxford branca",       tipo: "camisa",   cor: "branco",  preco: "", link: "" },
-  { nome: "Camisa Oxford azul-clara",   tipo: "camisa",   cor: "azulclaro", preco: "", link: "" },
-  { nome: "Polo piquet azul-marinho",   tipo: "polo",     cor: "marinho", preco: "", link: "" },
-  { nome: "Calça chino bege",           tipo: "sarja",    cor: "bege",    preco: "", link: "" },
-  { nome: "Calça jeans escura reta",    tipo: "jeans",    cor: "jeans",   preco: "", link: "" },
-  { nome: "Blazer azul-marinho",        tipo: "blazer",   cor: "marinho", preco: "", link: "" },
-  { nome: "Mocassim de couro marrom",   tipo: "mocassim", cor: "marrom",  preco: "", link: "" },
-  { nome: "Sapato social preto",        tipo: "sapato",   cor: "preto",   preco: "", link: "" },
-  { nome: "Tênis branco de couro",      tipo: "tenis",    cor: "branco",  preco: "", link: "" },
+  { nome: "Pomada Impossible Hair",                 tipo: "cuidado", cor: "preto",   preco: "", link: "https://www.instagram.com/lucaschaccon/" },
+  { nome: "Clube do Luke",                          tipo: "clube",   cor: "preto",   preco: "", link: "https://www.instagram.com/lucaschaccon/" },
+  { nome: "Camisa de linho off-white",              tipo: "camisa",  cor: "creme",   preco: "", link: "" },
+  { nome: "Camisa de listras finas",                tipo: "camisa",  cor: "estampa", preco: "", link: "" },
+  { nome: "Polo de tricô com zíper azul-marinho",   tipo: "polo",    cor: "marinho", preco: "", link: "" },
+  { nome: "Gola alta cinza",                        tipo: "sueter",  cor: "cinza",   preco: "", link: "" },
+  { nome: "Calça de alfaiataria caramelo",          tipo: "social",  cor: "caramelo", preco: "", link: "" },
+  { nome: "Bermuda de alfaiataria branca",          tipo: "bermuda", cor: "branco",  preco: "", link: "" },
+  { nome: "Mocassim de couro marrom",               tipo: "mocassim", cor: "marrom", preco: "", link: "" },
 ];
 
 /* ===================== Dados guardados no celular ===================== */
 
-const CHAVE = "alinhado:v1";
+const CHAVE = "impossible:v2";
 const MODELO_PADRAO = "claude-opus-5-5";
 
 function padrao() {
@@ -336,7 +343,7 @@ function padrao() {
     pecas: [],
     conversa: [],
     ajustes: { letra: 2, vozAuto: false, chave: "", modelo: MODELO_PADRAO },
-    consultor: { nome: "Lucas", metodo: METODO_PADRAO, produtos: PRODUTOS_PADRAO.map((p) => ({ ...p })) },
+    consultor: { app: "Impossible Man", nome: "Lucas Chacon", frase: "Cuide da sua imagem para poder cobrar o que você vale.", metodo: METODO_PADRAO, produtos: PRODUTOS_PADRAO.map((p) => ({ ...p })) },
   };
 }
 function carregar() {
@@ -368,6 +375,9 @@ const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 const norm = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 const novoId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const nomeConsultor = () => E.consultor.nome || "consultor";
+const nomeApp = () => E.consultor.app || "Impossible Man";
+const MANIFESTO = "Imagem como identidade, não vaidade. Roupa como extensão do caráter, não compensação por falta de substância.";
+const ICONE_PRODUTO = { cuidado: "💈", clube: "🤝" };
 const primeiroNome = () => (E.perfil && E.perfil.nome) ? E.perfil.nome.split(" ")[0] : "";
 // concordância: "camisa branca", "sapato branco"
 const FEMININO = { branco: "branca", preto: "preta", vermelho: "vermelha", estampa: "estampada ou xadrez" };
@@ -501,7 +511,9 @@ function notaLook(pecas) {
   const camada = pecas.find((p) => TIPOS[p.tipo].grupo === "camada");
   if (cima && baixo) {
     const tc = CORES[cima.cor]?.tom, tb = CORES[baixo.cor]?.tom;
-    if (cima.cor === baixo.cor && cima.cor !== "preto") nota -= 1.5;
+    const familia = (c) => ({ branco: "claro", creme: "claro", bege: "claro", marinho: "azul", jeans: "azul", marrom: "terra", caramelo: "terra" }[c] || c);
+    if (CORES[cima.cor]?.neutro && familia(cima.cor) === familia(baixo.cor)) { nota += 0.8; motivos.push("o tom sobre tom deixa o visual elegante e alonga a silhueta"); }
+    else if (cima.cor === baixo.cor) nota -= 1.5;
     else if (tc !== tb) { nota += 1; motivos.push("o contraste entre a parte de cima e a de baixo deixa o visual bonito"); }
     if (cima.cor === "marinho" && baixo.cor === "preto") nota -= 1;
   }
@@ -634,7 +646,9 @@ Roupas que ela já tem no guarda-roupa:
 ${pecas}`;
 }
 function instrucoesSistema() {
-  return `Você é o consultor virtual de imagem e estilo masculino do app Alinhado, que segue o método do consultor ${nomeConsultor()}. Você não é o ${nomeConsultor()} em pessoa e não inventa frases dele: aplica o método abaixo.
+  return `Você é o consultor virtual de imagem e estilo masculino do app ${nomeApp()}, criado com o método de ${nomeConsultor()}. Você não é o ${nomeConsultor()} em pessoa e não inventa frases dele: aplica o método abaixo.
+
+O jeito dele: imagem como identidade, não vaidade; roupa como extensão do caráter; elegância simples (tons neutros, tom sobre tom, linho no verão, tricô e gola alta no frio, alfaiataria, mocassim, cabelo penteado com pomada, barba desenhada) e presença antes da roupa.
 
 Quem usa o app são homens de todas as idades, inclusive pessoas mais velhas que quase não usam celular. Por isso:
 - Escreva em português do Brasil simples, como numa conversa. Frases curtas. Nada de termos técnicos ou estrangeiros sem explicar.
@@ -643,7 +657,7 @@ Quem usa o app são homens de todas as idades, inclusive pessoas mais velhas que
 - Trate a pessoa pelo nome quando souber.
 - Você cobre roupa, combinação de peças, cabelo, barba, cuidados com a pele, perfume, postura, comportamento e imagem em geral.
 - Ao comentar fotos de pessoas, fale só de estilo, roupa, cabelo e postura, com respeito e sem críticas ao corpo.
-- Quando faltar uma peça para o que você sugerir, pode dizer que há sugestões na tela "Peças recomendadas" do app, sem insistir em vender.
+- Quando faltar uma peça ou produto para o que você sugerir, pode dizer que há sugestões na tela "Loja do Lucas" do app, sem insistir em vender.
 - Se a pergunta não tiver relação com imagem e estilo, responda com gentileza que você ajuda com estilo e aparência.
 
 MÉTODO DO CONSULTOR
@@ -785,8 +799,8 @@ const TELAS = {
   boasvindas: () => `
     <main class="conteudo boas-vindas">
       <img src="marca/icone.svg" alt="">
-      <h2>Olá! Eu sou o seu consultor de estilo.</h2>
-      <p class="suave">Vou te ajudar a se vestir bem e cuidar da sua imagem, do jeito do método do ${esc(nomeConsultor())}.</p>
+      <div><p class="marca-nome">${esc(nomeApp())}</p><p class="marca-por" style="margin-top:8px">por ${esc(nomeConsultor())}</p></div>
+      <div class="manifesto" style="text-align:left;width:100%"><p class="frase">“${esc(E.consultor.frase)}”</p><div class="traco"></div><p style="opacity:.85">Eu sou o seu consultor de imagem, com o método do ${esc(nomeConsultor().split(" ")[0])}: roupa, cabelo, barba, cuidados e presença.</p></div>
       <p class="suave">É fácil: é só tocar nos botões grandes.</p>
       <button class="btn" data-acao="perfil-comecar" data-foco><span class="ico">👉</span> Começar</button>
     </main>`,
@@ -811,7 +825,7 @@ const TELAS = {
   inicio: () => {
     const nome = primeiroNome();
     return `
-    <header class="topo"><h1>Alinhado</h1><button class="voltar" data-acao="ir" data-valor="ajustes" aria-label="Ajustes">⚙️ Ajustes</button></header>
+    <header class="topo"><h1><i>${esc(nomeApp())}</i></h1><button class="voltar" data-acao="ir" data-valor="ajustes" aria-label="Ajustes">⚙️ Ajustes</button></header>
     <main class="conteudo">
       <h2>${saudacao()}${nome ? ", " + esc(nome) : ""}! 👋</h2>
       <p class="suave">O que você quer fazer agora? Toque em uma opção.</p>
@@ -819,7 +833,8 @@ const TELAS = {
       <button class="menu" data-acao="ir" data-valor="ocasiao"><span class="ico">👔</span><span><b>O que eu visto hoje?</b><span>Escolha a ocasião e eu monto a roupa</span></span></button>
       <button class="menu" data-acao="ir" data-valor="armario"><span class="ico">🚪</span><span><b>Meu guarda-roupa</b><span>${E.pecas.length ? `${E.pecas.length} ${E.pecas.length === 1 ? "peça guardada" : "peças guardadas"}` : "Guarde aqui as roupas que você tem"}</span></span></button>
       <button class="menu" data-acao="ir" data-valor="conversa"><span class="ico">💬</span><span><b>Perguntar ao consultor</b><span>Cabelo, barba, postura, perfume e mais</span></span></button>
-      <button class="menu" data-acao="ir" data-valor="loja"><span class="ico">🛍️</span><span><b>Peças recomendadas</b><span>A linha indicada pelo ${esc(nomeConsultor())}</span></span></button>
+      <button class="menu" data-acao="ir" data-valor="loja"><span class="ico">🛍️</span><span><b>Loja do ${esc(nomeConsultor().split(" ")[0])}</b><span>Pomada Impossible Hair, Clube do Luke e a linha de roupas</span></span></button>
+      <div class="manifesto"><p class="frase">“${esc(MANIFESTO)}”</p><div class="traco"></div><p class="marca-por" style="color:inherit;opacity:.8">${esc(nomeConsultor())}</p></div>
     </main>`;
   },
 
@@ -903,7 +918,7 @@ const TELAS = {
       <div class="caixa"><p>${esc(texto)}</p></div>
       <button class="btn claro" data-acao="falar" data-texto="${esc(texto)}">🔊 Ouvir</button>
       ${faltam.length ? `<div class="caixa ouro"><h3>Falta no seu guarda-roupa</h3><p>Guarde as suas roupas no app para eu montar com o que você tem. Ou veja as peças recomendadas.</p></div>
-        <button class="btn ouro" data-acao="ir" data-valor="loja">🛍️ Ver peças recomendadas</button>` : ""}
+        <button class="btn ouro" data-acao="ir" data-valor="loja">🛍️ Ver na loja do ${esc(nomeConsultor().split(" ")[0])}</button>` : ""}
       <div class="rodape">
         <button class="btn claro" data-acao="outro-look">🔄 Outra sugestão</button>
         <button class="btn" data-acao="usar-look">✅ Vou usar</button>
@@ -946,12 +961,12 @@ const TELAS = {
   /* ---------- conversa ---------- */
   conversa: () => {
     const msgs = E.conversa;
-    const sug = ["Qual corte de cabelo combina comigo?", "Como me vestir para um casamento?", "Como cuidar da barba?", "Como melhorar minha postura?", "Que perfume usar no dia a dia?"];
+    const sug = ["Como usar pomada no cabelo?", "Como ter mais presença?", "Roupa elegante para o calor", "Como fazer tom sobre tom?", "Gola alta: com o que usar?", "Como me vestir para um casamento?"];
     return `
     ${topo("Perguntar ao consultor")}
     <main class="conteudo">
       <div class="conversa" id="conversa">
-        <div class="bolha ia">Oi${primeiroNome() ? ", " + esc(primeiroNome()) : ""}! Pode me perguntar qualquer coisa sobre roupa, cabelo, barba, cuidados, postura ou como se portar. ${Reconhecedor ? "Se preferir, toque em 🎤 Falar e fale a sua pergunta." : ""}</div>
+        <div class="bolha ia">Oi${primeiroNome() ? ", " + esc(primeiroNome()) : ""}! Aqui é o consultor do método ${esc(nomeConsultor())}. Pode me perguntar qualquer coisa sobre roupa, cabelo, barba, cuidados, postura ou como se portar. ${Reconhecedor ? "Se preferir, toque em 🎤 Falar e fale a sua pergunta." : ""}</div>
         ${msgs.map((m, i) => bolha(m, i)).join("")}
       </div>
       ${msgs.length ? "" : `<p class="suave">Ou toque numa dessas perguntas:</p><div class="sugestoes">${sug.map((s) => `<button class="sugestao" data-acao="perguntar" data-texto="${esc(s)}">${esc(s)}</button>`).join("")}</div>`}
@@ -968,20 +983,27 @@ const TELAS = {
   },
 
   /* ---------- loja ---------- */
-  loja: () => `
-    ${topo("Peças recomendadas")}
-    <main class="conteudo">
-      <h2>A linha indicada pelo ${esc(nomeConsultor())}</h2>
-      <p class="suave">Peças básicas que combinam entre si e com o que você já tem.</p>
-      ${E.consultor.produtos.map((p, i) => `
+  loja: () => {
+    const lista = E.consultor.produtos.map((p, i) => ({ ...p, i }));
+    const cartao = (p) => `
         <div class="caixa produto">
-          <div class="mini" style="background:${fundoCor(p.cor)}">${TIPOS[p.tipo]?.ico || "🛍️"}</div>
+          <div class="mini" style="background:${ICONE_PRODUTO[p.tipo] ? "var(--marca)" : fundoCor(p.cor)}">${ICONE_PRODUTO[p.tipo] || TIPOS[p.tipo]?.ico || "🛍️"}</div>
           <div style="flex:1"><b>${esc(p.nome)}</b>${p.preco ? `<span class="suave">${esc(p.preco)}</span>` : ""}
             ${E.pecas.some((x) => x.tipo === p.tipo && x.cor === p.cor) ? `<br><span class="etiqueta" style="background:var(--verde-fundo)">✔ Você já tem parecida</span>` : ""}
           </div>
         </div>
-        <button class="btn ${p.link ? "" : "claro"}" data-acao="comprar" data-valor="${i}">${p.link ? "🛒 Quero comprar" : "Em breve"}</button>`).join("")}
-    </main>`,
+        <button class="btn ${p.link ? "" : "claro"}" data-acao="comprar" data-valor="${p.i}">${p.link ? (p.link.includes("instagram.com") ? "📲 Ver no Instagram do " + esc(nomeConsultor().split(" ")[0]) : "🛒 Quero comprar") : "Em breve"}</button>`;
+    const agora = lista.filter((p) => p.link || ICONE_PRODUTO[p.tipo]);
+    const breve = lista.filter((p) => !agora.includes(p));
+    return `
+    ${topo("Loja do " + esc(nomeConsultor().split(" ")[0]))}
+    <main class="conteudo">
+      <h2>Escolhido pelo ${esc(nomeConsultor())}</h2>
+      ${agora.map(cartao).join("")}
+      ${breve.length ? `<div class="separador"></div><h2>Linha de roupas <span style="color:var(--ouro)">· em breve</span></h2>
+      <p class="suave">Peças básicas que combinam entre si e com o que você já tem.</p>${breve.map(cartao).join("")}` : ""}
+    </main>`;
+  },
 
   /* ---------- ajustes ---------- */
   ajustes: () => `
@@ -1007,7 +1029,9 @@ const TELAS = {
     ${topo("Área do consultor")}
     <main class="conteudo">
       <p class="suave">Esta área é para quem configura o app (o consultor ou a equipe dele).</p>
+      <div><label class="rotulo" for="c-app">Nome do app</label><input type="text" id="c-app" value="${esc(nomeApp())}"></div>
       <div><label class="rotulo" for="c-nome">Nome do consultor</label><input type="text" id="c-nome" value="${esc(E.consultor.nome)}"></div>
+      <div><label class="rotulo" for="c-frase">Frase de boas-vindas</label><input type="text" id="c-frase" value="${esc(E.consultor.frase)}"></div>
       <div class="caixa ouro">
         <h3>🧠 Inteligência completa</h3>
         <p>Com uma chave da API da Anthropic, o app reconhece roupas pela foto sozinho e conversa sobre qualquer assunto de estilo usando o método abaixo. Sem a chave, o app continua funcionando com as regras do método.</p>
@@ -1015,11 +1039,11 @@ const TELAS = {
       </div>
       <div><label class="rotulo" for="c-chave">Chave da API</label><input type="password" id="c-chave" autocomplete="off" placeholder="sk-ant-..." value="${esc(E.ajustes.chave)}"></div>
       <div><label class="rotulo" for="c-metodo">Método do consultor</label>
-        <p class="suave" style="font-size:.85rem;margin-bottom:6px">Cada assunto começa com "## Título" e uma linha "palavras:" (usadas para responder sem internet). O texto inicial é só um exemplo: troque pelos ensinamentos do consultor.</p>
+        <p class="suave" style="font-size:.85rem;margin-bottom:6px">Cada assunto começa com "## Título" e uma linha "palavras:" (usadas para responder sem internet). O texto inicial é um rascunho feito a partir do estilo que aparece no perfil: o consultor confere e troca pelos ensinamentos dele.</p>
         <textarea class="campo" id="c-metodo">${esc(E.consultor.metodo)}</textarea></div>
       <button class="btn claro" data-acao="metodo-padrao" style="min-height:56px;font-size:.95rem">↩️ Voltar ao texto de exemplo</button>
       <h2>Produtos da linha</h2>
-      <p class="suave" style="font-size:.85rem">Uma linha por produto: nome | tipo | cor | preço | link. Tipos: ${Object.keys(TIPOS).join(", ")}. Cores: ${Object.keys(CORES).join(", ")}.</p>
+      <p class="suave" style="font-size:.85rem">Uma linha por produto: nome | tipo | cor | preço | link. Produtos com link aparecem como "disponível". Tipos: ${Object.keys(TIPOS).join(", ")}, cuidado, clube. Cores: ${Object.keys(CORES).join(", ")}.</p>
       <textarea class="campo" id="c-produtos" style="min-height:200px">${esc(E.consultor.produtos.map((p) => [p.nome, p.tipo, p.cor, p.preco, p.link].join(" | ")).join("\n"))}</textarea>
       <button class="btn" data-acao="salvar-area">💾 Salvar</button>
     </main>`,
@@ -1143,11 +1167,13 @@ const ACOES = {
   },
   "metodo-padrao": () => { $("#c-metodo").value = METODO_PADRAO; aviso("Texto de exemplo colocado. Toque em Salvar."); },
   "salvar-area": () => {
+    E.consultor.app = ($("#c-app").value || "").trim() || "Impossible Man";
     E.consultor.nome = ($("#c-nome").value || "").trim() || "consultor";
+    E.consultor.frase = ($("#c-frase").value || "").trim();
     E.ajustes.chave = ($("#c-chave").value || "").trim();
     E.consultor.metodo = $("#c-metodo").value;
     E.consultor.produtos = $("#c-produtos").value.split("\n").map((l) => l.split("|").map((x) => x.trim())).filter((c) => c[0]).map(([nome, tipo, cor, preco, link]) => ({
-      nome, tipo: TIPOS[tipo] ? tipo : "camiseta", cor: CORES[cor] ? cor : "cinza", preco: preco || "", link: /^https?:\/\//.test(link || "") ? link : "",
+      nome, tipo: TIPOS[tipo] || ICONE_PRODUTO[tipo] ? tipo : "camiseta", cor: CORES[cor] ? cor : "cinza", preco: preco || "", link: /^https?:\/\//.test(link || "") ? link : "",
     }));
     if (salvar()) { aviso("✔ Salvo!"); voltar(); }
   },

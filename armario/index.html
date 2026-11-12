@@ -1,0 +1,2013 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ARMÁRIO — Guarda-Roupa Inteligente</title>
+<meta name="description" content="Descubra novas formas de se vestir com as roupas que você já tem. Funciona offline, no seu aparelho.">
+<meta name="theme-color" content="#F5F3EF">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="marca/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="marca/icone-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ARMÁRIO">
+<meta name="format-detection" content="telephone=no">
+<style>
+  :root {
+    color-scheme: light;
+    --papel: #F5F3EF;
+    --papel2: #FCFBF9;
+    --papel3: #EEEBE4;
+    --tinta: #20221F;
+    --tinta2: #5A5D55;
+    --suave: #8D9088;
+    --linha: rgba(32,34,31,.10);
+    --linha2: rgba(32,34,31,.20);
+    --oliva: #59634B;
+    --oliva-fundo: #EAEDE4;
+    --bronze: #AC9271;
+    --bronze-fundo: #F4EDE4;
+    --alerta: #9A6A2B;
+    --erro: #9C4A3F;
+    --raio: 20px;
+    --raio-p: 14px;
+    --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Inter, system-ui, sans-serif;
+    --nav: 68px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--papel); color: var(--tinta);
+    font: 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased;
+    overflow-x: hidden; overscroll-behavior-y: none;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { border: 0; background: none; cursor: pointer; padding: 0; }
+  [hidden] { display: none !important; }
+  ::selection { background: var(--oliva-fundo); }
+  .icone { width: 22px; height: 22px; flex: none; stroke: currentColor; fill: none;
+    stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ====== estrutura ====== */
+  .app { max-width: 600px; margin: 0 auto; min-height: 100dvh;
+    padding: calc(env(safe-area-inset-top) + 0px) 0 calc(var(--nav) + env(safe-area-inset-bottom) + 14px); }
+  .tela { animation: sobe .26s ease both; }
+  @keyframes sobe { from { transform: translateY(8px); opacity: .6 } to { transform: none; opacity: 1 } }
+  @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important } }
+
+  .topo { display: flex; align-items: flex-end; gap: 12px; padding: 22px 20px 14px; }
+  .topo .titulo { flex: 1; min-width: 0; }
+  .topo .sobre { font: 500 11px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--bronze); }
+  .topo h1 { font: 400 27px/1.1 var(--serif); letter-spacing: -.01em; margin: 7px 0 0; }
+  .topo p { margin: 6px 0 0; color: var(--tinta2); font-size: 14px; }
+  .topo .acao { width: 42px; height: 42px; border-radius: 13px; background: var(--papel2);
+    border: 1px solid var(--linha); display: grid; place-items: center; color: var(--tinta2); }
+  .topo .acao:active { background: var(--papel3); }
+
+  .secao { padding: 0 20px; margin-bottom: 26px; }
+  .secao > h2 { font: 500 12px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase;
+    color: var(--suave); margin: 0 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .secao > h2 button { color: var(--oliva); font-size: 12px; font-weight: 600; letter-spacing: .02em; text-transform: none; }
+
+  .cartao { background: var(--papel2); border: 1px solid var(--linha); border-radius: var(--raio); overflow: hidden; }
+  .cartao + .cartao { margin-top: 12px; }
+  .pad { padding: 18px; }
+
+  /* ====== botões ====== */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; width: 100%;
+    padding: 15px 18px; border-radius: 15px; background: var(--oliva); color: #F7F6F2;
+    font-weight: 600; font-size: 15.5px; letter-spacing: .01em; transition: transform .1s ease, background .15s; }
+  .btn:active { transform: scale(.985); background: #4A5340; }
+  .btn[disabled] { opacity: .45; }
+  .btn.claro { background: var(--papel2); color: var(--tinta); border: 1px solid var(--linha2); }
+  .btn.claro:active { background: var(--papel3); }
+  .btn.bronze { background: var(--bronze); color: #fff; }
+  .btn.perigo { background: transparent; color: var(--erro); border: 1px solid rgba(156,74,63,.3); }
+  .btn.p { padding: 11px 14px; font-size: 14px; border-radius: 12px; width: auto; }
+  .linha-btn { display: flex; gap: 10px; }
+  .linha-btn > * { flex: 1; }
+
+  /* ====== chips / filtros ====== */
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 20px 4px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; padding: 9px 15px; border-radius: 999px; background: var(--papel2);
+    border: 1px solid var(--linha); font-size: 14px; color: var(--tinta2); white-space: nowrap; }
+  .chip[aria-pressed="true"] { background: var(--tinta); border-color: var(--tinta); color: var(--papel); font-weight: 550; }
+  .chip .n { opacity: .55; margin-left: 5px; font-size: 12.5px; }
+
+  /* ====== look ====== */
+  .look { background: var(--papel2); border: 1px solid var(--linha); border-radius: var(--raio); overflow: hidden; }
+  .look .cab { display: flex; align-items: center; gap: 10px; padding: 15px 16px 13px; border-bottom: 1px solid var(--linha); }
+  .look .cab .nota { font: 600 12px/1 var(--sans); padding: 6px 9px; border-radius: 8px;
+    background: var(--oliva-fundo); color: var(--oliva); letter-spacing: .02em; }
+  .look .cab .nota.media { background: var(--bronze-fundo); color: var(--alerta); }
+  .look .cab b { flex: 1; font: 500 15px/1.2 var(--sans); }
+  .look .cab small { display: block; color: var(--suave); font-size: 12.5px; font-weight: 400; margin-top: 2px; }
+
+  .pecas-look { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--linha); }
+  .pecas-look.de2 { grid-template-columns: repeat(2, 1fr); }
+  .pecas-look.de4 { grid-template-columns: repeat(4, 1fr); }
+  .vaga { background: var(--papel2); position: relative; display: flex; flex-direction: column; min-width: 0; }
+  .vaga .foto { aspect-ratio: 3/4; background: var(--papel3); display: grid; place-items: center; overflow: hidden; }
+  .vaga .foto.sem-foto { aspect-ratio: 4/3; }
+  .vaga .foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vaga .foto .sem { display: grid; place-items: center; gap: 6px; color: var(--suave); }
+  .vaga .foto .sem .amostra { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--linha2); }
+  .vaga .txt { padding: 9px 10px 11px; min-width: 0; }
+  .vaga .txt b { display: block; font: 550 12.5px/1.25 var(--sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .vaga .txt small { color: var(--suave); font-size: 11px; }
+  .vaga .trocar { position: absolute; top: 6px; right: 6px; width: 30px; height: 30px; border-radius: 9px;
+    background: rgba(252,251,249,.92); border: 1px solid var(--linha); display: grid; place-items: center; color: var(--tinta2); }
+  .vaga .trocar .icone { width: 16px; height: 16px; }
+  .vaga.vazia .foto { background: repeating-linear-gradient(45deg, var(--papel3) 0 6px, var(--papel2) 6px 12px); }
+
+  .porque { padding: 14px 16px 16px; border-top: 1px solid var(--linha); }
+  .porque h4 { margin: 0 0 8px; font: 500 11px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--suave); }
+  .porque li { list-style: none; margin: 0 0 7px; padding-left: 18px; position: relative; font-size: 14px; color: var(--tinta2); line-height: 1.45; }
+  .porque li::before { content: ""; position: absolute; left: 4px; top: 8px; width: 5px; height: 5px; border-radius: 50%; background: var(--bronze); }
+  .porque ul { margin: 0; padding: 0; }
+  .porque li.atencao::before { background: var(--alerta); }
+  .acoes-look { display: flex; gap: 1px; background: var(--linha); border-top: 1px solid var(--linha); }
+  .acoes-look button { flex: 1; background: var(--papel2); padding: 14px 6px; display: flex; flex-direction: column;
+    align-items: center; gap: 5px; font-size: 11.5px; color: var(--tinta2); font-weight: 500; }
+  .acoes-look button:active { background: var(--papel3); }
+  .acoes-look button[aria-pressed="true"] { color: var(--oliva); }
+  .acoes-look .icone { width: 20px; height: 20px; }
+  .acoes-look button[aria-pressed="true"] .icone { fill: var(--oliva-fundo); }
+
+  /* ====== grade de peças ====== */
+  .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 20px; }
+  @media (min-width: 520px) { .grade { grid-template-columns: repeat(3, 1fr); } }
+  .peca { background: var(--papel2); border: 1px solid var(--linha); border-radius: var(--raio-p);
+    overflow: hidden; text-align: left; display: flex; flex-direction: column; position: relative; }
+  .peca:active { transform: scale(.99); }
+  .peca .foto { aspect-ratio: 3/4; background: var(--papel3); display: grid; place-items: center; overflow: hidden; position: relative; }
+  .peca .foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .peca .txt { padding: 10px 11px 12px; }
+  .peca .txt b { display: block; font: 550 13.5px/1.3 var(--sans); }
+  .peca .txt small { color: var(--suave); font-size: 11.5px; display: block; margin-top: 3px; }
+  .peca .marcas { position: absolute; top: 8px; left: 8px; display: flex; gap: 5px; }
+  .selo { padding: 4px 8px; border-radius: 7px; font: 600 10.5px/1 var(--sans); letter-spacing: .04em;
+    background: rgba(252,251,249,.94); border: 1px solid var(--linha); color: var(--tinta2); }
+  .selo.lavando { background: rgba(172,146,113,.92); color: #fff; border-color: transparent; }
+  .selo.fav { background: rgba(89,99,75,.92); color: #fff; border-color: transparent; }
+  .amostra-cor { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--linha2); flex: none; }
+
+  /* ====== formulário ====== */
+  .campo { margin-bottom: 18px; }
+  .campo > label { display: block; font: 500 12px/1 var(--sans); letter-spacing: .1em;
+    text-transform: uppercase; color: var(--suave); margin-bottom: 9px; }
+  .campo .dica { font-size: 12.5px; color: var(--suave); margin-top: 7px; line-height: 1.4; text-transform: none; letter-spacing: 0; }
+  .entrada { width: 100%; padding: 13px 14px; border-radius: 13px; background: var(--papel2);
+    border: 1px solid var(--linha2); outline: none; }
+  .entrada:focus { border-color: var(--oliva); box-shadow: 0 0 0 3px rgba(89,99,75,.12); }
+  select.entrada { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--tinta2) 50%), linear-gradient(135deg, var(--tinta2) 50%, transparent 50%);
+    background-position: calc(100% - 20px) 55%, calc(100% - 14px) 55%; background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; padding-right: 38px; }
+  .opcoes { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opcoes button { padding: 10px 14px; border-radius: 11px; background: var(--papel2);
+    border: 1px solid var(--linha2); font-size: 14px; color: var(--tinta2); }
+  .opcoes button[aria-pressed="true"] { background: var(--oliva); border-color: var(--oliva); color: #F7F6F2; font-weight: 550; }
+  .cores { display: grid; grid-template-columns: repeat(auto-fill, minmax(54px, 1fr)); gap: 10px; }
+  .cores button { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 10px;
+    color: var(--suave); line-height: 1.15; text-align: center; }
+  .cores button i { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--linha2); display: block; }
+  .cores button[aria-pressed="true"] i { box-shadow: 0 0 0 2px var(--papel), 0 0 0 4px var(--oliva); }
+  .cores button[aria-pressed="true"] { color: var(--tinta); font-weight: 600; }
+  .escala { display: flex; gap: 6px; }
+  .escala button { flex: 1; padding: 12px 2px 10px; border-radius: 12px; background: var(--papel2);
+    border: 1px solid var(--linha2); display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .escala button b { font: 600 15px/1 var(--sans); }
+  .escala button small { font-size: 9.5px; color: var(--suave); letter-spacing: .02em; }
+  .escala button[aria-pressed="true"] { background: var(--oliva); border-color: var(--oliva); color: #F7F6F2; }
+  .escala button[aria-pressed="true"] small { color: rgba(247,246,242,.8); }
+  .troca { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 15px 0; }
+  .troca + .troca { border-top: 1px solid var(--linha); }
+  .troca .rotulo b { display: block; font-size: 15px; font-weight: 550; }
+  .troca .rotulo small { color: var(--suave); font-size: 13px; }
+  .pino { width: 50px; height: 30px; border-radius: 999px; background: var(--papel3);
+    border: 1px solid var(--linha2); position: relative; flex: none; transition: background .18s; }
+  .pino::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--papel2); box-shadow: 0 1px 3px rgba(0,0,0,.18); transition: transform .18s; }
+  .pino[aria-pressed="true"] { background: var(--oliva); border-color: var(--oliva); }
+  .pino[aria-pressed="true"]::after { transform: translateX(20px); }
+
+  .foto-escolha { display: flex; gap: 12px; align-items: stretch; }
+  .foto-previa { width: 96px; aspect-ratio: 3/4; border-radius: var(--raio-p); background: var(--papel3);
+    border: 1px solid var(--linha); display: grid; place-items: center; overflow: hidden; flex: none; color: var(--suave); }
+  .foto-previa img { width: 100%; height: 100%; object-fit: cover; }
+  .foto-escolha .lados { flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+
+  /* ====== gaveta (sheet) ====== */
+  .cortina { position: fixed; inset: 0; background: rgba(32,34,31,.4); z-index: 40;
+    opacity: 0; pointer-events: none; transition: opacity .22s; backdrop-filter: blur(2px); }
+  .cortina.aberta { opacity: 1; pointer-events: auto; }
+  .gaveta { position: fixed; left: 0; right: 0; bottom: 0; z-index: 41; background: var(--papel);
+    border-radius: 24px 24px 0 0; max-width: 600px; margin: 0 auto; max-height: 92dvh;
+    display: flex; flex-direction: column; transform: translateY(101%); transition: transform .26s cubic-bezier(.32,.72,0,1); }
+  .gaveta.aberta { transform: none; }
+  .gaveta .g-topo { display: flex; align-items: center; gap: 12px; padding: 16px 18px 12px; border-bottom: 1px solid var(--linha); }
+  .gaveta .g-topo b { flex: 1; font: 400 20px/1.2 var(--serif); }
+  .gaveta .g-corpo { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 18px 18px 8px; }
+  .gaveta .g-pe { padding: 12px 18px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid var(--linha); background: var(--papel); }
+  .fechar { width: 36px; height: 36px; border-radius: 11px; background: var(--papel3); display: grid; place-items: center; color: var(--tinta2); }
+
+  /* ====== navegação ====== */
+  .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; max-width: 600px; margin: 0 auto;
+    background: rgba(245,243,239,.93); backdrop-filter: saturate(180%) blur(14px);
+    border-top: 1px solid var(--linha); display: grid; grid-template-columns: repeat(5, 1fr);
+    padding-bottom: env(safe-area-inset-bottom); }
+  .nav button { padding: 11px 2px 9px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    font: 500 10.5px/1 var(--sans); color: var(--suave); letter-spacing: .02em; }
+  .nav button[aria-current="page"] { color: var(--oliva); }
+  .nav button[aria-current="page"] .icone { stroke-width: 2; }
+
+  /* ====== avisos / vazios ====== */
+  .vazio { text-align: center; padding: 34px 26px; }
+  .vazio .icone { width: 42px; height: 42px; color: var(--bronze); margin-bottom: 14px; }
+  .vazio h3 { font: 400 21px/1.25 var(--serif); margin: 0 0 8px; }
+  .vazio p { color: var(--tinta2); font-size: 14.5px; margin: 0 auto 18px; max-width: 320px; }
+  .nota-rodape { padding: 0 20px 10px; color: var(--suave); font-size: 12.5px; line-height: 1.5; }
+  .faixa { display: flex; gap: 11px; align-items: flex-start; padding: 14px 15px; border-radius: var(--raio-p);
+    background: var(--bronze-fundo); border: 1px solid rgba(172,146,113,.28); font-size: 13.5px; color: #5E4B35; line-height: 1.45; }
+  .faixa .icone { width: 19px; height: 19px; color: var(--bronze); margin-top: 1px; }
+  .torrada { position: fixed; left: 50%; bottom: calc(var(--nav) + env(safe-area-inset-bottom) + 18px);
+    transform: translate(-50%, 14px); z-index: 60; background: var(--tinta); color: var(--papel);
+    padding: 12px 18px; border-radius: 13px; font-size: 14px; font-weight: 500; max-width: 86vw; text-align: center;
+    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; box-shadow: 0 10px 30px rgba(32,34,31,.22); }
+  .torrada.vendo { opacity: 1; transform: translate(-50%, 0); }
+
+  .numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--linha); }
+  .numeros div { background: var(--papel2); padding: 15px 10px; text-align: center; }
+  .numeros b { display: block; font: 400 24px/1 var(--serif); }
+  .numeros small { color: var(--suave); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+
+  .lista-oc { display: flex; flex-direction: column; }
+  .lista-oc button { display: flex; align-items: center; gap: 13px; padding: 15px 16px; text-align: left; background: var(--papel2); }
+  .lista-oc button + button { border-top: 1px solid var(--linha); }
+  .lista-oc button:active { background: var(--papel3); }
+  .lista-oc .rot { flex: 1; }
+  .lista-oc .rot b { display: block; font-size: 15.5px; font-weight: 550; }
+  .lista-oc .rot small { color: var(--suave); font-size: 12.5px; }
+  .lista-oc .qtd { font: 600 13px/1 var(--sans); color: var(--oliva); background: var(--oliva-fundo); padding: 7px 9px; border-radius: 8px; }
+  .lista-oc .qtd.zero { color: var(--suave); background: var(--papel3); }
+  .passos-ajuda { counter-reset: p; }
+  .passos-ajuda li { list-style: none; position: relative; padding-left: 34px; margin-bottom: 14px; font-size: 14.5px; color: var(--tinta2); }
+  .passos-ajuda li::before { counter-increment: p; content: counter(p); position: absolute; left: 0; top: -1px;
+    width: 24px; height: 24px; border-radius: 8px; background: var(--oliva-fundo); color: var(--oliva);
+    display: grid; place-items: center; font: 600 12px/1 var(--sans); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="i-casa"><path d="M3.2 10.4 12 3.4l8.8 7"/><path d="M5.6 9.3V20h12.8V9.3"/><path d="M10 20v-5h4v5"/></g>
+    <g id="i-cabide"><path d="M12 7.6V6.5a2.6 2.6 0 1 1 5.2 0"/><path d="M12 7.6 3.7 14.3c-.8.6-.3 1.9.6 1.9h15.4c.9 0 1.4-1.3.6-1.9L12 7.6Z"/></g>
+    <g id="i-varinha"><path d="M11 3.2l1.5 4.1 4.1 1.5-4.1 1.5L11 14.4 9.5 10.3 5.4 8.8l4.1-1.5L11 3.2Z"/><path d="M18.2 14.6l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2Z"/></g>
+    <g id="i-coracao"><path d="M12 20.2S4.8 16 4.8 10.9A3.9 3.9 0 0 1 12 8.6a3.9 3.9 0 0 1 7.2 2.3c0 5.1-7.2 9.3-7.2 9.3Z"/></g>
+    <g id="i-ajustes"><path d="M3.6 7.2h8.2"/><path d="M16.2 7.2h4.2"/><circle cx="14" cy="7.2" r="2.1"/><path d="M3.6 16.8h4.2"/><path d="M12.2 16.8h8.2"/><circle cx="10" cy="16.8" r="2.1"/></g>
+    <g id="i-camera"><rect x="3.4" y="7.4" width="17.2" height="11.8" rx="2.6"/><path d="M8.6 7.4 9.9 4.9h4.2l1.3 2.5"/><circle cx="12" cy="13.3" r="3.2"/></g>
+    <g id="i-mais"><path d="M12 5.2v13.6"/><path d="M5.2 12h13.6"/></g>
+    <g id="i-lixo"><path d="M4.6 7.2h14.8"/><path d="M9.2 7.2V4.8h5.6v2.4"/><path d="M6.8 7.2 7.9 20h8.2l1.1-12.8"/></g>
+    <g id="i-lapis"><path d="M4 20.2l4.2-1.1L19.4 7.9l-3.1-3.1L5.1 16l-1.1 4.2Z"/></g>
+    <g id="i-troca"><path d="M19.8 12a7.8 7.8 0 1 1-2.3-5.5"/><path d="M19.8 4.4v4.1h-4.1"/></g>
+    <g id="i-fechar"><path d="M6.2 6.2 17.8 17.8"/><path d="M17.8 6.2 6.2 17.8"/></g>
+    <g id="i-voltar"><path d="M14.8 4.8 7.6 12l7.2 7.2"/></g>
+    <g id="i-seta"><path d="M9.2 4.8 16.4 12l-7.2 7.2"/></g>
+    <g id="i-baixar"><path d="M12 4.2v10.6"/><path d="M8 11l4 4 4-4"/><path d="M4.8 19.4h14.4"/></g>
+    <g id="i-subir"><path d="M12 19.4V8.8"/><path d="M8 12.6l4-4 4 4"/><path d="M4.8 4.6h14.4"/></g>
+    <g id="i-compartilhar"><path d="M12 15.6V4.2"/><path d="M8 8.2l4-4 4 4"/><path d="M5.2 13.4v6h13.6v-6"/></g>
+    <g id="i-check"><path d="M4.8 12.6 9.4 17.2 19.2 6.8"/></g>
+    <g id="i-gota"><path d="M12 3.6s5.4 5.9 5.4 9.4a5.4 5.4 0 0 1-10.8 0C6.6 9.5 12 3.6 12 3.6Z"/></g>
+    <g id="i-aviso"><path d="M12 4.2 3.2 19.4h17.6L12 4.2Z"/><path d="M12 10.2v4"/><path d="M12 16.6v.4"/></g>
+    <g id="i-imagem"><rect x="3.6" y="5.2" width="16.8" height="13.6" rx="2.4"/><circle cx="9" cy="10" r="1.6"/><path d="M4.4 17.2 9.6 12l3.4 3.2 2.6-2.4 4 4.4"/></g>
+    <g id="i-estrela"><path d="M12 4.2l2.4 5 5.4.7-3.9 3.8 1 5.4-4.9-2.7-4.9 2.7 1-5.4-3.9-3.8 5.4-.7L12 4.2Z"/></g>
+    <g id="i-calendario"><rect x="3.8" y="5.6" width="16.4" height="14" rx="2.4"/><path d="M3.8 10h16.4"/><path d="M8.4 3.8v3.4"/><path d="M15.6 3.8v3.4"/></g>
+    <g id="i-relogio"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.4V12l3.2 2"/></g>
+    <g id="i-info"><circle cx="12" cy="12" r="8.2"/><path d="M12 11v5.4"/><path d="M12 8.1v.3"/></g>
+  </defs>
+</svg>
+
+<div class="app">
+  <main id="palco" role="main"></main>
+</div>
+
+<nav class="nav" id="nav" aria-label="Navegação principal">
+  <button data-tela="inicio" aria-current="page"><svg class="icone" viewBox="0 0 24 24"><use href="#i-casa"/></svg>Início</button>
+  <button data-tela="pecas"><svg class="icone" viewBox="0 0 24 24"><use href="#i-cabide"/></svg>Peças</button>
+  <button data-tela="montar"><svg class="icone" viewBox="0 0 24 24"><use href="#i-varinha"/></svg>Montar</button>
+  <button data-tela="salvos"><svg class="icone" viewBox="0 0 24 24"><use href="#i-coracao"/></svg>Salvos</button>
+  <button data-tela="ajustes"><svg class="icone" viewBox="0 0 24 24"><use href="#i-ajustes"/></svg>Ajustes</button>
+</nav>
+
+<div class="cortina" id="cortina"></div>
+<section class="gaveta" id="gaveta" role="dialog" aria-modal="true" aria-labelledby="g-titulo" aria-hidden="true">
+  <header class="g-topo">
+    <b id="g-titulo">—</b>
+    <button class="fechar" id="g-fechar" aria-label="Fechar"><svg class="icone" viewBox="0 0 24 24"><use href="#i-fechar"/></svg></button>
+  </header>
+  <div class="g-corpo" id="g-corpo"></div>
+  <footer class="g-pe" id="g-pe" hidden></footer>
+</section>
+
+<div class="torrada" id="torrada" role="status" aria-live="polite"></div>
+<input type="file" id="arq-foto" accept="image/*" hidden>
+<input type="file" id="arq-backup" accept="application/json,.json" hidden>
+
+<script>
+"use strict";
+/* =========================================================================
+   ARMÁRIO — Guarda-Roupa Inteligente
+   Tudo roda no aparelho: nenhuma API externa, nenhum login, nenhum servidor.
+   As recomendações vêm de um motor de regras determinístico (sem IA).
+   ========================================================================= */
+
+/* ---------- 1. Vocabulário do guarda-roupa ---------- */
+
+// viv = vivacidade: 0 neutro (combina com quase tudo), 1 discreta, 2 marcante
+const CORES = [
+  { id: "branco",      nome: "Branco", f: "Branca",       hex: "#F7F5F0", fam: "neutro",  viv: 0 },
+  { id: "cru",         nome: "Cru", f: "Crua",          hex: "#E7DFD1", fam: "neutro",  viv: 0 },
+  { id: "cinza-claro", nome: "Cinza claro", f: "Cinza clara",  hex: "#C8C6C0", fam: "neutro",  viv: 0 },
+  { id: "cinza",       nome: "Cinza",        hex: "#8B8A86", fam: "neutro",  viv: 0 },
+  { id: "grafite",     nome: "Grafite",      hex: "#3B3C38", fam: "neutro",  viv: 0 },
+  { id: "preto",       nome: "Preto", f: "Preta",        hex: "#1C1C1B", fam: "neutro",  viv: 0 },
+  { id: "marinho",     nome: "Marinho",      hex: "#23304A", fam: "frio",    viv: 0 },
+  { id: "bege",        nome: "Bege",         hex: "#D8C8AD", fam: "terroso", viv: 1 },
+  { id: "caqui",       nome: "Caqui",        hex: "#B4A079", fam: "terroso", viv: 1 },
+  { id: "camel",       nome: "Camel",        hex: "#AC8456", fam: "terroso", viv: 1 },
+  { id: "marrom",      nome: "Marrom",       hex: "#6B4A32", fam: "terroso", viv: 1 },
+  { id: "oliva",       nome: "Verde oliva",  hex: "#59634B", fam: "terroso", viv: 1 },
+  { id: "verde-escuro",nome: "Verde escuro", hex: "#2E4438", fam: "frio",    viv: 1 },
+  { id: "jeans-claro", nome: "Jeans claro",  hex: "#8FA7BF", fam: "frio",    viv: 1 },
+  { id: "jeans-escuro",nome: "Jeans escuro", hex: "#3B4D63", fam: "frio",    viv: 0 },
+  { id: "azul-claro",  nome: "Azul claro", f: "Azul clara",   hex: "#A9C0D4", fam: "frio",    viv: 1 },
+  { id: "azul",        nome: "Azul",         hex: "#3C6490", fam: "frio",    viv: 2 },
+  { id: "lilas",       nome: "Lilás",        hex: "#B7A8C4", fam: "frio",    viv: 1 },
+  { id: "roxo",        nome: "Roxo", f: "Roxa",         hex: "#5B4470", fam: "frio",    viv: 2 },
+  { id: "rosa-claro",  nome: "Rosa claro",   hex: "#D9B3AC", fam: "quente",  viv: 1 },
+  { id: "vinho",       nome: "Vinho",        hex: "#6A2436", fam: "quente",  viv: 1 },
+  { id: "vermelho",    nome: "Vermelho", f: "Vermelha",     hex: "#B33A32", fam: "quente",  viv: 2 },
+  { id: "terracota",   nome: "Terracota",    hex: "#A9573C", fam: "quente",  viv: 2 },
+  { id: "laranja",     nome: "Laranja",      hex: "#C96A2B", fam: "quente",  viv: 2 },
+  { id: "mostarda",    nome: "Mostarda",     hex: "#C08F2B", fam: "quente",  viv: 2 },
+  { id: "amarelo",     nome: "Amarelo", f: "Amarela",      hex: "#D8B23F", fam: "quente",  viv: 2 }
+];
+const CORpor = Object.fromEntries(CORES.map((c) => [c.id, c]));
+
+// Pares clássicos (nota alta) e atritos conhecidos (nota baixa).
+// A chave é ordenada alfabeticamente para valer nas duas direções.
+const PARES = {};
+function par(a, b, n) { PARES[[a, b].sort().join("|")] = n; }
+[
+  ["marinho","branco"],["marinho","cru"],["marinho","bege"],["marinho","caqui"],["marinho","camel"],
+  ["marinho","cinza-claro"],["marinho","vinho"],["marinho","oliva"],["marinho","grafite"],
+  ["oliva","bege"],["oliva","cru"],["oliva","branco"],["oliva","caqui"],["oliva","marrom"],
+  ["oliva","jeans-escuro"],["oliva","grafite"],["oliva","terracota"],
+  ["marrom","azul-claro"],["marrom","bege"],["marrom","cru"],["marrom","jeans-escuro"],["marrom","verde-escuro"],
+  ["camel","branco"],["camel","grafite"],["camel","jeans-escuro"],["camel","marinho"],
+  ["vinho","cinza"],["vinho","grafite"],["vinho","bege"],["vinho","cru"],
+  ["jeans-escuro","branco"],["jeans-escuro","cru"],["jeans-escuro","cinza-claro"],["jeans-escuro","bege"],
+  ["jeans-claro","branco"],["jeans-claro","marinho"],["jeans-claro","grafite"],
+  ["terracota","cru"],["terracota","bege"],["terracota","marinho"],
+  ["mostarda","marinho"],["mostarda","grafite"],["mostarda","cru"],
+  ["preto","branco"],["preto","cinza"],["preto","grafite"],["preto","cinza-claro"],
+  ["verde-escuro","cru"],["verde-escuro","bege"],["verde-escuro","branco"],
+  ["azul-claro","grafite"],["azul-claro","bege"],["azul","cru"],["azul","branco"],
+  ["rosa-claro","marinho"],["rosa-claro","cinza"],["lilas","cinza"],["lilas","branco"]
+].forEach(([a, b]) => par(a, b, 0.98));
+[
+  ["preto","marrom", 0.32],["preto","marinho", 0.5],["preto","camel", 0.62],
+  ["jeans-claro","jeans-escuro", 0.5],["marrom","grafite", 0.6],["cinza","bege", 0.58],
+  ["vermelho","terracota", 0.3],["vermelho","laranja", 0.25],["roxo","marrom", 0.3],
+  ["vermelho","verde-escuro", 0.3],["mostarda","amarelo", 0.35],["azul","jeans-claro", 0.45]
+].forEach(([a, b, n]) => par(a, b, n));
+
+const PADROES = [
+  { id: "liso", nome: "Liso", peso: 0 },
+  { id: "listrado", nome: "Listrado", peso: 1 },
+  { id: "xadrez", nome: "Xadrez", peso: 1 },
+  { id: "estampado", nome: "Estampado", peso: 2 }
+];
+
+// mod = quanto o tecido muda a formalidade sugerida da categoria
+const TECIDOS = [
+  { id: "algodao",     nome: "Algodão",        mod:  0,   clima: ["ameno", "calor"] },
+  { id: "linho",       nome: "Linho",          mod: -0.3, clima: ["calor", "ameno"] },
+  { id: "jeans",       nome: "Jeans",          mod: -1,   clima: ["ameno", "frio"] },
+  { id: "alfaiataria", nome: "Alfaiataria",    mod:  1,   clima: ["ameno", "frio"] },
+  { id: "la",          nome: "Lã / tricô",     mod:  0.4, clima: ["frio"] },
+  { id: "moletom",     nome: "Moletom",        mod: -1,   clima: ["frio", "ameno"] },
+  { id: "couro",       nome: "Couro / suede",  mod:  0.5, clima: ["ameno", "frio"] },
+  { id: "seda",        nome: "Seda / viscose", mod:  0.5, clima: ["calor", "ameno"] },
+  { id: "tecnico",     nome: "Tecido técnico", mod: -0.5, clima: ["calor", "ameno", "frio"] },
+  { id: "outro",       nome: "Outro",          mod:  0,   clima: ["ameno"] }
+];
+const TECpor = Object.fromEntries(TECIDOS.map((t) => [t.id, t]));
+
+// slot: onde a peça entra no look. form: formalidade típica (1 a 5).
+const CATEGORIAS = [
+  { id: "camiseta",  nome: "Camiseta",       slot: "topo",      form: 1, g: "f" },
+  { id: "polo",      nome: "Polo",           slot: "topo",      form: 2, g: "m" },
+  { id: "camisa",    nome: "Camisa",         slot: "topo",      form: 3, g: "f" },
+  { id: "malha",     nome: "Malha / suéter", slot: "topo",      form: 3, g: "f" },
+  { id: "calca",     nome: "Calça",          slot: "baixo",     form: 3, g: "f" },
+  { id: "bermuda",   nome: "Bermuda",        slot: "baixo",     form: 1, g: "f" },
+  { id: "blazer",    nome: "Blazer",         slot: "camada",    form: 4, g: "m" },
+  { id: "jaqueta",   nome: "Jaqueta",        slot: "camada",    form: 2, g: "f" },
+  { id: "casaco",    nome: "Casaco",         slot: "camada",    form: 3, g: "m" },
+  { id: "tenis",     nome: "Tênis",          slot: "calcado",   form: 2, g: "m" },
+  { id: "mocassim",  nome: "Mocassim",       slot: "calcado",   form: 4, g: "m" },
+  { id: "sapato",    nome: "Sapato social",  slot: "calcado",   form: 5, g: "m" },
+  { id: "bota",      nome: "Bota",           slot: "calcado",   form: 3, g: "f" },
+  { id: "sandalia",  nome: "Sandália",       slot: "calcado",   form: 1, g: "f" },
+  { id: "cinto",     nome: "Cinto",          slot: "acessorio", form: 3, g: "m" },
+  { id: "relogio",   nome: "Relógio",        slot: "acessorio", form: 3, g: "m" },
+  { id: "oculos",    nome: "Óculos",         slot: "acessorio", form: 2, g: "m" },
+  { id: "bone",      nome: "Boné / chapéu",  slot: "acessorio", form: 1, g: "m" },
+  { id: "bolsa",     nome: "Bolsa / mochila",slot: "acessorio", form: 2, g: "f" }
+];
+const CATpor = Object.fromEntries(CATEGORIAS.map((c) => [c.id, c]));
+// "a bota", "o blazer": o artigo certo deixa as explicações legíveis
+const comArtigo = (catId) => (CATpor[catId].g === "f" ? "a " : "o ") + CATpor[catId].nome.toLowerCase();
+
+const SLOTS = [
+  { id: "topo",    nome: "Parte de cima" },
+  { id: "baixo",   nome: "Parte de baixo" },
+  { id: "camada",  nome: "Camada" },
+  { id: "calcado", nome: "Calçado" }
+];
+const SLOTpor = Object.fromEntries(SLOTS.map((s) => [s.id, s]));
+
+const CLIMAS = [
+  { id: "calor", nome: "Calor",  desc: "acima de 26°C" },
+  { id: "ameno", nome: "Ameno",  desc: "18°C a 26°C" },
+  { id: "frio",  nome: "Frio",   desc: "abaixo de 18°C" }
+];
+const CLIMApor = Object.fromEntries(CLIMAS.map((c) => [c.id, c]));
+
+// alvo = formalidade ideal; faixa = o que ainda passa.
+const OCASIOES = [
+  { id: "casual",  nome: "Casual",   desc: "dia a dia, sem compromisso", alvo: 2.0, faixa: [1, 3.3] },
+  { id: "trabalho",nome: "Trabalho", desc: "escritório e reuniões",      alvo: 3.4, faixa: [2.4, 4.7], fechado: true, semBermuda: true },
+  { id: "jantar",  nome: "Jantar",   desc: "restaurante, noite",         alvo: 3.6, faixa: [2.7, 4.8], fechado: true, semBermuda: true },
+  { id: "encontro",nome: "Encontro", desc: "primeiro encontro, drinks",  alvo: 3.0, faixa: [2.2, 4.3], fechado: true },
+  { id: "evento",  nome: "Evento",   desc: "casamento, formatura, gala", alvo: 4.5, faixa: [3.6, 5], fechado: true, semBermuda: true },
+  { id: "viagem",  nome: "Viagem",   desc: "aeroporto e deslocamento",   alvo: 2.2, faixa: [1, 3.5] }
+];
+const OCpor = Object.fromEntries(OCASIOES.map((o) => [o.id, o]));
+
+const NIVEIS = ["", "Bem casual", "Casual", "Casual arrumado", "Social", "Formal"];
+
+/* ---------- 2. Utilidades ---------- */
+const $ = (s, r) => (r || document).querySelector(s);
+const palco = $("#palco");
+const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
+const hoje = () => new Date().toISOString().slice(0, 10);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const id9 = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const svg = (n, cls) => '<svg class="icone ' + (cls || "") + '" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+const diasDe = (iso) => {
+  if (!iso) return 999;
+  const d = Math.floor((Date.parse(hoje()) - Date.parse(String(iso).slice(0, 10))) / 86400000);
+  return isNaN(d) ? 999 : d;
+};
+const plural = (n, um, muitos) => n + " " + (n === 1 ? um : muitos);
+
+function torrada(txt) {
+  const t = $("#torrada");
+  t.textContent = txt;
+  t.classList.add("vendo");
+  clearTimeout(torrada._t);
+  torrada._t = setTimeout(() => t.classList.remove("vendo"), 2600);
+}
+
+// Semente estável por dia: a sugestão do dia não muda a cada abertura do app.
+function semente(txt) {
+  let h = 2166136261;
+  for (let i = 0; i < txt.length; i++) { h ^= txt.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0) / 4294967296;
+}
+
+/* ---------- 3. Guarda tudo no aparelho (IndexedDB) ---------- */
+const BD = { nome: "armario", ver: 1, ref: null };
+
+function abrirBD() {
+  if (BD.ref) return Promise.resolve(BD.ref);
+  return new Promise((ok, erro) => {
+    const p = indexedDB.open(BD.nome, BD.ver);
+    p.onupgradeneeded = () => {
+      const d = p.result;
+      if (!d.objectStoreNames.contains("pecas")) d.createObjectStore("pecas", { keyPath: "id" });
+      if (!d.objectStoreNames.contains("looks")) d.createObjectStore("looks", { keyPath: "id" });
+      if (!d.objectStoreNames.contains("config")) d.createObjectStore("config", { keyPath: "chave" });
+    };
+    p.onsuccess = () => { BD.ref = p.result; ok(BD.ref); };
+    p.onerror = () => erro(p.error);
+  });
+}
+function tx(loja, modo) { return abrirBD().then((d) => d.transaction(loja, modo).objectStore(loja)); }
+function pedir(req) { return new Promise((ok, erro) => { req.onsuccess = () => ok(req.result); req.onerror = () => erro(req.error); }); }
+const lerTudo = (loja) => tx(loja, "readonly").then((s) => pedir(s.getAll()));
+const gravar = (loja, obj) => tx(loja, "readwrite").then((s) => pedir(s.put(obj)));
+const remover = (loja, chave) => tx(loja, "readwrite").then((s) => pedir(s.delete(chave)));
+const esvaziar = (loja) => tx(loja, "readwrite").then((s) => pedir(s.clear()));
+
+/* ---------- 4. Fotos: comprimidas e guardadas no próprio aparelho ---------- */
+const urls = new Map();
+function urlDaFoto(peca, grande) {
+  const b = grande ? (peca.foto || peca.mini) : (peca.mini || peca.foto);
+  if (!b) return null;
+  const chave = peca.id + (grande ? ":g" : ":p");
+  if (!urls.has(chave)) urls.set(chave, URL.createObjectURL(b));
+  return urls.get(chave);
+}
+function soltarFoto(id) {
+  [":g", ":p"].forEach((suf) => {
+    const k = id + suf;
+    if (urls.has(k)) { URL.revokeObjectURL(urls.get(k)); urls.delete(k); }
+  });
+}
+
+async function comprimir(arquivo, ladoMax, qualidade) {
+  const bmp = await (window.createImageBitmap
+    ? createImageBitmap(arquivo)
+    : new Promise((ok, err) => {
+        const i = new Image();
+        i.onload = () => ok(i); i.onerror = err;
+        i.src = URL.createObjectURL(arquivo);
+      }));
+  const l = bmp.width, a = bmp.height;
+  const fator = Math.min(1, ladoMax / Math.max(l, a));
+  const cv = document.createElement("canvas");
+  cv.width = Math.round(l * fator); cv.height = Math.round(a * fator);
+  const ct = cv.getContext("2d");
+  ct.imageSmoothingQuality = "high";
+  ct.drawImage(bmp, 0, 0, cv.width, cv.height);
+  if (bmp.close) bmp.close();
+  const tipo = cv.toDataURL("image/webp").startsWith("data:image/webp") ? "image/webp" : "image/jpeg";
+  const blob = await new Promise((ok) => cv.toBlob(ok, tipo, qualidade));
+  return blob || arquivo;
+}
+async function prepararFoto(arquivo) {
+  const foto = await comprimir(arquivo, 900, 0.82);
+  const mini = await comprimir(arquivo, 320, 0.76);
+  return { foto, mini };
+}
+
+/* ---------- 5. Estado do app ---------- */
+const CONFIG_PADRAO = {
+  chave: "geral",
+  ocasiao: "casual",
+  clima: "ameno",
+  evitarRepetir: true,
+  comAcessorios: true,
+  boasVindasVista: false
+};
+const estado = {
+  pecas: [],
+  looks: [],
+  config: Object.assign({}, CONFIG_PADRAO),
+  tela: "inicio",
+  filtroCat: "tudo",
+  filtroSo: "todas",
+  montados: [],
+  atual: null,
+  fixos: {}
+};
+
+async function carregar() {
+  const [pecas, looks, cfgs] = await Promise.all([lerTudo("pecas"), lerTudo("looks"), lerTudo("config")]);
+  estado.pecas = pecas.sort((a, b) => (b.criadaEm || "").localeCompare(a.criadaEm || ""));
+  estado.looks = looks.sort((a, b) => (b.criadoEm || "").localeCompare(a.criadoEm || ""));
+  const c = cfgs.find((x) => x.chave === "geral");
+  estado.config = Object.assign({}, CONFIG_PADRAO, c || {});
+}
+const salvarConfig = () => gravar("config", estado.config);
+
+async function salvarPeca(p) {
+  await gravar("pecas", p);
+  const i = estado.pecas.findIndex((x) => x.id === p.id);
+  if (i >= 0) estado.pecas[i] = p; else estado.pecas.unshift(p);
+  soltarFoto(p.id);
+}
+async function apagarPeca(id) {
+  await remover("pecas", id);
+  estado.pecas = estado.pecas.filter((p) => p.id !== id);
+  soltarFoto(id);
+  // looks salvos que usavam a peça perdem sentido: saem junto
+  const orfaos = estado.looks.filter((l) => Object.values(l.pecas).flat().includes(id));
+  for (const l of orfaos) await remover("looks", l.id);
+  estado.looks = estado.looks.filter((l) => !orfaos.includes(l));
+}
+
+/* =========================================================================
+   6. MOTOR DE REGRAS
+   Nenhuma IA, nenhuma chamada externa: só as informações que você cadastrou.
+   Cada combinação recebe uma nota de 0 a 100 somando cinco critérios.
+   ========================================================================= */
+
+function corCompat(a, b) {
+  if (!a || !b) return 0.8;
+  const A = CORpor[a], B = CORpor[b];
+  if (!A || !B) return 0.7;
+  if (a === b) return A.viv === 0 ? 0.92 : A.viv >= 2 ? 0.25 : 0.55;
+  const fixo = PARES[[a, b].sort().join("|")];
+  if (fixo != null) return fixo;
+  const neutros = (A.viv === 0 ? 1 : 0) + (B.viv === 0 ? 1 : 0);
+  if (neutros === 2) return 0.93;
+  if (neutros === 1) return 0.88;
+  if (A.fam === B.fam) return 0.72;
+  if (A.viv >= 2 && B.viv >= 2) return 0.22;
+  if (A.viv >= 2 || B.viv >= 2) return 0.5;
+  return 0.62;
+}
+
+const PESOS_PAR = [
+  ["topo", "baixo", 0.40],
+  ["baixo", "calcado", 0.24],
+  ["topo", "calcado", 0.14],
+  ["camada", "topo", 0.14],
+  ["camada", "baixo", 0.08]
+];
+const PESOS_FORM = { topo: 1, baixo: 1, calcado: 1.4, camada: 1.1 };
+
+function climaOk(peca, clima) {
+  const e = peca.estacoes && peca.estacoes.length ? peca.estacoes : ["ameno"];
+  return e.includes(clima);
+}
+function climaImpossivel(peca, clima) {
+  const e = peca.estacoes && peca.estacoes.length ? peca.estacoes : ["ameno"];
+  if (e.includes(clima)) return false;
+  if (clima === "calor" && e.length === 1 && e[0] === "frio") return true;
+  if (clima === "frio" && e.length === 1 && e[0] === "calor") return true;
+  return false;
+}
+const disponivel = (p) => p.disponivel !== false && !p.lavando;
+
+/* --- nota de uma combinação (rápido: roda milhares de vezes) --- */
+function avaliar(c, ctx) {
+  const oc = OCpor[ctx.ocasiao] || OCpor.casual;
+  const presentes = ["topo", "baixo", "calcado", "camada"].map((s) => c[s]).filter(Boolean);
+
+  // (a) cores
+  let soma = 0, pesoTotal = 0, pior = 1, melhor = 0;
+  for (const [x, y, w] of PESOS_PAR) {
+    if (!c[x] || !c[y]) continue;
+    const n = corCompat(c[x].cor, c[y].cor);
+    soma += n * w; pesoTotal += w;
+    if (n < pior) pior = n;
+    if (n > melhor) melhor = n;
+  }
+  let cor = pesoTotal ? soma / pesoTotal : 0.8;
+  const estampas = presentes.reduce((t, p) => t + (PADROES.find((x) => x.id === (p.padrao || "liso")) || PADROES[0]).peso, 0);
+  if (estampas >= 3) cor *= 0.45;
+  else if (estampas === 2) cor *= 0.62;
+
+  // (b) formalidade da ocasião
+  let fSoma = 0, fPeso = 0, menor = 9, maior = 0;
+  for (const s of ["topo", "baixo", "calcado", "camada"]) {
+    const p = c[s]; if (!p) continue;
+    const f = p.formalidade || CATpor[p.categoria].form;
+    fSoma += f * PESOS_FORM[s]; fPeso += PESOS_FORM[s];
+    if (s !== "camada") { menor = Math.min(menor, f); maior = Math.max(maior, f); }
+  }
+  const form = fPeso ? fSoma / fPeso : 3;
+  const dif = Math.abs(form - oc.alvo);
+  let ocasiao = clamp(1 - dif / 2.2, 0, 1);
+  if (form < oc.faixa[0] - 0.05 || form > oc.faixa[1] + 0.05) ocasiao *= 0.45;
+
+  // (c) coerência interna: peças de níveis muito distantes brigam entre si
+  const vao = maior - menor;
+  const coerencia = vao <= 1 ? 1 : vao <= 2 ? 0.78 : vao <= 3 ? 0.42 : 0.18;
+
+  // (d) clima e camadas
+  let okClima = 0;
+  presentes.forEach((p) => { okClima += climaOk(p, ctx.clima) ? 1 : 0.35; });
+  let clima = presentes.length ? okClima / presentes.length : 0.6;
+  if (ctx.clima === "frio" && !c.camada) clima *= 0.5;
+  if (ctx.clima === "calor" && c.camada) clima *= 0.55;
+
+  // (e) novidade: evita sugerir sempre as mesmas peças
+  let novidade = 1;
+  if (ctx.evitarRepetir) {
+    let n = 0;
+    presentes.forEach((p) => {
+      const d = diasDe(p.ultimoUso);
+      n += d <= 1 ? 0.35 : d <= 3 ? 0.65 : d <= 6 ? 0.88 : 1;
+    });
+    novidade = presentes.length ? n / presentes.length : 1;
+  }
+
+  // (f) preferências declaradas
+  const favs = presentes.filter((p) => p.favorita).length;
+  const bonus = 1 + Math.min(favs, 3) * 0.025;
+
+  const nota = (cor * 0.34 + ocasiao * 0.30 + coerencia * 0.14 + clima * 0.16 + novidade * 0.06) * bonus;
+  return {
+    nota: Math.round(clamp(nota, 0, 1) * 100),
+    partes: { cor: cor, ocasiao: ocasiao, coerencia: coerencia, clima: clima, novidade: novidade },
+    form: form, vao: vao, pior: pior, melhor: melhor, estampas: estampas
+  };
+}
+
+/* --- candidatas por vaga, já filtradas pelas regras rígidas --- */
+function candidatas(ctx, pecas) {
+  const oc = OCpor[ctx.ocasiao] || OCpor.casual;
+  const base = (pecas || estado.pecas).filter((p) => {
+    if (!disponivel(p)) return false;
+    if (climaImpossivel(p, ctx.clima)) return false;
+    if (oc.semBermuda && p.categoria === "bermuda") return false;
+    if (oc.fechado && p.categoria === "sandalia") return false;
+    if (ctx.clima === "calor" && CATpor[p.categoria].slot === "camada") return false;
+    return true;
+  });
+  const grupo = { topo: [], baixo: [], calcado: [], camada: [], acessorio: [] };
+  base.forEach((p) => grupo[CATpor[p.categoria].slot].push(p));
+
+  const afinidade = (p) => {
+    const f = p.formalidade || CATpor[p.categoria].form;
+    const perto = 1 - Math.min(Math.abs(f - oc.alvo) / 4, 1);
+    const cl = climaOk(p, ctx.clima) ? 1 : 0.4;
+    const fav = p.favorita ? 1 : 0.55;
+    const d = diasDe(p.ultimoUso);
+    const nov = ctx.evitarRepetir ? (d <= 1 ? 0.5 : d <= 3 ? 0.8 : 1) : 1;
+    return perto * 0.46 + cl * 0.28 + fav * 0.12 + nov * 0.14;
+  };
+  const TETO = { topo: 16, baixo: 16, calcado: 12, camada: 10, acessorio: 24 };
+  for (const s in grupo) {
+    grupo[s].sort((a, b) => afinidade(b) - afinidade(a));
+    if (ctx.fixos && ctx.fixos[s]) {
+      const fixa = base.find((p) => p.id === ctx.fixos[s]);
+      // se a peça exigida não passa pelos filtros (lavando, clima, ocasião),
+      // a vaga fica vazia de propósito: melhor avisar do que trocar escondido
+      if (fixa) grupo[s] = [fixa];
+      else { grupo[s] = []; grupo.fixoFora = ctx.fixos[s]; }
+    } else {
+      grupo[s] = grupo[s].slice(0, TETO[s]);
+    }
+  }
+  return grupo;
+}
+
+/* --- gera, pontua e diversifica as combinações --- */
+function montarLooks(ctx, opcoes) {
+  const op = opcoes || {};
+  const limite = op.limite || 10;
+  const minimo = op.minimo == null ? 45 : op.minimo;
+  const g = candidatas(ctx);
+  if (g.fixoFora) return { looks: [], faltando: [], fixoFora: g.fixoFora, possiveis: 0, avaliadas: 0 };
+  const faltando = [];
+  if (!g.topo.length) faltando.push("parte de cima");
+  if (!g.baixo.length) faltando.push("parte de baixo");
+  if (!g.calcado.length) faltando.push("calçado");
+  if (faltando.length) return { looks: [], faltando: faltando, possiveis: 0, avaliadas: 0 };
+
+  // camada: obrigatória no frio quando existe uma disponível; proibida no calor
+  let camadas = [null];
+  if (ctx.clima !== "calor" && g.camada.length) {
+    camadas = ctx.clima === "frio" ? g.camada.slice() : [null].concat(g.camada);
+    if (ctx.clima === "frio" && ctx.fixos && ctx.fixos.camada === "") camadas = [null];
+  }
+  if (ctx.fixos && ctx.fixos.camada) {
+    const f = g.camada.find((p) => p.id === ctx.fixos.camada);
+    if (f) camadas = [f];
+  }
+
+  const achados = [];
+  let avaliadas = 0;
+  const TETO_AVAL = 90000;
+  for (const topo of g.topo) {
+    for (const baixo of g.baixo) {
+      for (const calcado of g.calcado) {
+        for (const camada of camadas) {
+          if (avaliadas++ > TETO_AVAL) break;
+          const c = { topo: topo, baixo: baixo, calcado: calcado, camada: camada };
+          const av = avaliar(c, ctx);
+          if (av.nota >= minimo) achados.push({ pecas: c, av: av });
+        }
+      }
+    }
+  }
+  achados.sort((a, b) => b.av.nota - a.av.nota || a.pecas.topo.id.localeCompare(b.pecas.topo.id));
+
+  // diversificar: duas sugestões não podem ser quase a mesma coisa
+  const escolhidos = [];
+  for (const cand of achados) {
+    const ids = ["topo", "baixo", "calcado", "camada"].map((s) => cand.pecas[s] && cand.pecas[s].id).filter(Boolean);
+    const repetido = escolhidos.some((e) => {
+      const outros = ["topo", "baixo", "calcado", "camada"].map((s) => e.pecas[s] && e.pecas[s].id).filter(Boolean);
+      const iguais = ids.filter((i) => outros.includes(i)).length;
+      return iguais >= Math.max(2, Math.min(ids.length, outros.length) - 1);
+    });
+    if (!repetido) escolhidos.push(cand);
+    if (escolhidos.length >= limite) break;
+  }
+  const finais = (escolhidos.length ? escolhidos : achados.slice(0, limite)).map((c) => {
+    c.acessorios = ctx.comAcessorios ? acessoriosPara(c.pecas, g.acessorio, c.av, ctx) : [];
+    c.ocasiao = ctx.ocasiao; c.clima = ctx.clima;
+    return c;
+  });
+  const possiveis = g.topo.length * g.baixo.length * g.calcado.length * camadas.length;
+  return { looks: finais, faltando: [], possiveis: possiveis, avaliadas: achados.length };
+}
+
+/* --- toque final: cinto que conversa com o sapato, relógio, óculos --- */
+function acessoriosPara(c, lista, av, ctx) {
+  if (!lista || !lista.length) return [];
+  const notas = lista.map((p) => {
+    const f = p.formalidade || CATpor[p.categoria].form;
+    let n = 0.5 + 0.5 * clamp(1 - Math.abs(f - av.form) / 3, 0, 1);
+    if (p.categoria === "cinto") {
+      if (c.baixo && ["bermuda"].includes(c.baixo.categoria)) n *= 0.7;
+      if (c.baixo && c.baixo.tecido === "moletom") n *= 0.3;
+      const comSapato = corCompat(p.cor, c.calcado.cor);
+      n = n * 0.45 + comSapato * 0.55;
+      if (p.cor === c.calcado.cor) n = Math.min(1, n + 0.18);
+    } else {
+      n = n * 0.6 + corCompat(p.cor, c.topo.cor) * 0.4;
+    }
+    if (p.categoria === "bone" && av.form >= 3.5) n *= 0.3;
+    if (p.favorita) n = Math.min(1, n + 0.05);
+    return { peca: p, n: n };
+  }).filter((x) => x.n >= 0.62).sort((a, b) => b.n - a.n);
+
+  const saida = [], usados = new Set();
+  for (const x of notas) {
+    if (usados.has(x.peca.categoria)) continue;
+    usados.add(x.peca.categoria);
+    saida.push(x.peca);
+    if (saida.length >= 2) break;
+  }
+  return saida;
+}
+
+/* --- troca de uma vaga só, mantendo o resto do look --- */
+function alternativasDeVaga(look, slot, ctx) {
+  const fixos = {};
+  ["topo", "baixo", "calcado", "camada"].forEach((s) => {
+    if (s !== slot && look.pecas[s]) fixos[s] = look.pecas[s].id;
+  });
+  const ctx2 = Object.assign({}, ctx, { fixos: fixos });
+  const g = candidatas(ctx2);
+  const opcoes = g[slot] || [];
+  const avaliadas = opcoes.map((p) => {
+    const c = Object.assign({}, look.pecas); c[slot] = p;
+    return { peca: p, av: avaliar(c, ctx2) };
+  }).sort((a, b) => b.av.nota - a.av.nota);
+  if (slot === "camada" && look.pecas.camada && ctx.clima !== "frio") {
+    avaliadas.push({ peca: null, av: avaliar(Object.assign({}, look.pecas, { camada: null }), ctx2) });
+  }
+  return avaliadas;
+}
+
+/* --- texto do "por que funciona" (só para os looks exibidos) --- */
+function explicar(look, ctx) {
+  const c = look.pecas, av = look.av, oc = OCpor[look.ocasiao || ctx.ocasiao];
+  const cl = CLIMApor[look.clima || ctx.clima];
+  const motivos = [], atencoes = [];
+  const nomeCor = (p) => (CORpor[p.cor] ? CORpor[p.cor].nome.toLowerCase() : "a cor");
+
+  const parCima = corCompat(c.topo.cor, c.baixo.cor);
+  if (parCima >= 0.9) {
+    motivos.push("<b>" + esc(nomeCor(c.topo)) + " com " + esc(nomeCor(c.baixo)) + "</b> é uma dupla clássica: nenhuma das duas disputa atenção.");
+  } else if (parCima >= 0.7) {
+    motivos.push("As cores ficam na mesma temperatura, então o look não fica confuso.");
+  }
+  const neutras = [c.topo, c.baixo, c.calcado].filter((p) => CORpor[p.cor] && CORpor[p.cor].viv === 0).length;
+  if (neutras >= 2 && parCima < 0.9) motivos.push("Base neutra em " + neutras + " peças: é o tipo de look que você repete sem parecer repetido.");
+  if (av.estampas === 1) {
+    const est = [c.topo, c.baixo, c.camada].filter((p) => p && p.padrao && p.padrao !== "liso")[0];
+    if (est) motivos.push("Só uma peça com padrão (" + esc(est.nome) + "): ela puxa o olhar e o resto acompanha.");
+  }
+
+  motivos.push("Para <b>" + esc(oc.nome.toLowerCase()) + "</b> o nível usual é " + NIVEIS[Math.round(oc.alvo)].toLowerCase() +
+    ". Este look ficou em " + av.form.toFixed(1) + " de 5 — " + NIVEIS[clamp(Math.round(av.form), 1, 5)].toLowerCase() + ".");
+
+  if (av.vao <= 1) motivos.push("As peças estão no mesmo nível de formalidade, sem nenhuma puxando o look para outro lado.");
+  if (c.camada && cl.id === "frio") motivos.push("Camada prevista para " + cl.desc + ": " + esc(comArtigo(c.camada.categoria)) + " resolve a temperatura sem mudar o conjunto.");
+  if (!c.camada && cl.id === "calor") motivos.push("Sem camadas, com peças marcadas por você como boas para " + cl.desc + ".");
+  if (c.calcado) {
+    const f = c.calcado.formalidade || CATpor[c.calcado.categoria].form;
+    if (Math.abs(f - oc.alvo) <= 1) motivos.push("O calçado é o que mais define o nível de um look — e " + esc(comArtigo(c.calcado.categoria)) + " está no ponto para a ocasião.");
+  }
+  if (ctx.evitarRepetir && av.partes.novidade >= 0.95) motivos.push("Peças que você não registrou uso recente: combinação nova para você.");
+
+  if (av.partes.cor < 0.62) atencoes.push("As cores exigem atenção: pode ficar pesado se as duas peças forem muito marcantes.");
+  if (av.vao >= 3) atencoes.push("Há uma peça bem mais formal que o resto — funciona, mas é uma escolha deliberada.");
+  if (av.partes.ocasiao < 0.6) atencoes.push("Para " + esc(oc.nome.toLowerCase()) + ", este look está " + (av.form > oc.alvo ? "mais formal" : "mais casual") + " do que o usual.");
+  const foraDoClima = [c.topo, c.baixo, c.calcado, c.camada].filter((p) => p && !climaOk(p, cl.id));
+  if (foraDoClima.length) {
+    atencoes.push((foraDoClima.length === 1 ? esc(foraDoClima[0].nome) + " não está" : esc(foraDoClima.map((p) => p.nome).join(", ")) + " não estão") +
+      " marcada" + (foraDoClima.length === 1 ? "" : "s") + " por você para clima " + esc(cl.nome.toLowerCase()) + " (" + esc(cl.desc) + ").");
+  }
+  if (av.estampas >= 2) atencoes.push("Duas peças com padrão no mesmo look: prefira trocar uma por algo liso.");
+
+  return { motivos: motivos.slice(0, 5), atencoes: atencoes.slice(0, 3) };
+}
+
+function contextoAtual(extra) {
+  return Object.assign({
+    ocasiao: estado.config.ocasiao,
+    clima: estado.config.clima,
+    evitarRepetir: estado.config.evitarRepetir,
+    comAcessorios: estado.config.comAcessorios,
+    fixos: null
+  }, extra || {});
+}
+
+/* =========================================================================
+   7. TELAS
+   ========================================================================= */
+const REG = new Map();
+function registrar(look) {
+  look.uid = look.uid || id9();
+  REG.set(look.uid, look);
+  return look.uid;
+}
+
+function htmlPeca(p, slot, uid, podeTrocar) {
+  if (!p) {
+    return '<div class="vaga vazia"><div class="foto">' + svg("mais") + '</div>' +
+      '<div class="txt"><b>Sem camada</b><small>' + esc(SLOTpor[slot].nome) + "</small></div></div>";
+  }
+  const u = urlDaFoto(p, false);
+  const cor = CORpor[p.cor];
+  const foto = u
+    ? '<img src="' + u + '" alt="' + esc(p.nome) + '" loading="lazy">'
+    : '<div class="sem"><i class="amostra" style="background:' + (cor ? cor.hex : "#ccc") + '"></i>' + svg("cabide") + "</div>";
+  return '<div class="vaga">' +
+    '<div class="foto' + (u ? "" : " sem-foto") + '">' + foto + "</div>" +
+    (podeTrocar ? '<button class="trocar" data-trocar="' + uid + '" data-slot="' + slot + '" aria-label="Trocar ' + esc(SLOTpor[slot].nome) + '">' + svg("troca") + "</button>" : "") +
+    '<div class="txt"><b>' + esc(p.nome) + "</b><small>" + esc(SLOTpor[slot].nome) + "</small></div></div>";
+}
+
+function htmlLook(look, op) {
+  op = op || {};
+  const uid = registrar(look);
+  const ctx = contextoAtual({ ocasiao: look.ocasiao, clima: look.clima });
+  const oc = OCpor[look.ocasiao] || OCpor.casual;
+  const cl = CLIMApor[look.clima] || CLIMApor.ameno;
+  const ordem = ["topo", "camada", "baixo", "calcado"];
+  const vagas = ordem.filter((s) => look.pecas[s] || (s === "camada" && look.mostrarCamadaVazia));
+  const g = explicar(look, ctx);
+  const salvo = looksIguais(look);
+  const nota = look.av.nota;
+  const rotulo = nota >= 80 ? "Excelente" : nota >= 66 ? "Boa" : "Aceitável";
+
+  let h = '<article class="look" data-uid="' + uid + '">';
+  h += '<header class="cab"><span class="nota' + (nota >= 66 ? "" : " media") + '">' + nota + "</span>" +
+    "<b>" + esc(op.titulo || rotulo + " para " + oc.nome.toLowerCase()) +
+    "<small>" + esc(cl.nome) + " · " + esc(oc.desc) + "</small></b>";
+  if (op.ordem) h += '<span class="selo">' + op.ordem + "</span>";
+  h += "</header>";
+  h += '<div class="pecas-look' + (vagas.length === 4 ? " de2" : vagas.length === 2 ? " de2" : "") + '">' +
+    vagas.map((s) => htmlPeca(look.pecas[s], s, uid, op.trocar !== false)).join("") + "</div>";
+
+  if (look.acessorios && look.acessorios.length) {
+    h += '<div class="porque" style="border-top:1px solid var(--linha);padding-bottom:10px"><h4>Toque final</h4>' +
+      '<ul><li>' + look.acessorios.map((a) => esc(a.nome)).join(" · ") + "</li></ul></div>";
+  }
+  if (op.porque !== false) {
+    h += '<div class="porque"><h4>Por que funciona</h4><ul>' +
+      g.motivos.map((m) => "<li>" + m + "</li>").join("") +
+      g.atencoes.map((m) => '<li class="atencao">' + esc(m) + "</li>").join("") +
+      "</ul></div>";
+  }
+  if (op.acoes !== false) {
+    h += '<div class="acoes-look">' +
+      (op.trocar === false ? "" : '<button data-outro="' + uid + '">' + svg("troca") + "Outro look</button>") +
+      '<button data-salvar="' + uid + '" aria-pressed="' + (salvo ? "true" : "false") + '">' + svg("coracao") + (salvo ? "Salvo" : "Salvar") + "</button>" +
+      '<button data-usei="' + uid + '">' + svg("check") + "Usei hoje</button>" +
+      '<button data-cartao="' + uid + '">' + svg("compartilhar") + "Cartão</button>" +
+      "</div>";
+  }
+  return h + "</article>";
+}
+
+function looksIguais(look) {
+  const ids = ["topo", "baixo", "calcado", "camada"].map((s) => look.pecas[s] && look.pecas[s].id).filter(Boolean).sort().join(",");
+  return estado.looks.find((l) => l.favorito && l.chave === ids && l.ocasiao === look.ocasiao);
+}
+
+function hidratar(salvo) {
+  const acha = (id) => estado.pecas.find((p) => p.id === id);
+  const pecas = {};
+  ["topo", "baixo", "calcado", "camada"].forEach((s) => { if (salvo.pecas[s]) pecas[s] = acha(salvo.pecas[s]); });
+  if (!pecas.topo || !pecas.baixo || !pecas.calcado) return null;
+  const ctx = contextoAtual({ ocasiao: salvo.ocasiao, clima: salvo.clima });
+  const look = {
+    pecas: pecas,
+    av: avaliar(pecas, ctx),
+    acessorios: (salvo.pecas.acessorios || []).map(acha).filter(Boolean),
+    ocasiao: salvo.ocasiao, clima: salvo.clima, salvoId: salvo.id, usos: salvo.usos || []
+  };
+  return look;
+}
+
+/* ---------- Tela: Início ---------- */
+function telaInicio() {
+  const n = estado.pecas.length;
+  const porSlot = {};
+  SLOTS.concat([{ id: "acessorio" }]).forEach((s) => { porSlot[s.id] = estado.pecas.filter((p) => CATpor[p.categoria].slot === s.id).length; });
+
+  let h = '<div class="tela">';
+  h += '<header class="topo"><div class="titulo"><span class="sobre">Seu armário</span>' +
+    "<h1>Novas possibilidades</h1>" +
+    "<p>" + (n ? plural(n, "peça cadastrada", "peças cadastradas") : "Comece com três peças e o app já monta looks") + "</p></div>" +
+    '<button class="acao" data-tela="ajustes" aria-label="Ajustes">' + svg("ajustes") + "</button></header>";
+
+  if (n < 3) {
+    h += '<div class="secao"><div class="cartao pad">' +
+      "<h3 style=\"font:400 21px/1.25 var(--serif);margin:0 0 10px\">Três peças já bastam para começar</h3>" +
+      '<p style="color:var(--tinta2);font-size:14.5px;margin:0 0 16px">Você não precisa fotografar o guarda-roupa inteiro hoje. ' +
+      "Cadastre uma parte de cima, uma de baixo e um calçado — o ARMÁRIO já começa a sugerir. Depois você vai acrescentando.</p>" +
+      '<ol class="passos-ajuda" style="margin:0 0 18px;padding:0">' +
+      "<li>Cadastre uma camisa ou camiseta que você usa muito.</li>" +
+      "<li>Cadastre uma calça e um par de sapatos ou tênis.</li>" +
+      "<li>Toque em <b>Montar</b> e escolha a ocasião.</li></ol>" +
+      '<button class="btn" data-nova="1">' + svg("mais") + "Cadastrar primeira peça</button>" +
+      "</div>";
+    if (n > 0) {
+      h += '<div class="secao" style="padding:0;margin-top:22px"><h2 style="padding:0 20px">Já no armário</h2>' + htmlGrade(estado.pecas) + "</div>";
+    }
+    h += "</div></div>";
+    return h;
+  }
+
+  // Look do dia: mesma sugestão durante todo o dia, estável por data
+  const ctx = contextoAtual();
+  const r = lookDoDia();
+  h += '<div class="secao"><h2>Look sugerido para hoje<button data-tela="montar">Montar outro</button></h2>';
+  if (r.look) {
+    h += htmlLook(r.look, { titulo: "Para hoje" });
+  } else if (r.faltando.length) {
+    h += '<div class="cartao pad"><div class="faixa">' + svg("aviso") +
+      "<div>Falta cadastrar: <b>" + esc(r.faltando.join(", ")) + "</b>. Um look precisa de parte de cima, parte de baixo e calçado.</div></div></div>";
+  } else {
+    h += '<div class="cartao pad"><div class="faixa">' + svg("aviso") +
+      "<div>Nenhuma combinação alcançou nota mínima para <b>" + esc(OCpor[ctx.ocasiao].nome.toLowerCase()) +
+      "</b> com clima " + esc(CLIMApor[ctx.clima].nome.toLowerCase()) + ". Tente outra ocasião em <b>Montar</b>.</div></div></div>";
+  }
+  h += "</div>";
+
+  // Números do armário
+  const combin = porSlot.topo * porSlot.baixo * porSlot.calcado * (porSlot.camada + 1);
+  h += '<div class="secao"><h2>Seu armário em números</h2><div class="cartao"><div class="numeros">' +
+    "<div><b>" + n + "</b><small>Peças</small></div>" +
+    "<div><b>" + (combin > 999 ? (combin / 1000).toFixed(1).replace(".", ",") + "k" : combin) + "</b><small>Combinações</small></div>" +
+    "<div><b>" + estado.looks.filter((l) => l.favorito).length + "</b><small>Salvos</small></div>" +
+    '</div><div class="pad" style="border-top:1px solid var(--linha);color:var(--tinta2);font-size:13px">' +
+    "Combinações = todas as formas de juntar uma parte de cima, uma de baixo, um calçado e (opcionalmente) uma camada. " +
+    "O app ordena essas combinações por adequação, em vez de mostrar todas.</div></div></div>";
+
+  // Quantos looks bons por ocasião
+  h += '<div class="secao"><h2>Looks bons por ocasião</h2><div class="cartao"><div class="lista-oc">';
+  OCASIOES.forEach((o) => {
+    const res = montarLooks(contextoAtual({ ocasiao: o.id }), { limite: 8, minimo: 66 });
+    const q = res.looks.length;
+    h += '<button data-ocasiao="' + o.id + '"><div class="rot"><b>' + esc(o.nome) + "</b><small>" + esc(o.desc) + "</small></div>" +
+      '<span class="qtd' + (q ? "" : " zero") + '">' + (q >= 8 ? "8+" : q) + "</span>" + svg("seta") + "</button>";
+  });
+  h += "</div></div>";
+  h += '<p class="nota-rodape" style="padding:10px 2px 0">Contagem entre as combinações melhor classificadas, com o clima <b>' +
+    esc(CLIMApor[estado.config.clima].nome.toLowerCase()) + "</b>. Mude o clima na tela Montar.</p></div>";
+
+  h += '<div class="secao"><button class="btn claro" data-nova="1">' + svg("mais") + "Cadastrar nova peça</button></div>";
+  return h + "</div>";
+}
+
+/* ---------- Tela: Peças ---------- */
+function htmlGrade(lista) {
+  if (!lista.length) return "";
+  return '<div class="grade">' + lista.map((p) => {
+    const u = urlDaFoto(p, false);
+    const cor = CORpor[p.cor];
+    const foto = u
+      ? '<img src="' + u + '" alt="' + esc(p.nome) + '" loading="lazy">'
+      : '<div class="sem" style="display:grid;place-items:center;gap:8px;color:var(--suave)">' +
+        '<i class="amostra-cor" style="background:' + (cor ? cor.hex : "#ccc") + '"></i>' + svg("cabide") + "</div>";
+    const marcas = (p.lavando ? '<span class="selo lavando">Lavando</span>' : "") +
+      (p.favorita ? '<span class="selo fav">★</span>' : "") +
+      (p.disponivel === false && !p.lavando ? '<span class="selo">Fora</span>' : "");
+    return '<button class="peca" data-peca="' + p.id + '">' +
+      '<div class="foto">' + foto + (marcas ? '<div class="marcas">' + marcas + "</div>" : "") + "</div>" +
+      '<div class="txt"><b>' + esc(p.nome) + "</b><small>" + esc(CATpor[p.categoria].nome) +
+      " · " + esc(cor ? cor.nome : "—") + "</small>" +
+      '<small style="color:var(--bronze)">' + esc(NIVEIS[p.formalidade || CATpor[p.categoria].form]) + "</small></div></button>";
+  }).join("") + "</div>";
+}
+
+function telaPecas() {
+  const slots = [{ id: "tudo", nome: "Tudo" }].concat(SLOTS, [{ id: "acessorio", nome: "Acessórios" }]);
+  let lista = estado.pecas.slice();
+  if (estado.filtroCat !== "tudo") lista = lista.filter((p) => CATpor[p.categoria].slot === estado.filtroCat);
+  if (estado.filtroSo === "favoritas") lista = lista.filter((p) => p.favorita);
+  if (estado.filtroSo === "lavando") lista = lista.filter((p) => p.lavando);
+  if (estado.filtroSo === "disponiveis") lista = lista.filter(disponivel);
+
+  let h = '<div class="tela">';
+  h += '<header class="topo"><div class="titulo"><span class="sobre">Catálogo</span><h1>Meu armário</h1>' +
+    "<p>" + plural(estado.pecas.length, "peça", "peças") + " · " + plural(estado.pecas.filter((p) => p.lavando).length, "lavando", "lavando") + "</p></div>" +
+    '<button class="acao" data-nova="1" aria-label="Cadastrar peça">' + svg("mais") + "</button></header>";
+
+  if (!estado.pecas.length) {
+    h += '<div class="vazio">' + svg("cabide") +
+      "<h3>Seu armário está vazio</h3><p>Cadastre peças com foto ou só com as informações — o ARMÁRIO monta os looks a partir do que você descrever.</p>" +
+      '<button class="btn" data-nova="1" style="max-width:280px;margin:0 auto">' + svg("mais") + "Cadastrar peça</button></div></div>";
+    return h;
+  }
+
+  h += '<div class="chips">' + slots.map((s) => {
+    const q = s.id === "tudo" ? estado.pecas.length : estado.pecas.filter((p) => CATpor[p.categoria].slot === s.id).length;
+    return '<button class="chip" data-filtro-cat="' + s.id + '" aria-pressed="' + (estado.filtroCat === s.id ? "true" : "false") + '">' +
+      esc(s.nome) + '<span class="n">' + q + "</span></button>";
+  }).join("") + "</div>";
+  h += '<div class="chips" style="margin:8px 0 16px">' +
+    [["todas", "Todas"], ["disponiveis", "Disponíveis"], ["favoritas", "Favoritas"], ["lavando", "Lavando"]].map(([k, v]) =>
+      '<button class="chip" data-filtro-so="' + k + '" aria-pressed="' + (estado.filtroSo === k ? "true" : "false") + '">' + v + "</button>").join("") + "</div>";
+
+  h += lista.length ? htmlGrade(lista) : '<div class="vazio">' + svg("info") + "<h3>Nada neste filtro</h3><p>Troque o filtro acima ou cadastre uma peça desta categoria.</p></div>";
+  h += '<div class="secao" style="margin-top:22px"><button class="btn claro" data-nova="1">' + svg("mais") + "Cadastrar peça</button></div>";
+  return h + "</div>";
+}
+
+/* ---------- Tela: Montar ---------- */
+function telaMontar() {
+  const ctx = contextoAtual();
+  let h = '<div class="tela">';
+  h += '<header class="topo"><div class="titulo"><span class="sobre">Montar</span><h1>Para onde você vai?</h1>' +
+    "<p>Escolha a ocasião e o clima. As combinações saem das suas peças.</p></div></header>";
+
+  h += '<div class="secao"><h2>Ocasião</h2><div class="opcoes">' +
+    OCASIOES.map((o) => '<button data-set-ocasiao="' + o.id + '" aria-pressed="' + (ctx.ocasiao === o.id ? "true" : "false") + '">' + esc(o.nome) + "</button>").join("") +
+    "</div></div>";
+  h += '<div class="secao"><h2>Clima de hoje</h2><div class="escala">' +
+    CLIMAS.map((c) => '<button data-set-clima="' + c.id + '" aria-pressed="' + (ctx.clima === c.id ? "true" : "false") + '">' +
+      "<b>" + esc(c.nome) + "</b><small>" + esc(c.desc) + "</small></button>").join("") +
+    '</div><p class="dica" style="color:var(--suave);font-size:12.5px;margin-top:9px">O app não consulta previsão do tempo: você informa, ele responde na hora e sem internet.</p></div>';
+
+  if (estado.fixoAtual) {
+    h += '<div class="secao"><div class="cartao pad" style="display:flex;gap:12px;align-items:center">' +
+      '<div style="flex:1"><small style="color:var(--suave);font-size:12px;letter-spacing:.1em;text-transform:uppercase">Usando obrigatoriamente</small>' +
+      '<b style="display:block;font-size:15px;margin-top:3px">' + esc(estado.fixoAtual.nome) + "</b></div>" +
+      '<button class="btn claro p" data-limpar-fixo="1">' + svg("fechar") + "Tirar</button></div></div>";
+  }
+  h += '<div class="secao"><button class="btn" data-montar="1">' + svg("varinha") + "Montar looks</button></div>";
+
+  if (estado.montados && estado.montados.length) {
+    h += '<div class="secao"><h2>' + plural(estado.montados.length, "sugestão", "sugestões") +
+      " para " + esc(OCpor[ctx.ocasiao].nome.toLowerCase()) + '<button data-montar="1">Gerar de novo</button></h2>';
+    estado.montados.forEach((l, i) => { h += '<div style="margin-bottom:14px">' + htmlLook(l, { ordem: i + 1 + "º" }) + "</div>"; });
+    h += "</div>";
+  } else if (estado.montouVazio) {
+    h += '<div class="secao"><div class="cartao pad"><div class="faixa">' + svg("aviso") + "<div>" + esc(estado.montouVazio) + "</div></div></div></div>";
+  }
+  return h + "</div>";
+}
+
+function montarAgora() {
+  const fixos = estado.fixoAtual ? { [estado.fixoAtual.slot]: estado.fixoAtual.id } : null;
+  const ctx = contextoAtual({ fixos: fixos });
+  const r = montarLooks(ctx, { limite: 6 });
+  estado.montouVazio = "";
+  if (r.fixoFora) {
+    estado.montados = [];
+    const fx = estado.pecas.find((p) => p.id === r.fixoFora);
+    const oc = OCpor[ctx.ocasiao], cl = CLIMApor[ctx.clima];
+    let razao = "não passa pelos filtros desta busca";
+    if (fx && !disponivel(fx)) razao = "está marcada como " + (fx.lavando ? "lavando" : "indisponível");
+    else if (fx && climaImpossivel(fx, ctx.clima)) razao = "não está marcada para usar com clima " + cl.nome.toLowerCase();
+    else if (fx && oc.semBermuda && fx.categoria === "bermuda") razao = "é bermuda, e " + oc.nome.toLowerCase() + " pede parte de baixo mais formal";
+    else if (fx && oc.fechado && fx.categoria === "sandalia") razao = oc.nome.toLowerCase() + " pede calçado fechado";
+    else if (fx && ctx.clima === "calor" && CATpor[fx.categoria].slot === "camada") razao = "é camada, e no calor o app não sugere camadas";
+    estado.montouVazio = "“" + (fx ? fx.nome : "A peça escolhida") + "” " + razao +
+      ", então nenhum look pode usá-la agora. Troque a ocasião, o clima, ou toque em Tirar acima.";
+    render();
+    return;
+  }
+  if (r.faltando.length) {
+    estado.montados = [];
+    estado.montouVazio = "Para esta ocasião faltam peças de: " + r.faltando.join(", ") +
+      ". Cadastre pelo menos uma de cada e volte aqui.";
+  } else if (!r.looks.length) {
+    estado.montados = [];
+    estado.montouVazio = "Nenhuma combinação deste armário alcançou a nota mínima para " +
+      OCpor[ctx.ocasiao].nome.toLowerCase() + " com clima " + CLIMApor[ctx.clima].nome.toLowerCase() +
+      ". Costuma faltar um calçado no nível da ocasião.";
+  } else {
+    estado.montados = r.looks;
+  }
+  render();
+  if (estado.montados.length) torrada(plural(estado.montados.length, "look montado", "looks montados"));
+}
+
+/* ---------- Tela: Salvos ---------- */
+function telaSalvos() {
+  const favs = estado.looks.filter((l) => l.favorito);
+  const hist = estado.looks.filter((l) => (l.usos || []).length).sort((a, b) => (b.usos[b.usos.length - 1] || "").localeCompare(a.usos[a.usos.length - 1] || ""));
+  const aba = estado.abaSalvos || "favoritos";
+  let h = '<div class="tela">';
+  h += '<header class="topo"><div class="titulo"><span class="sobre">Guardados</span><h1>Looks salvos</h1>' +
+    "<p>" + plural(favs.length, "favorito", "favoritos") + " · " + plural(hist.length, "look usado", "looks usados") + "</p></div></header>";
+  h += '<div class="chips" style="margin-bottom:16px">' +
+    [["favoritos", "Favoritos"], ["historico", "Histórico de uso"]].map(([k, v]) =>
+      '<button class="chip" data-aba="' + k + '" aria-pressed="' + (aba === k ? "true" : "false") + '">' + v + "</button>").join("") + "</div>";
+
+  const lista = aba === "favoritos" ? favs : hist;
+  if (!lista.length) {
+    h += '<div class="vazio">' + svg(aba === "favoritos" ? "coracao" : "calendario") +
+      "<h3>" + (aba === "favoritos" ? "Nada salvo ainda" : "Sem histórico ainda") + "</h3>" +
+      "<p>" + (aba === "favoritos"
+        ? "Quando um look te agradar, toque em <b>Salvar</b>. Ele fica aqui com as peças e a explicação."
+        : "Toque em <b>Usei hoje</b> num look. O app passa a evitar repetir as mesmas peças nos próximos dias.") + "</p>" +
+      '<button class="btn" data-tela="montar" style="max-width:260px;margin:0 auto">' + svg("varinha") + "Montar um look</button></div></div>";
+    return h;
+  }
+
+  h += '<div class="secao">';
+  lista.forEach((salvo) => {
+    const look = hidratar(salvo);
+    if (!look) return;
+    const ult = (salvo.usos || []).length ? "Usado " + plural((salvo.usos || []).length, "vez", "vezes") + " · última em " + fmtData(salvo.usos[salvo.usos.length - 1]) : "Nunca registrado como usado";
+    h += '<div style="margin-bottom:14px">' + htmlLook(look, { titulo: OCpor[salvo.ocasiao].nome + " · " + fmtData(salvo.criadoEm), porque: false, trocar: false }) +
+      '<div class="cartao pad" style="margin-top:-1px;border-radius:0 0 var(--raio) var(--raio);border-top:0;display:flex;gap:10px;align-items:center;justify-content:space-between">' +
+      '<small style="color:var(--suave);font-size:12.5px">' + esc(ult) + "</small>" +
+      '<button class="btn p claro" data-apagar-look="' + salvo.id + '">' + svg("lixo") + "Remover</button></div></div>";
+  });
+  h += "</div>";
+  return h + "</div>";
+}
+const fmtData = (iso) => {
+  if (!iso) return "—";
+  const d = new Date(String(iso).slice(0, 10) + "T12:00:00");
+  return isNaN(d) ? "—" : d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+};
+
+/* ---------- Tela: Ajustes ---------- */
+function telaAjustes() {
+  const c = estado.config;
+  let h = '<div class="tela">';
+  h += '<header class="topo"><div class="titulo"><span class="sobre">Ajustes</span><h1>Preferências</h1>' +
+    "<p>Seus dados ficam só neste aparelho.</p></div></header>";
+
+  h += '<div class="secao"><h2>Recomendações</h2><div class="cartao pad" style="padding-top:4px;padding-bottom:4px">' +
+    troca("evitarRepetir", "Evitar repetir peças", "Dá preferência a peças que você não usou nos últimos dias.", c.evitarRepetir) +
+    troca("comAcessorios", "Sugerir acessórios", "Cinto que conversa com o sapato, relógio e óculos.", c.comAcessorios) +
+    "</div></div>";
+
+  h += '<div class="secao"><h2>Backup</h2><div class="cartao pad">' +
+    '<p style="margin:0 0 14px;color:var(--tinta2);font-size:14px">O arquivo de backup inclui as peças, as fotos e os looks salvos. Guarde-o em outro lugar (e-mail, nuvem, computador).</p>' +
+    '<div class="linha-btn"><button class="btn claro" data-exportar="1">' + svg("baixar") + "Exportar</button>" +
+    '<button class="btn claro" data-importar="1">' + svg("subir") + "Importar</button></div></div>";
+  h += '<div class="cartao pad" style="margin-top:12px"><div class="faixa">' + svg("aviso") +
+    "<div><b>Importante:</b> se você limpar os dados do navegador, desinstalar o app ou trocar de aparelho, as peças cadastradas são perdidas. " +
+    "Exporte um backup de vez em quando — não existe cópia em servidor nenhum.</div></div>" +
+    '<button class="btn claro p" data-persistir="1" style="width:100%;margin-top:12px">' + svg("check") + "Pedir ao navegador para não apagar</button></div></div>";
+
+  h += '<div class="secao"><h2>Como o app decide</h2><div class="cartao pad">' +
+    '<p style="margin:0 0 12px;color:var(--tinta2);font-size:14px">Não existe inteligência artificial aqui, nem consulta a nenhum servidor. ' +
+    "Cada combinação recebe uma nota de 0 a 100 somando cinco critérios:</p>" +
+    '<ul style="margin:0;padding-left:18px;color:var(--tinta2);font-size:14px;line-height:1.7">' +
+    "<li><b>Cores (34%)</b> — compatibilidade entre as cores que você cadastrou, com pares clássicos e atritos conhecidos.</li>" +
+    "<li><b>Ocasião (30%)</b> — distância entre a formalidade do look e a formalidade típica da ocasião.</li>" +
+    "<li><b>Coerência (14%)</b> — penaliza peças de níveis muito distantes no mesmo look.</li>" +
+    "<li><b>Clima (16%)</b> — estações marcadas em cada peça e necessidade de camada.</li>" +
+    "<li><b>Novidade (6%)</b> — evita repetir o que você usou nos últimos dias.</li></ul>" +
+    '<p style="margin:12px 0 0;color:var(--suave);font-size:13px">Peças marcadas como lavando ou indisponíveis ficam fora. ' +
+    "Sandália não entra em ocasiões de calçado fechado, e bermuda não entra em trabalho, jantar ou evento.</p></div></div>";
+
+  h += '<div class="secao"><h2>Instalar</h2><div class="cartao pad">' +
+    '<p style="margin:0 0 12px;color:var(--tinta2);font-size:14px">No iPhone: botão Compartilhar do Safari → <b>Adicionar à Tela de Início</b>. ' +
+    "No Android ou no PC: menu do navegador → <b>Instalar aplicativo</b>. Depois de instalado funciona sem internet.</p>" +
+    '<button class="btn claro" data-instalar="1" id="btn-instalar" hidden>' + svg("baixar") + "Instalar agora</button></div></div>";
+
+  h += '<div class="secao"><h2>Zona de risco</h2><div class="cartao pad">' +
+    '<button class="btn perigo" data-apagar-tudo="1">' + svg("lixo") + "Apagar todas as peças e looks</button></div></div>";
+  h += '<p class="nota-rodape">ARMÁRIO · guarda-roupa inteligente · versão 1.0 · funciona offline, sem conta e sem servidor.</p>';
+  return h + "</div>";
+}
+function troca(chave, titulo, desc, ligado) {
+  return '<div class="troca"><div class="rotulo"><b>' + esc(titulo) + "</b><small>" + esc(desc) + "</small></div>" +
+    '<button class="pino" data-troca="' + chave + '" aria-pressed="' + (ligado ? "true" : "false") + '" aria-label="' + esc(titulo) + '"></button></div>';
+}
+
+/* ---------- roteador ---------- */
+function render() {
+  const telas = { inicio: telaInicio, pecas: telaPecas, montar: telaMontar, salvos: telaSalvos, ajustes: telaAjustes };
+  palco.innerHTML = (telas[estado.tela] || telaInicio)();
+  document.querySelectorAll("#nav button").forEach((b) => {
+    if (b.dataset.tela === estado.tela) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current");
+  });
+  if (estado.tela === "ajustes" && promessaInstalar) { const b = $("#btn-instalar"); if (b) b.hidden = false; }
+}
+function irPara(tela) {
+  estado.tela = tela;
+  render();
+  window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+}
+
+/* =========================================================================
+   8. GAVETA: cadastro, detalhe da peça e troca de vaga
+   ========================================================================= */
+let gavetaAtual = null;
+let form = null;
+let pegarFoto = null;
+
+function abrirGaveta(ctx) {
+  gavetaAtual = ctx;
+  renderGaveta();
+  $("#cortina").classList.add("aberta");
+  $("#gaveta").classList.add("aberta");
+  $("#gaveta").setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  if (!history.state || !history.state.gaveta) history.pushState({ gaveta: true }, "");
+}
+function fecharGaveta(semVoltar) {
+  gavetaAtual = null; form = null;
+  $("#cortina").classList.remove("aberta");
+  $("#gaveta").classList.remove("aberta");
+  $("#gaveta").setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+  if (!semVoltar && history.state && history.state.gaveta) history.back();
+}
+function renderGaveta(manterRolagem) {
+  if (!gavetaAtual) return;
+  const corpo = $("#g-corpo"), pe = $("#g-pe");
+  const topo = manterRolagem ? corpo.scrollTop : 0;
+  $("#g-titulo").textContent = gavetaAtual.titulo;
+  corpo.innerHTML = gavetaAtual.corpo();
+  const p = gavetaAtual.pe ? gavetaAtual.pe() : "";
+  pe.innerHTML = p; pe.hidden = !p;
+  corpo.scrollTop = topo;
+}
+
+/* ---------- cadastro / edição de peça ---------- */
+function novaPeca(categoria) {
+  const cat = categoria || "camisa";
+  form = {
+    id: null, nome: "", categoria: cat, cor: "branco", padrao: "liso", tecido: "algodao",
+    formalidade: sugereFormalidade(cat, "algodao"), estacoes: ["ameno", "calor"],
+    favorita: false, lavando: false, disponivel: true, foto: null, mini: null,
+    tocouForm: false, tocouEstacoes: false, tocouNome: false
+  };
+  abrirGaveta({ titulo: "Nova peça", corpo: htmlForm, pe: peForm });
+}
+function editarPeca(p) {
+  form = Object.assign({}, p, { tocouForm: true, tocouEstacoes: true, tocouNome: true });
+  form.estacoes = (p.estacoes || ["ameno"]).slice();
+  abrirGaveta({ titulo: "Editar peça", corpo: htmlForm, pe: peForm });
+}
+const sugereFormalidade = (cat, tec) => clamp(Math.round(CATpor[cat].form + (TECpor[tec] ? TECpor[tec].mod : 0)), 1, 5);
+function nomeAutomatico(f) {
+  const cat = CATpor[f.categoria], cor = CORpor[f.cor];
+  if (!cor) return cat.nome;
+  // a cor concorda com o gênero da peça: "calça branca", "sapato branco"
+  const nome = cat.g === "f" && cor.f ? cor.f : cor.nome;
+  return cat.nome + " " + nome.toLowerCase();
+}
+
+function htmlForm() {
+  const f = form;
+  const u = f.mini || f.foto ? URL.createObjectURL(f.mini || f.foto) : null;
+  if (htmlForm.url) URL.revokeObjectURL(htmlForm.url);
+  htmlForm.url = u;
+
+  let h = "";
+  h += '<div class="campo"><label>Foto (opcional)</label><div class="foto-escolha">' +
+    '<div class="foto-previa">' + (u ? '<img src="' + u + '" alt="">' : svg("imagem")) + "</div>" +
+    '<div class="lados">' +
+    '<button class="btn claro p" data-foto="1" style="width:100%">' + svg("camera") + (u ? "Trocar foto" : "Tirar ou escolher") + "</button>" +
+    (u ? '<button class="btn claro p" data-foto-fora="1" style="width:100%">' + svg("fechar") + "Remover foto</button>" : "") +
+    '<p class="dica" style="margin:0">Dá para cadastrar sem foto: o app usa a cor e os dados da peça.</p>' +
+    "</div></div></div>";
+
+  h += '<div class="campo"><label>Nome</label>' +
+    '<input class="entrada" id="f-nome" placeholder="' + esc(nomeAutomatico(f)) + '" value="' + esc(f.nome) + '" maxlength="40">' +
+    '<p class="dica">Em branco, o app usa “' + esc(nomeAutomatico(f)) + "”.</p></div>";
+
+  h += '<div class="campo"><label>Categoria</label><select class="entrada" id="f-cat">' +
+    SLOTS.concat([{ id: "acessorio", nome: "Acessórios" }]).map((s) =>
+      '<optgroup label="' + esc(s.nome) + '">' + CATEGORIAS.filter((c) => c.slot === s.id).map((c) =>
+        '<option value="' + c.id + '"' + (f.categoria === c.id ? " selected" : "") + ">" + esc(c.nome) + "</option>").join("") + "</optgroup>").join("") +
+    "</select></div>";
+
+  h += '<div class="campo"><label>Cor principal</label><div class="cores">' +
+    CORES.map((c) => '<button data-cor="' + c.id + '" aria-pressed="' + (f.cor === c.id ? "true" : "false") + '">' +
+      '<i style="background:' + c.hex + '"></i>' + esc(c.nome) + "</button>").join("") + "</div></div>";
+
+  h += '<div class="campo"><label>Padrão</label><div class="opcoes">' +
+    PADROES.map((p) => '<button data-padrao="' + p.id + '" aria-pressed="' + (f.padrao === p.id ? "true" : "false") + '">' + esc(p.nome) + "</button>").join("") +
+    "</div></div>";
+
+  h += '<div class="campo"><label>Tecido</label><select class="entrada" id="f-tecido">' +
+    TECIDOS.map((t) => '<option value="' + t.id + '"' + (f.tecido === t.id ? " selected" : "") + ">" + esc(t.nome) + "</option>").join("") +
+    "</select></div>";
+
+  h += '<div class="campo"><label>Formalidade</label><div class="escala">' +
+    [1, 2, 3, 4, 5].map((n) => '<button data-form="' + n + '" aria-pressed="' + (f.formalidade === n ? "true" : "false") + '">' +
+      "<b>" + n + "</b><small>" + esc(NIVEIS[n].split(" ")[0]) + "</small></button>").join("") +
+    '</div><p class="dica">' + esc(NIVEIS[f.formalidade]) + ". Sugerido pela categoria e pelo tecido — ajuste se a sua peça for diferente.</p></div>";
+
+  h += '<div class="campo"><label>Usa em qual clima</label><div class="opcoes">' +
+    CLIMAS.map((c) => '<button data-estacao="' + c.id + '" aria-pressed="' + (f.estacoes.includes(c.id) ? "true" : "false") + '">' +
+      esc(c.nome) + " <span style=\"opacity:.6;font-size:12px\">" + esc(c.desc) + "</span></button>").join("") +
+    '</div><p class="dica">Pode marcar mais de um.</p></div>';
+
+  h += '<div class="campo"><label>Situação</label><div class="cartao pad" style="padding-top:2px;padding-bottom:2px">' +
+    troca("f-favorita", "Peça favorita", "Entra com leve preferência nas sugestões.", f.favorita) +
+    troca("f-lavando", "Está lavando", "Sai das sugestões até você desmarcar.", f.lavando) +
+    troca("f-disponivel", "Disponível", "Desmarque para peças guardadas ou emprestadas.", f.disponivel) +
+    "</div></div>";
+  return h;
+}
+function peForm() {
+  return '<div class="linha-btn">' +
+    (form.id ? '<button class="btn claro" data-excluir="' + form.id + '">' + svg("lixo") + "Excluir</button>" : "") +
+    '<button class="btn" data-salvar-peca="1">' + svg("check") + (form.id ? "Salvar" : "Cadastrar") + "</button></div>";
+}
+
+async function gravarFormulario() {
+  const f = form;
+  const nome = ($("#f-nome") && $("#f-nome").value.trim()) || nomeAutomatico(f);
+  if (!f.estacoes.length) { torrada("Marque pelo menos um clima"); return; }
+  const peca = {
+    id: f.id || id9(),
+    nome: nome.slice(0, 40),
+    categoria: f.categoria, cor: f.cor, padrao: f.padrao, tecido: f.tecido,
+    formalidade: f.formalidade, estacoes: f.estacoes.slice(),
+    favorita: !!f.favorita, lavando: !!f.lavando, disponivel: !!f.disponivel,
+    foto: f.foto || null, mini: f.mini || null,
+    criadaEm: f.criadaEm || new Date().toISOString(),
+    ultimoUso: f.ultimoUso || null, usos: f.usos || 0
+  };
+  await salvarPeca(peca);
+  fecharGaveta();
+  estado.montados = [];
+  render();
+  torrada(f.id ? "Peça atualizada" : "Peça cadastrada");
+}
+
+/* ---------- detalhe da peça ---------- */
+function verPeca(p) {
+  abrirGaveta({
+    titulo: p.nome,
+    corpo: () => {
+      const u = urlDaFoto(p, true);
+      const cor = CORpor[p.cor];
+      const emLooks = estado.looks.filter((l) => l.favorito && (l.chave || "").split(",").includes(p.id)).length;
+      let h = "";
+      if (u) h += '<div style="border-radius:var(--raio);overflow:hidden;border:1px solid var(--linha);margin-bottom:16px;aspect-ratio:4/3;background:var(--papel3)">' +
+        '<img src="' + u + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div>';
+      h += '<div class="cartao" style="margin-bottom:16px">' +
+        ficha("Categoria", CATpor[p.categoria].nome + " · " + SLOTpor[CATpor[p.categoria].slot === "acessorio" ? "topo" : CATpor[p.categoria].slot].nome.toLowerCase()) +
+        ficha("Cor", (cor ? cor.nome : "—") + (p.padrao !== "liso" ? " · " + (PADROES.find((x) => x.id === p.padrao) || {}).nome : "")) +
+        ficha("Tecido", (TECpor[p.tecido] || {}).nome || "—") +
+        ficha("Formalidade", p.formalidade + " de 5 — " + NIVEIS[p.formalidade]) +
+        ficha("Clima", (p.estacoes || []).map((e) => CLIMApor[e].nome).join(", ") || "—") +
+        ficha("Situação", p.lavando ? "Lavando" : p.disponivel === false ? "Indisponível" : "Disponível") +
+        ficha("Uso registrado", (p.usos || 0) ? plural(p.usos, "vez", "vezes") + " · última em " + fmtData(p.ultimoUso) : "Nenhum") +
+        ficha("Em looks salvos", emLooks ? plural(emLooks, "look", "looks") : "Nenhum") +
+        "</div>";
+      h += '<div class="linha-btn" style="margin-bottom:10px">' +
+        '<button class="btn claro p" data-alt-fav="' + p.id + '">' + svg("estrela") + (p.favorita ? "Tirar favorita" : "Favoritar") + "</button>" +
+        '<button class="btn claro p" data-alt-lava="' + p.id + '">' + svg("gota") + (p.lavando ? "Saiu da lavagem" : "Está lavando") + "</button></div>";
+      h += '<button class="btn claro" data-looks-com="' + p.id + '" style="margin-bottom:10px">' + svg("varinha") + "Montar looks com esta peça</button>";
+      return h;
+    },
+    pe: () => '<div class="linha-btn"><button class="btn claro" data-editar="' + p.id + '">' + svg("lapis") + "Editar</button>" +
+      '<button class="btn" data-looks-com="' + p.id + '">' + svg("varinha") + "Usar agora</button></div>"
+  });
+}
+function ficha(rot, val) {
+  return '<div style="display:flex;gap:14px;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--linha)">' +
+    '<small style="color:var(--suave);font-size:13px">' + esc(rot) + "</small>" +
+    '<b style="font-size:13.5px;font-weight:550;text-align:right">' + esc(val) + "</b></div>";
+}
+
+/* ---------- troca de uma vaga ---------- */
+function abrirTroca(look, slot) {
+  const ctx = contextoAtual({ ocasiao: look.ocasiao, clima: look.clima });
+  const alts = alternativasDeVaga(look, slot, ctx);
+  abrirGaveta({
+    titulo: "Trocar " + SLOTpor[slot].nome.toLowerCase(),
+    corpo: () => {
+      if (!alts.length) return '<div class="vazio">' + svg("info") + "<h3>Sem alternativas</h3>" +
+        "<p>Não há outra peça desta vaga disponível para esta ocasião e clima. Cadastre mais peças ou tire alguma da lavagem.</p></div>";
+      const atual = look.pecas[slot];
+      let h = '<p style="color:var(--tinta2);font-size:14px;margin:0 0 14px">O resto do look fica como está. A nota mostra como ficaria o look inteiro com cada troca.</p>';
+      h += '<div class="cartao">';
+      alts.forEach((a) => {
+        const p = a.peca;
+        const ehAtual = (p && atual && p.id === atual.id) || (!p && !atual);
+        const u = p ? urlDaFoto(p, false) : null;
+        const cor = p ? CORpor[p.cor] : null;
+        h += '<button data-aplicar="' + (p ? p.id : "") + '" data-aplicar-slot="' + slot + '" data-aplicar-uid="' + look.uid + '"' +
+          ' style="display:flex;width:100%;gap:12px;align-items:center;padding:12px 14px;text-align:left;border-bottom:1px solid var(--linha);background:' + (ehAtual ? "var(--oliva-fundo)" : "var(--papel2)") + '">' +
+          '<span style="width:52px;height:66px;border-radius:10px;overflow:hidden;background:var(--papel3);display:grid;place-items:center;flex:none">' +
+          (u ? '<img src="' + u + '" alt="" style="width:100%;height:100%;object-fit:cover">'
+             : p ? '<i class="amostra-cor" style="background:' + (cor ? cor.hex : "#ccc") + '"></i>' : svg("fechar")) + "</span>" +
+          '<span style="flex:1;min-width:0"><b style="display:block;font-size:14.5px;font-weight:550">' + (p ? esc(p.nome) : "Sem camada") + "</b>" +
+          '<small style="color:var(--suave);font-size:12.5px">' + (p ? esc(CATpor[p.categoria].nome + " · " + (CORpor[p.cor] || {}).nome) : "Tirar a camada do look") + "</small>" +
+          (ehAtual ? '<small style="display:block;color:var(--oliva);font-size:12px;font-weight:600">Em uso agora</small>' : "") + "</span>" +
+          '<span class="selo' + (a.av.nota >= 66 ? "" : " ") + '" style="background:' + (a.av.nota >= 66 ? "var(--oliva-fundo);color:var(--oliva)" : "var(--papel3);color:var(--tinta2)") + ';border:0">' + a.av.nota + "</span>" +
+          "</button>";
+      });
+      return h + "</div>";
+    }
+  });
+}
+function aplicarTroca(uid, slot, pecaId) {
+  const look = REG.get(uid);
+  if (!look) return;
+  const p = pecaId ? estado.pecas.find((x) => x.id === pecaId) : null;
+  if (pecaId && !p) return;
+  look.pecas[slot] = p;
+  if (!p && slot === "camada") delete look.pecas.camada;
+  const ctx = contextoAtual({ ocasiao: look.ocasiao, clima: look.clima });
+  look.av = avaliar(look.pecas, ctx);
+  const g = candidatas(ctx);
+  look.acessorios = ctx.comAcessorios ? acessoriosPara(look.pecas, g.acessorio, look.av, ctx) : [];
+  look.salvoId = null;
+  fecharGaveta();
+  render();
+  torrada("Trocado · nota " + look.av.nota);
+}
+
+/* =========================================================================
+   9. AÇÕES DO LOOK
+   ========================================================================= */
+const idsDoLook = (l) => ["topo", "baixo", "calcado", "camada"].map((s) => l.pecas[s] && l.pecas[s].id).filter(Boolean).sort().join(",");
+
+function lookDoDia() {
+  const ctx = contextoAtual();
+  const assinatura = hoje() + "|" + ctx.ocasiao + "|" + ctx.clima + "|" +
+    estado.pecas.map((p) => p.id + (disponivel(p) ? "1" : "0")).join("");
+  if (estado.chaveDia === assinatura && estado.lookDia) return { look: estado.lookDia, faltando: [] };
+  const r = montarLooks(ctx, { limite: 8 });
+  estado.chaveDia = assinatura;
+  estado.lookDia = r.looks.length ? r.looks[Math.floor(semente(assinatura) * r.looks.length)] : null;
+  estado.faltandoDia = r.faltando;
+  return { look: estado.lookDia, faltando: r.faltando };
+}
+
+function outroLook(uid) {
+  const look = REG.get(uid);
+  if (!look) return;
+  const ctx = contextoAtual({ ocasiao: look.ocasiao, clima: look.clima });
+  const r = montarLooks(ctx, { limite: 16 });
+  if (!r.looks.length) { torrada("Sem outra combinação disponível"); return; }
+  const atual = idsDoLook(look);
+  const naTela = (estado.montados || []).map(idsDoLook);
+  let novo = r.looks.find((l) => idsDoLook(l) !== atual && !naTela.includes(idsDoLook(l)));
+  if (!novo) novo = r.looks.find((l) => idsDoLook(l) !== atual);
+  if (!novo) { torrada("Este é o único look possível agora"); return; }
+  const i = (estado.montados || []).findIndex((l) => l.uid === uid);
+  if (i >= 0) estado.montados[i] = novo;
+  else if (estado.lookDia && estado.lookDia.uid === uid) estado.lookDia = novo;
+  render();
+  torrada("Outra combinação · nota " + novo.av.nota);
+}
+
+function registroDoLook(look) {
+  const chave = idsDoLook(look);
+  return estado.looks.find((l) => l.chave === chave && l.ocasiao === look.ocasiao);
+}
+function novoRegistro(look) {
+  const r = {
+    id: id9(),
+    chave: idsDoLook(look),
+    pecas: {
+      topo: look.pecas.topo.id, baixo: look.pecas.baixo.id, calcado: look.pecas.calcado.id,
+      camada: look.pecas.camada ? look.pecas.camada.id : null,
+      acessorios: (look.acessorios || []).map((a) => a.id)
+    },
+    ocasiao: look.ocasiao, clima: look.clima, nota: look.av.nota,
+    favorito: false, usos: [], criadoEm: new Date().toISOString()
+  };
+  estado.looks.unshift(r);
+  return r;
+}
+
+async function alternarSalvo(uid) {
+  const look = REG.get(uid);
+  if (!look) return;
+  let r = registroDoLook(look);
+  if (r && r.favorito) {
+    r.favorito = false;
+    if (!(r.usos || []).length) { await remover("looks", r.id); estado.looks = estado.looks.filter((l) => l.id !== r.id); }
+    else await gravar("looks", r);
+    torrada("Removido dos salvos");
+  } else {
+    if (!r) r = novoRegistro(look);
+    r.favorito = true; r.nota = look.av.nota;
+    await gravar("looks", r);
+    torrada("Look salvo");
+  }
+  render();
+}
+
+async function marcarUso(uid) {
+  const look = REG.get(uid);
+  if (!look) return;
+  let r = registroDoLook(look) || novoRegistro(look);
+  r.usos = (r.usos || []).concat([hoje()]);
+  await gravar("looks", r);
+  for (const s of ["topo", "baixo", "calcado", "camada"]) {
+    const p = look.pecas[s];
+    if (!p) continue;
+    p.usos = (p.usos || 0) + 1;
+    p.ultimoUso = hoje();
+    await gravar("pecas", p);
+  }
+  estado.chaveDia = null;
+  render();
+  torrada("Uso registrado · as peças saem das sugestões por alguns dias");
+}
+
+/* ---------- cartão do look (imagem para guardar ou enviar) ---------- */
+async function cartaoDoLook(uid) {
+  const look = REG.get(uid);
+  if (!look) return;
+  torrada("Gerando cartão…");
+  const L = 1080, M = 72;
+  const slots = ["topo", "camada", "baixo", "calcado"].filter((s) => look.pecas[s]);
+  const col = slots.length === 4 ? 2 : slots.length;
+  const vao = 24;
+  const lado = (L - M * 2 - vao * (col - 1)) / col;
+  const y0 = 292;
+  const linhas = Math.ceil(slots.length / col);
+  const temAcessorios = !!(look.acessorios && look.acessorios.length);
+  // a altura acompanha o conteúdo: sem buraco branco quando o look tem 3 peças
+  const A = Math.round(y0 + linhas * lado + (linhas - 1) * vao + (temAcessorios ? 96 : 24) + 86);
+  const cv = document.createElement("canvas");
+  cv.width = L; cv.height = A;
+  const c = cv.getContext("2d");
+  c.fillStyle = "#F5F3EF"; c.fillRect(0, 0, L, A);
+  c.fillStyle = "#AC9271";
+  c.font = "600 26px -apple-system, Segoe UI, Roboto, sans-serif";
+  if ("letterSpacing" in c) c.letterSpacing = "6px";
+  c.fillText("ARMÁRIO", M, 112);
+  if ("letterSpacing" in c) c.letterSpacing = "0px";
+  const oc = OCpor[look.ocasiao] || OCpor.casual;
+  const cl = CLIMApor[look.clima] || CLIMApor.ameno;
+  c.fillStyle = "#20221F";
+  c.font = "400 62px Georgia, 'Times New Roman', serif";
+  c.fillText(oc.nome, M, 196);
+  c.fillStyle = "#5A5D55";
+  c.font = "400 28px -apple-system, Segoe UI, Roboto, sans-serif";
+  c.fillText(cl.nome + " · " + cl.desc + " · nota " + look.av.nota + "/100", M, 244);
+
+  for (let i = 0; i < slots.length; i++) {
+    const p = look.pecas[slots[i]];
+    const x = M + (i % col) * (lado + vao);
+    const y = y0 + Math.floor(i / col) * (lado + vao);
+    const cor = CORpor[p.cor];
+    c.fillStyle = "#EEEBE4";
+    c.fillRect(x, y, lado, lado);
+    if (p.foto || p.mini) {
+      try {
+        const bmp = await createImageBitmap(p.foto || p.mini);
+        const f = Math.max(lado / bmp.width, lado / bmp.height);
+        const w = bmp.width * f, hh = bmp.height * f;
+        c.save(); c.beginPath(); c.rect(x, y, lado, lado); c.clip();
+        c.drawImage(bmp, x + (lado - w) / 2, y + (lado - hh) / 2, w, hh);
+        c.restore();
+        if (bmp.close) bmp.close();
+      } catch (e) { /* sem foto utilizável: fica a cor */ }
+    } else if (cor) {
+      c.fillStyle = cor.hex;
+      c.beginPath(); c.arc(x + lado / 2, y + lado / 2 - 20, 86, 0, Math.PI * 2); c.fill();
+    }
+    const g = c.createLinearGradient(0, y + lado - 120, 0, y + lado);
+    g.addColorStop(0, "rgba(20,20,18,0)"); g.addColorStop(1, "rgba(20,20,18,.72)");
+    c.fillStyle = g; c.fillRect(x, y + lado - 120, lado, 120);
+    const cp = col >= 3 ? 23 : 27;
+    c.fillStyle = "#F7F6F2";
+    c.font = "600 " + cp + "px -apple-system, Segoe UI, Roboto, sans-serif";
+    c.fillText(corta(c, p.nome, lado - 36), x + 18, y + lado - 48);
+    c.fillStyle = "rgba(247,246,242,.78)";
+    c.font = "400 " + (cp - 4) + "px -apple-system, Segoe UI, Roboto, sans-serif";
+    c.fillText(SLOTpor[slots[i]].nome, x + 18, y + lado - 20);
+  }
+  let yPe = y0 + linhas * lado + (linhas - 1) * vao + 42;
+  if (temAcessorios) {
+    c.fillStyle = "#AC9271"; c.font = "600 22px -apple-system, Segoe UI, Roboto, sans-serif";
+    c.fillText("TOQUE FINAL", M, yPe + 10);
+    c.fillStyle = "#20221F"; c.font = "400 28px -apple-system, Segoe UI, Roboto, sans-serif";
+    c.fillText(corta(c, look.acessorios.map((a) => a.nome).join(" · "), L - M * 2), M, yPe + 46);
+  }
+  c.fillStyle = "#8D9088"; c.font = "400 22px -apple-system, Segoe UI, Roboto, sans-serif";
+  c.fillText("Montado com as peças do seu armário · " + fmtData(hoje()), M, A - 38);
+
+  const blob = await new Promise((ok) => cv.toBlob(ok, "image/png"));
+  if (!blob) { torrada("Não foi possível gerar o cartão"); return; }
+  const arq = new File([blob], "look-" + oc.id + "-" + hoje() + ".png", { type: "image/png" });
+  if (navigator.canShare && navigator.canShare({ files: [arq] })) {
+    try { await navigator.share({ files: [arq], title: "Look para " + oc.nome }); return; } catch (e) { /* cancelado: cai no download */ }
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = arq.name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  torrada("Cartão salvo nos downloads");
+}
+function corta(c, txt, max) {
+  let t = String(txt);
+  while (t.length > 3 && c.measureText(t).width > max) t = t.slice(0, -2);
+  return t === String(txt) ? t : t + "…";
+}
+
+/* =========================================================================
+   10. BACKUP (exportar / importar)
+   ========================================================================= */
+const blobParaTexto = (b) => new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(b); });
+function textoParaBlob(d) {
+  if (!d || typeof d !== "string" || d.indexOf(",") < 0) return null;
+  const [cab, dados] = d.split(",");
+  const tipo = (cab.match(/data:([^;]+)/) || [])[1] || "image/jpeg";
+  const bin = atob(dados);
+  const u = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  return new Blob([u], { type: tipo });
+}
+
+async function exportarBackup() {
+  torrada("Preparando backup…");
+  const pecas = [];
+  for (const p of estado.pecas) {
+    const copia = Object.assign({}, p);
+    copia.foto = p.foto ? await blobParaTexto(p.foto) : null;
+    copia.mini = p.mini ? await blobParaTexto(p.mini) : null;
+    pecas.push(copia);
+  }
+  const pacote = { app: "armario", versao: 1, criadoEm: new Date().toISOString(), pecas: pecas, looks: estado.looks, config: estado.config };
+  const blob = new Blob([JSON.stringify(pacote)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "armario-backup-" + hoje() + ".json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  torrada("Backup de " + plural(pecas.length, "peça", "peças") + " exportado");
+}
+
+async function importarBackup(arquivo) {
+  let p;
+  try { p = JSON.parse(await arquivo.text()); } catch (e) { torrada("Arquivo inválido"); return; }
+  if (!p || p.app !== "armario" || !Array.isArray(p.pecas)) { torrada("Este arquivo não é um backup do ARMÁRIO"); return; }
+  if (!confirm("Importar " + p.pecas.length + " peças e " + ((p.looks || []).length) + " looks?\n\nPeças com o mesmo identificador são substituídas; as demais são mantidas.")) return;
+  for (const raw of p.pecas) {
+    const peca = Object.assign({}, raw);
+    peca.foto = textoParaBlob(raw.foto);
+    peca.mini = textoParaBlob(raw.mini) || peca.foto;
+    if (!peca.id) peca.id = id9();
+    if (!CATpor[peca.categoria]) peca.categoria = "camiseta";
+    await gravar("pecas", peca);
+  }
+  for (const l of (p.looks || [])) if (l && l.id) await gravar("looks", l);
+  if (p.config) { estado.config = Object.assign({}, CONFIG_PADRAO, p.config, { chave: "geral" }); await salvarConfig(); }
+  urls.forEach((u) => URL.revokeObjectURL(u)); urls.clear();
+  await carregar();
+  estado.chaveDia = null; estado.montados = [];
+  render();
+  torrada("Backup importado");
+}
+
+async function apagarTudo() {
+  if (!confirm("Apagar TODAS as peças, fotos e looks deste aparelho?\n\nIsso não pode ser desfeito. Se quiser guardar, exporte um backup antes.")) return;
+  if (!confirm("Confirma? Tudo será apagado agora.")) return;
+  await Promise.all([esvaziar("pecas"), esvaziar("looks")]);
+  urls.forEach((u) => URL.revokeObjectURL(u)); urls.clear();
+  estado.pecas = []; estado.looks = []; estado.montados = []; estado.chaveDia = null; estado.lookDia = null;
+  render();
+  torrada("Tudo apagado");
+}
+
+/* =========================================================================
+   11. EVENTOS
+   ========================================================================= */
+let promessaInstalar = null;
+
+document.addEventListener("click", async (ev) => {
+  const alvo = (sel) => ev.target.closest(sel);
+  let b;
+
+  if ((b = alvo("[data-tela]"))) return irPara(b.dataset.tela);
+  if ((b = alvo("[data-nova]"))) return novaPeca();
+  if ((b = alvo("[data-peca]"))) {
+    const p = estado.pecas.find((x) => x.id === b.dataset.peca);
+    return p && verPeca(p);
+  }
+  if ((b = alvo("[data-filtro-cat]"))) { estado.filtroCat = b.dataset.filtroCat; return render(); }
+  if ((b = alvo("[data-filtro-so]"))) { estado.filtroSo = b.dataset.filtroSo; return render(); }
+  if ((b = alvo("[data-aba]"))) { estado.abaSalvos = b.dataset.aba; return render(); }
+
+  if ((b = alvo("[data-ocasiao]"))) {
+    estado.config.ocasiao = b.dataset.ocasiao;
+    await salvarConfig();
+    estado.tela = "montar";
+    montarAgora();
+    window.scrollTo(0, 0);
+    return;
+  }
+  if ((b = alvo("[data-set-ocasiao]"))) {
+    estado.config.ocasiao = b.dataset.setOcasiao;
+    estado.montados = []; estado.montouVazio = ""; estado.chaveDia = null;
+    await salvarConfig();
+    return render();
+  }
+  if ((b = alvo("[data-set-clima]"))) {
+    estado.config.clima = b.dataset.setClima;
+    estado.montados = []; estado.montouVazio = ""; estado.chaveDia = null;
+    await salvarConfig();
+    return render();
+  }
+  if (alvo("[data-montar]")) return montarAgora();
+  if (alvo("[data-limpar-fixo]")) { estado.fixoAtual = null; estado.montados = []; return render(); }
+
+  if ((b = alvo("[data-trocar]"))) {
+    const look = REG.get(b.dataset.trocar);
+    return look && abrirTroca(look, b.dataset.slot);
+  }
+  if ((b = alvo("[data-aplicar-uid]"))) return aplicarTroca(b.dataset.aplicarUid, b.dataset.aplicarSlot, b.dataset.aplicar);
+  if ((b = alvo("[data-outro]"))) return outroLook(b.dataset.outro);
+  if ((b = alvo("[data-salvar]"))) return alternarSalvo(b.dataset.salvar);
+  if ((b = alvo("[data-usei]"))) return marcarUso(b.dataset.usei);
+  if ((b = alvo("[data-cartao]"))) return cartaoDoLook(b.dataset.cartao);
+  if ((b = alvo("[data-apagar-look]"))) {
+    const r = estado.looks.find((l) => l.id === b.dataset.apagarLook);
+    if (!r) return;
+    await remover("looks", r.id);
+    estado.looks = estado.looks.filter((l) => l.id !== r.id);
+    render();
+    return torrada("Look removido");
+  }
+
+  // --- formulário de peça ---
+  if (alvo("[data-foto]")) { pegarFoto = true; return $("#arq-foto").click(); }
+  if (alvo("[data-foto-fora]")) { form.foto = null; form.mini = null; return renderGaveta(true); }
+  if ((b = alvo("[data-cor]"))) {
+    form.cor = b.dataset.cor;
+    if (!form.tocouNome && $("#f-nome")) form.nome = $("#f-nome").value.trim();
+    return renderGaveta(true);
+  }
+  if ((b = alvo("[data-padrao]"))) { form.padrao = b.dataset.padrao; return renderGaveta(true); }
+  if ((b = alvo("[data-form]"))) { form.formalidade = +b.dataset.form; form.tocouForm = true; return renderGaveta(true); }
+  if ((b = alvo("[data-estacao]"))) {
+    const e = b.dataset.estacao;
+    form.tocouEstacoes = true;
+    form.estacoes = form.estacoes.includes(e) ? form.estacoes.filter((x) => x !== e) : form.estacoes.concat([e]);
+    return renderGaveta(true);
+  }
+  if (alvo("[data-salvar-peca]")) { form.nome = ($("#f-nome") && $("#f-nome").value) || form.nome; return gravarFormulario(); }
+  if ((b = alvo("[data-excluir]"))) {
+    const p = estado.pecas.find((x) => x.id === b.dataset.excluir);
+    if (!p) return;
+    if (!confirm("Excluir “" + p.nome + "”?\n\nLooks salvos que usam esta peça também serão removidos.")) return;
+    await apagarPeca(p.id);
+    fecharGaveta();
+    estado.montados = []; estado.chaveDia = null;
+    render();
+    return torrada("Peça excluída");
+  }
+  if ((b = alvo("[data-editar]"))) {
+    const p = estado.pecas.find((x) => x.id === b.dataset.editar);
+    return p && editarPeca(p);
+  }
+  if ((b = alvo("[data-alt-fav]"))) {
+    const p = estado.pecas.find((x) => x.id === b.dataset.altFav);
+    if (!p) return;
+    p.favorita = !p.favorita;
+    await gravar("pecas", p);
+    renderGaveta(true); render();
+    return torrada(p.favorita ? "Marcada como favorita" : "Não é mais favorita");
+  }
+  if ((b = alvo("[data-alt-lava]"))) {
+    const p = estado.pecas.find((x) => x.id === b.dataset.altLava);
+    if (!p) return;
+    p.lavando = !p.lavando;
+    await gravar("pecas", p);
+    estado.montados = []; estado.chaveDia = null;
+    renderGaveta(true); render();
+    return torrada(p.lavando ? "Fora das sugestões até sair da lavagem" : "De volta às sugestões");
+  }
+  if ((b = alvo("[data-looks-com]"))) {
+    const p = estado.pecas.find((x) => x.id === b.dataset.looksCom);
+    if (!p) return;
+    const slot = CATpor[p.categoria].slot;
+    fecharGaveta();
+    if (slot === "acessorio") {
+      estado.config.comAcessorios = true;
+      await salvarConfig();
+      estado.fixoAtual = null;
+      torrada("Acessórios entram como toque final dos looks");
+    } else {
+      estado.fixoAtual = { slot: slot, id: p.id, nome: p.nome };
+    }
+    estado.tela = "montar";
+    montarAgora();
+    window.scrollTo(0, 0);
+    return;
+  }
+
+  // --- interruptores ---
+  if ((b = alvo("[data-troca]"))) {
+    const k = b.dataset.troca;
+    if (k.startsWith("f-")) {
+      const campo = k.slice(2);
+      form[campo] = !form[campo];
+      if (campo === "lavando" && form.lavando) form.disponivel = true;
+      return renderGaveta(true);
+    }
+    estado.config[k] = !estado.config[k];
+    await salvarConfig();
+    estado.montados = []; estado.chaveDia = null;
+    return render();
+  }
+
+  // --- ajustes ---
+  if (alvo("[data-exportar]")) return exportarBackup();
+  if (alvo("[data-importar]")) return $("#arq-backup").click();
+  if (alvo("[data-apagar-tudo]")) return apagarTudo();
+  if (alvo("[data-persistir]")) {
+    if (!navigator.storage || !navigator.storage.persist) return torrada("Este navegador não oferece esse controle");
+    const ok = await navigator.storage.persist();
+    return torrada(ok ? "O navegador vai preservar seus dados" : "O navegador não garantiu — mantenha backups");
+  }
+  if (alvo("[data-instalar]")) {
+    if (!promessaInstalar) return torrada("Use o menu do navegador para instalar");
+    promessaInstalar.prompt();
+    promessaInstalar = null;
+    return;
+  }
+
+  if (ev.target.closest("#g-fechar") || ev.target.id === "cortina") return fecharGaveta();
+});
+
+document.addEventListener("change", async (ev) => {
+  const t = ev.target;
+  if (t.id === "f-cat" && form) {
+    form.categoria = t.value;
+    if (!form.tocouForm) form.formalidade = sugereFormalidade(form.categoria, form.tecido);
+    return renderGaveta(true);
+  }
+  if (t.id === "f-tecido" && form) {
+    form.tecido = t.value;
+    if (!form.tocouForm) form.formalidade = sugereFormalidade(form.categoria, form.tecido);
+    if (!form.tocouEstacoes && TECpor[form.tecido]) form.estacoes = TECpor[form.tecido].clima.slice();
+    return renderGaveta(true);
+  }
+  if (t.id === "arq-foto" && t.files && t.files[0] && form) {
+    const arq = t.files[0];
+    t.value = "";
+    torrada("Preparando foto…");
+    try {
+      const r = await prepararFoto(arq);
+      form.foto = r.foto; form.mini = r.mini;
+      renderGaveta(true);
+      torrada("Foto pronta");
+    } catch (e) { torrada("Não foi possível ler esta imagem"); }
+    return;
+  }
+  if (t.id === "arq-backup" && t.files && t.files[0]) {
+    const arq = t.files[0];
+    t.value = "";
+    return importarBackup(arq);
+  }
+});
+document.addEventListener("input", (ev) => {
+  if (ev.target.id === "f-nome" && form) { form.nome = ev.target.value; form.tocouNome = true; }
+});
+window.addEventListener("popstate", () => { if (gavetaAtual) fecharGaveta(true); });
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  promessaInstalar = e;
+  const b = $("#btn-instalar");
+  if (b) b.hidden = false;
+});
+
+/* =========================================================================
+   12. INÍCIO
+   ========================================================================= */
+(async function iniciar() {
+  try {
+    await carregar();
+  } catch (e) {
+    palco.innerHTML = '<div class="vazio">' + svg("aviso") +
+      "<h3>Não foi possível abrir o armário</h3><p>Este navegador bloqueou o armazenamento local. " +
+      "Saia do modo privado (ou libere os dados do site) e abra de novo.</p></div>";
+    return;
+  }
+  render();
+  if ("serviceWorker" in navigator) {
+    const registrar = () => navigator.serviceWorker.register("sw.js").catch(() => {});
+    if (document.readyState === "complete") registrar();
+    else window.addEventListener("load", registrar, { once: true });
+  }
+})();
+</script>
+</body>
+</html>

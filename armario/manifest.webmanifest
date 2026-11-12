@@ -1,0 +1,19 @@
+{
+  "name": "ARMÁRIO — Guarda-Roupa Inteligente",
+  "short_name": "ARMÁRIO",
+  "description": "Descubra novas formas de se vestir com as roupas que você já tem.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F3EF",
+  "theme_color": "#F5F3EF",
+  "lang": "pt-BR",
+  "categories": ["lifestyle", "utilities"],
+  "icons": [
+    { "src": "marca/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "marca/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "marca/icone-mascara-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "marca/icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

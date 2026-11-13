@@ -1,0 +1,16 @@
+{
+  "name": "CAMPANHA X",
+  "short_name": "CAMPANHA X",
+  "description": "Monte a campanha de divulgação do seu infoproduto para o momento de agora.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0a10",
+  "theme_color": "#0b0a10",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "../icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

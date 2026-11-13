@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CAMPANHA X</title>
+<meta name="description" content="Monte a campanha do seu infoproduto: que tipo fazer agora, por quanto tempo, orgânico ou pago, quais vídeos gravar e com quais produtos.">
+<meta name="theme-color" content="#0b0a10">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<link rel="icon" href="../icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CAMPANHA X">
+<style>
+  :root {
+    color-scheme: dark;
+    --fundo: #0b0a10; --sup: #14121c; --sup2: #1c1927; --linha: rgba(255,255,255,.09); --linha2: rgba(255,255,255,.16);
+    --texto: #f4f1ea; --texto2: #c5c0b4; --apagado: #8d8898;
+    --acento: #f59e0b; --acento2: #f43f5e; --bom: #34d399; --alerta: #fbbf24; --ruim: #fb7185;
+    --grad: linear-gradient(120deg, #f59e0b 0%, #f43f5e 100%);
+    --raio: 20px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--fundo); color: var(--texto); overflow-x: hidden;
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(520px 340px at 0% -5%, rgba(245,158,11,.16), transparent 70%),
+                radial-gradient(520px 340px at 100% 0%, rgba(244,63,94,.13), transparent 70%); }
+  button, input, select { font: inherit; color: inherit; }
+  button { border: 0; background: none; cursor: pointer; }
+  [hidden] { display: none !important; }
+  .app { max-width: 620px; margin: 0 auto; padding: calc(env(safe-area-inset-top) + 18px) 16px 60px; }
+
+  header h1 { margin: 0; font-size: 26px; letter-spacing: -.5px; }
+  header h1 span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  header p { margin: 4px 0 0; color: var(--texto2); }
+
+  .cartao { background: var(--sup); border: 1px solid var(--linha); border-radius: var(--raio); padding: 18px; margin-top: 16px; }
+  .cartao h2 { margin: 0 0 4px; font-size: 17px; letter-spacing: -.2px; }
+  .cartao h2 small { color: var(--apagado); font-weight: 500; font-size: 13px; margin-left: 6px; }
+  .sub { color: var(--texto2); margin: 0 0 12px; font-size: 14px; }
+  .rotulo { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--apagado); font-weight: 650; }
+
+  /* leitura do momento */
+  .datas { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .data { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; background: var(--sup2); }
+  .data .dias { flex: none; min-width: 58px; text-align: center; font-weight: 700; font-size: 18px; line-height: 1.1; }
+  .data .dias small { display: block; font-size: 11px; font-weight: 500; color: var(--apagado); }
+  .data .txt { flex: 1; min-width: 0; }
+  .data .txt b { display: block; }
+  .data .txt span { color: var(--texto2); font-size: 13px; }
+  .data.forte { box-shadow: inset 0 0 0 1px rgba(245,158,11,.5); }
+  .data.forte .dias { color: var(--acento); }
+
+  /* formulário */
+  label.campo { display: block; margin-top: 14px; }
+  label.campo > span { display: block; font-size: 13px; color: var(--texto2); margin-bottom: 6px; }
+  .entrada { width: 100%; background: rgba(0,0,0,.3); border: 1px solid var(--linha); border-radius: 13px; padding: 12px 13px; outline: none; min-width: 0; }
+  .entrada:focus { border-color: var(--acento); }
+  select.entrada { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--apagado) 50%), linear-gradient(135deg, var(--apagado) 50%, transparent 50%);
+    background-position: calc(100% - 18px) 55%, calc(100% - 13px) 55%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 34px; }
+  .duas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .produto { display: grid; grid-template-columns: 1fr 104px 40px; gap: 8px; margin-top: 8px; }
+  .produto .tipo { grid-column: 1 / 3; }
+  .produto .tira { grid-row: 1 / 3; grid-column: 3; border-radius: 13px; background: var(--sup2); color: var(--apagado); font-size: 18px; }
+  .btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 15px; border-radius: 15px; font-weight: 700; font-size: 16px;
+    background: var(--grad); color: #1a0f05; margin-top: 18px; }
+  .btn:active { transform: scale(.985); }
+  .btn.claro { background: var(--sup2); color: var(--texto); font-weight: 600; font-size: 14px; padding: 12px; margin-top: 10px; }
+  .erro { color: var(--ruim); font-size: 14px; margin-top: 10px; }
+
+  /* resultado */
+  .veredito { background: linear-gradient(160deg, rgba(245,158,11,.14), rgba(244,63,94,.10)); border-color: rgba(245,158,11,.35); }
+  .veredito h2 { font-size: 22px; letter-spacing: -.4px; margin-top: 4px; }
+  .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .dado { background: rgba(0,0,0,.25); border-radius: 14px; padding: 11px 12px; min-width: 0; }
+  .dado b { display: block; font-size: 15px; margin-top: 2px; overflow-wrap: anywhere; }
+  .dado span { color: var(--texto2); font-size: 13px; }
+  ul.lista { margin: 8px 0 0; padding-left: 18px; color: var(--texto2); }
+  ul.lista li { margin: 4px 0; }
+  ul.lista b { color: var(--texto); }
+  .aviso { border-left: 3px solid var(--alerta); background: rgba(251,191,36,.08); border-radius: 0 12px 12px 0; padding: 10px 12px; margin-top: 10px; font-size: 14px; color: var(--texto2); }
+  .papel { display: flex; gap: 10px; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--linha); }
+  .papel:first-of-type { border-top: 0; }
+  .papel .etq { flex: none; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 3px 8px; border-radius: 99px; background: var(--sup2); color: var(--texto2); }
+  .papel .etq.heroi { background: var(--grad); color: #1a0f05; }
+  .papel div { min-width: 0; }
+  .papel div span { display: block; color: var(--texto2); font-size: 13px; }
+
+  .fase { border-top: 1px solid var(--linha); padding: 14px 0 4px; }
+  .fase:first-of-type { border-top: 0; padding-top: 4px; }
+  .fase .cab { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .fase .cab b { font-size: 16px; }
+  .fase .cab span { color: var(--acento); font-size: 13px; font-weight: 600; }
+  .fase p { margin: 4px 0 0; color: var(--texto2); font-size: 14px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { font-size: 12px; padding: 4px 9px; border-radius: 99px; background: var(--sup2); color: var(--texto2); }
+  .chip.verba { background: rgba(52,211,153,.12); color: var(--bom); }
+
+  .video { border-top: 1px solid var(--linha); padding: 12px 0; }
+  .video:first-of-type { border-top: 0; }
+  .video .cab { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
+  .video .cab b { font-size: 15px; }
+  .video .cab span { flex: none; font-weight: 700; color: var(--acento); }
+  .video p { margin: 4px 0 0; color: var(--texto2); font-size: 14px; }
+  .video .gancho { color: var(--texto); font-style: italic; }
+  .rodape { color: var(--apagado); font-size: 12px; margin-top: 18px; text-align: center; }
+  @media (max-width: 380px) { .grade, .duas { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>CAMPANHA <span>X</span></h1>
+    <p>O plano de divulgação do seu infoproduto, montado para o momento de agora.</p>
+  </header>
+
+  <section class="cartao" id="momento"></section>
+
+  <section class="cartao">
+    <h2>Seus dados</h2>
+    <p class="sub">Quanto mais perto da realidade, melhor o plano. Tudo fica só no seu aparelho.</p>
+
+    <div class="rotulo" style="margin-top:6px">Produtos</div>
+    <div id="produtos"></div>
+    <button class="btn claro" id="maisProduto" type="button">+ Adicionar produto</button>
+
+    <label class="campo"><span>Tema / nicho (ex.: inglês para viagem, confeitaria, finanças)</span>
+      <input class="entrada" id="nicho" maxlength="60" placeholder="Sobre o que você ensina"></label>
+
+    <div class="duas">
+      <label class="campo"><span>Seguidores (soma das redes)</span>
+        <input class="entrada" id="seguidores" type="number" inputmode="numeric" min="0" placeholder="0"></label>
+      <label class="campo"><span>Lista (e-mail + WhatsApp)</span>
+        <input class="entrada" id="lista" type="number" inputmode="numeric" min="0" placeholder="0"></label>
+    </div>
+
+    <div class="duas">
+      <label class="campo"><span>Verba de anúncios (R$ por mês)</span>
+        <input class="entrada" id="verba" type="number" inputmode="numeric" min="0" placeholder="0 = só orgânico"></label>
+      <label class="campo"><span>Tempo para gravar</span>
+        <select class="entrada" id="horas">
+          <option value="2">Até 2h por semana</option>
+          <option value="5" selected>Umas 5h por semana</option>
+          <option value="10">10h ou mais por semana</option>
+        </select></label>
+    </div>
+
+    <div class="duas">
+      <label class="campo"><span>Objetivo agora</span>
+        <select class="entrada" id="objetivo">
+          <option value="vender">Vender o que já tenho</option>
+          <option value="lancar">Lançar produto novo</option>
+          <option value="audiencia">Crescer audiência primeiro</option>
+        </select></label>
+      <label class="campo"><span>Você aparece em vídeo?</span>
+        <select class="entrada" id="camera">
+          <option value="sim">Sim, apareço</option>
+          <option value="nao">Prefiro não aparecer</option>
+        </select></label>
+    </div>
+
+    <label class="campo"><span>Começar em</span>
+      <input class="entrada" id="inicio" type="date"></label>
+
+    <div class="erro" id="erro" hidden></div>
+    <button class="btn" id="montar" type="button">Montar campanha</button>
+  </section>
+
+  <div id="resultado"></div>
+  <p class="rodape">As recomendações seguem regras práticas de mercado, não são garantia de resultado. Teste pequeno antes de aumentar a verba.</p>
+</div>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const reais = (v) => "R$ " + Math.round(v).toLocaleString("pt-BR");
+const DIA = 86400000;
+
+/* ---------- datas ---------- */
+const dia = (a, m, d) => new Date(a, m - 1, d, 12);           // meio-dia: sem susto de horário de verão
+const soma = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n, 12);
+const entre = (a, b) => Math.round((b - a) / DIA);
+const SEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+const fmt = (d) => SEM[d.getDay()] + " " + String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0");
+const iso = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+function pascoa(a) {
+  const g = a % 19, c = Math.floor(a / 100), h = (c - Math.floor(c / 4) - Math.floor((8 * c + 13) / 25) + 19 * g + 15) % 30;
+  const i = h - Math.floor(h / 28) * (1 - Math.floor(29 / (h + 1)) * Math.floor((21 - g) / 11));
+  const j = (a + Math.floor(a / 4) + i + 2 - c + Math.floor(c / 4)) % 7, l = i - j, m = 3 + Math.floor((l + 40) / 44);
+  return dia(a, m, l + 28 - 31 * Math.floor(m / 4));
+}
+const enesimo = (a, m, semana, n) => { const p = dia(a, m, 1); return soma(p, ((semana - p.getDay() + 7) % 7) + 7 * (n - 1)); };
+
+// forca: 3 = o mercado inteiro compra; 2 = boa desculpa para oferta; 1 = só gancho de conteúdo.
+// abre/fecha: quando a oferta abre e fecha, em dias a partir da data.
+function calendario(a) {
+  return [
+    { nome: "Ano Novo", data: dia(a, 1, 1), forca: 3, abre: -5, fecha: 10, angulo: "metas e recomeço: “este ano eu aprendo/resolvo isso”" },
+    { nome: "Carnaval", data: soma(pascoa(a), -47), forca: 1, abre: -3, fecha: 1, angulo: "“enquanto todo mundo para, você adianta”" },
+    { nome: "Dia do Consumidor", data: dia(a, 3, 15), forca: 2, abre: -2, fecha: 2, angulo: "a “Black Friday do primeiro semestre”: desconto ou bônus" },
+    { nome: "Dia das Mães", data: enesimo(a, 5, 0, 2), forca: 2, abre: -7, fecha: 0, angulo: "presente e renda extra para mães" },
+    { nome: "Dia dos Namorados", data: dia(a, 6, 12), forca: 1, abre: -5, fecha: 0, angulo: "presente a dois ou oferta “para você mesmo”" },
+    { nome: "Virada de semestre", data: dia(a, 7, 1), forca: 2, abre: -3, fecha: 7, angulo: "“ainda dá tempo de cumprir a meta do ano” + férias" },
+    { nome: "Dia dos Pais", data: enesimo(a, 8, 0, 2), forca: 1, abre: -7, fecha: 0, angulo: "presente para pais" },
+    { nome: "Dia do Cliente", data: dia(a, 9, 15), forca: 2, abre: -2, fecha: 2, angulo: "condição especial para quem já acompanha você" },
+    { nome: "Black Friday", data: soma(enesimo(a, 11, 4, 4), 1), forca: 3, abre: 0, fecha: 3, angulo: "a melhor condição do ano; vai até a Cyber Monday" },
+    { nome: "Natal", data: dia(a, 12, 25), forca: 2, abre: -12, fecha: -1, angulo: "13º salário na conta e presente que não precisa de entrega" },
+  ];
+}
+function proximas(hoje) {
+  const a = hoje.getFullYear();
+  return [...calendario(a), ...calendario(a + 1)]
+    .map((d) => ({ ...d, faltam: entre(hoje, d.data), abreEm: entre(hoje, soma(d.data, d.abre)), fim: soma(d.data, d.fecha) }))
+    .filter((d) => entre(hoje, d.fim) >= 1 && d.faltam <= 120)
+    .sort((x, y) => x.data - y.data);
+}
+// A data que vale ancorar a campanha: forte o bastante, com tempo para aquecer e sem estar longe demais.
+function ancora(hoje) {
+  return proximas(hoje)
+    .filter((d) => d.forca >= 2 && d.abreEm >= 3 && d.abreEm <= (d.forca === 3 ? 50 : 35))
+    .sort((x, y) => y.forca - x.forca || x.data - y.data)[0] || null;
+}
+function bolso(d) {
+  const n = d.getDate(), m = d.getMonth() + 1;
+  if (m === 11 && n >= 25 || m === 12 && n <= 20) return "13º salário caindo (1ª parcela até 30/11, 2ª até 20/12): o melhor bolso do ano.";
+  if (n <= 10) return "Começo do mês, salário na conta: bom momento para abrir vendas.";
+  if (n <= 19) return "Meio do mês, bolso mais apertado: use para aquecer e abra vendas perto do dia 20 ou do dia 5.";
+  return "Fim do mês: adiantamento do dia 20 e salário chegando. Bom para abrir ou fechar oferta.";
+}
+
+/* ---------- catálogo de vídeos ---------- */
+const V = {
+  gancho:  { nome: "Gancho rápido", dur: "15–30 s", tam: "Vertical 9:16 · 1080×1920", onde: "Reels, TikTok, Shorts", para: "alcançar gente nova", gancho: "O erro nº 1 de quem começa em {nicho}" },
+  dor:     { nome: "Dor e virada", dur: "30–45 s", tam: "Vertical 9:16 · 1080×1920", onde: "Reels, TikTok", para: "a pessoa se reconhecer no problema", gancho: "Se você já tentou {nicho} e travou, o problema não é você" },
+  aula:    { nome: "Mini-aula", dur: "60–90 s", tam: "Vertical 9:16 · 1080×1920", onde: "Reels, TikTok, Shorts", para: "mostrar que você sabe ensinar", gancho: "{nicho}: o passo a passo em 3 etapas que ninguém mostra" },
+  prova:   { nome: "Prova e bastidor", dur: "30–60 s", tam: "Vertical 9:16 ou feed 4:5 · 1080×1350", onde: "Reels, Stories, anúncio", para: "gerar confiança", gancho: "Olha o que mudou depois de aplicar isso (antes e depois)" },
+  objecao: { nome: "Quebra de objeção", dur: "20–40 s", tam: "Vertical 9:16 · 1080×1920", onde: "Stories e remarketing", para: "tirar a dúvida que trava a compra", gancho: "“Não tenho tempo” — veja por que isso não é o problema" },
+  oferta:  { nome: "Oferta direta", dur: "30–45 s", tam: "Vertical 9:16 + versão feed 4:5", onde: "Anúncio, Reels, Stories", para: "vender", gancho: "{produto} por {preco}: o que vem dentro e para quem é" },
+  urgencia:{ nome: "Última chamada", dur: "15–20 s", tam: "Vertical 9:16 · 1080×1920", onde: "Stories e remarketing", para: "fechar quem ficou em cima do muro", gancho: "Fecha hoje às 23h59 — depois volta ao preço normal" },
+  convite: { nome: "Convite", dur: "20–30 s", tam: "Vertical 9:16 · 1080×1920", onde: "Reels, Stories, anúncio", para: "levar para a aula, o grupo ou a conversa", gancho: "Vou mostrar ao vivo como fazer {nicho} do zero. Link na bio" },
+  vsl:     { nome: "Vídeo de vendas da página", dur: "", tam: "Horizontal 16:9 · 1920×1080 (ou 9:16 se a página for só para celular)", onde: "Página de vendas", para: "explicar a oferta inteira para quem clicou", gancho: "Promessa → para quem é → o que vem dentro → prova → preço → garantia" },
+  live:    { nome: "Aula ao vivo", dur: "45–60 min", tam: "Horizontal 16:9 (YouTube) ou vertical (Instagram)", onde: "YouTube ou Instagram ao vivo", para: "ensinar de verdade e abrir as vendas no final", gancho: "40 min de conteúdo + 15 min de oferta e perguntas" },
+  longo:   { nome: "Vídeo longo de conteúdo", dur: "8–12 min", tam: "Horizontal 16:9 · 1920×1080", onde: "YouTube", para: "ser encontrado por busca e aprofundar", gancho: "Guia completo: {nicho} para iniciantes" },
+};
+
+/* ---------- motor ---------- */
+const MODELOS = {
+  data:      "Oferta de data",
+  direto:    "Venda direta contínua",
+  relampago: "Lançamento relâmpago",
+  semente:   "Lançamento semente",
+  alto:      "Alto valor por conversa",
+  audiencia: "Crescimento com isca",
+};
+
+function montar(s) {
+  const hoje = s.inicio;
+  const prods = [...s.produtos].sort((a, b) => a.preco - b.preco);
+  const calor = s.lista + s.seguidores * 0.1;          // estimativa de gente realmente atenta a você
+  const pago = s.verba >= 600 ? "forte" : s.verba > 0 ? "leve" : "nao";
+  const avisos = [];
+
+  // carro-chefe: público frio e sem verba compra o mais barato; base quente aguenta o mais caro
+  let heroi;
+  if (s.objetivo === "audiencia" || (calor < 200 && s.verba < 600)) heroi = prods[0];
+  else heroi = [...prods].reverse().find((p) => p.preco <= 2000) || prods[prods.length - 1];
+  const papeis = prods.map((p) => {
+    if (p === heroi) return { p, etq: "Carro-chefe", heroi: true, txt: "É o produto que a campanha inteira vende." };
+    if (p.preco <= heroi.preco * 0.4) return { p, etq: "Complemento", txt: "Ofereça como adicional com um clique na hora do pagamento (order bump)." };
+    if (p.preco < heroi.preco) return { p, etq: "Entrada", txt: "Opção mais barata para quem disse “agora não” no último dia." };
+    return { p, etq: "Próximo passo", txt: "Ofereça só para quem comprou, logo após a compra ou 7 dias depois (upsell)." };
+  });
+
+  const anc = ancora(hoje);
+  let modelo;
+  if (s.objetivo === "audiencia") modelo = "audiencia";
+  else if (heroi.preco > 1000) modelo = "alto";
+  else if (s.objetivo === "lancar" && calor < 300 && heroi.preco > 100) modelo = "semente";
+  else if (anc) modelo = "data";
+  else if (heroi.preco <= 100) modelo = "direto";
+  else modelo = "relampago";
+
+  const vslDur = heroi.preco <= 100 ? "3–5 min" : heroi.preco <= 1000 ? "8–15 min" : "15–25 min";
+  let porque, fases;
+  const F = (nome, dias, objetivo, acoes, videos, verba, pagoTxt) => ({ nome, dias, objetivo, acoes, videos, verba, pagoTxt });
+
+  if (modelo === "data") {
+    const a = anc.abreEm, vip = Math.min(3, Math.max(1, Math.floor(a / 4))), aq = a - vip, aberta = Math.max(1, anc.fecha - anc.abre);
+    porque = `Faltam ${anc.faltam} dias para ${anc.nome === "Ano Novo" ? "o" : "a"} ${anc.nome}. Nessa data as pessoas já estão esperando oferta, então você gasta menos esforço para convencer. Ângulo: ${anc.angulo}.`;
+    fases = [
+      F("Aquecimento", aq, "Ser visto e fazer a pessoa sentir o problema, sem falar de preço.",
+        ["Publicar conteúdo todo dia útil", "Avisar que vem uma condição especial e abrir lista de espera (grupo de WhatsApp ou e-mail)", "Preparar página, pagamento e o vídeo de vendas"],
+        ["gancho", "dor", "aula", "prova"], 35, "Anúncio dos melhores vídeos para público novo, levando para a lista de espera."),
+      F("Lista VIP", vip, "Encher a lista de espera e criar expectativa.",
+        ["Prometer acesso antecipado ou bônus só para quem está na lista", "Contagem regressiva nos Stories", "Mostrar o que vem dentro do produto"],
+        ["convite", "prova", "objecao"], 15, "Anúncio do convite para quem assistiu aos vídeos do aquecimento."),
+      F("Oferta aberta", aberta, `Vender ${heroi.nome}.`,
+        ["Abrir primeiro para a lista VIP, algumas horas antes", "Mensagem na lista de manhã e à noite", "Responder todo comentário e direct no mesmo dia"],
+        ["oferta", "prova", "objecao"], 35, "Anúncio de oferta para quem visitou a página, entrou na lista ou interagiu nos últimos 30 dias."),
+      F("Última chamada", 1, "Fechar quem ficou em dúvida.",
+        ["Três avisos: manhã, 18h e 22h", "Mostrar compras e depoimentos chegando", "Encerrar de verdade no horário prometido"],
+        ["urgencia", "objecao"], 15, "Todo o resto da verba em remarketing para quem visitou a página e não comprou."),
+    ];
+  } else if (modelo === "direto") {
+    porque = `${heroi.nome} custa ${reais(heroi.preco)}: nesse preço a pessoa decide em minutos, não precisa de evento. O que funciona é vídeo curto levando direto para a página, rodando sem parar e trocando os vídeos fracos pelos fortes.`;
+    fases = [
+      F("Teste de vídeos", 7, "Descobrir quais vídeos fazem a pessoa clicar e comprar.",
+        ["Publicar vídeos com ganchos bem diferentes entre si", "Link da página na bio e nos Stories todo dia", "Anotar visualizações, cliques e vendas de cada vídeo"],
+        ["gancho", "dor", "oferta", "prova"], 25, "Dividir a verba igualmente entre 3 a 5 vídeos de oferta, mesmo público."),
+      F("Corte e ajuste", 7, "Parar o que não vende e melhorar a página.",
+        ["Pausar os vídeos sem venda", "Regravar o melhor vídeo com 3 começos diferentes", "Ajustar título e primeira dobra da página"],
+        ["oferta", "objecao", "prova"], 25, "Verba só nos 2 melhores vídeos e nas variações deles."),
+      F("Escala", 16, "Vender mais mantendo o custo por venda.",
+        ["Publicar variações do vídeo campeão", "Ativar o complemento no pagamento", "Pedir depoimento a cada comprador e transformar em vídeo"],
+        ["oferta", "prova", "gancho", "objecao"], 50, "Aumentar a verba do vencedor aos poucos (20% a cada 2 ou 3 dias) e ligar remarketing para quem visitou a página."),
+    ];
+  } else if (modelo === "relampago") {
+    // carrinho abre perto de dinheiro na conta (dia 20+ ou primeiros dias do mês)
+    let aq = 12;
+    for (const t of [12, 11, 13, 10, 14, 9, 15, 8, 16, 17, 18, 19, 20]) { const n = soma(hoje, t + 5).getDate(); if (n <= 7 || n >= 20) { aq = t; break; } }
+    porque = `${heroi.nome} custa ${reais(heroi.preco)}: a pessoa precisa confiar em você antes de pagar. Uma aula ao vivo gratuita entrega valor, prova que você sabe e abre as vendas com prazo curto. Ajustei o aquecimento para as vendas abrirem com dinheiro na conta do público.`;
+    fases = [
+      F("Aquecimento", aq, "Ser visto e virar referência no tema.",
+        ["Conteúdo todo dia útil", "Enquete e caixinha para descobrir as dúvidas reais", "Preparar a aula, a página e o pagamento"],
+        ["gancho", "dor", "aula", "prova"], 30, "Anúncio dos melhores vídeos para público novo."),
+      F("Convite para a aula", 4, "Colocar gente no grupo da aula.",
+        ["Abrir grupo de WhatsApp da aula", "Convite diário nos Stories e na lista", "Lembrete na véspera e 1h antes"],
+        ["convite", "aula", "objecao"], 35, "Anúncio do convite para quem interagiu e para público parecido com seus seguidores."),
+      F("Aula ao vivo", 1, "Ensinar de verdade e abrir as vendas no final.",
+        ["Aula no horário nobre (20h)", "Oferta com bônus para quem comprar até o fim da aula", "Enviar o link no grupo na hora"],
+        ["live"], 0, "Sem anúncio novo: só lembrete para quem se inscreveu."),
+      F("Carrinho aberto", 4, `Vender ${heroi.nome} com prazo.`,
+        ["Liberar a gravação da aula por tempo limitado", "Mensagens diárias: depoimento, dúvidas, bônus, último dia", "Atender direct e WhatsApp um a um"],
+        ["oferta", "prova", "objecao", "urgencia"], 35, "Remarketing para inscritos na aula e visitantes da página."),
+    ];
+  } else if (modelo === "semente") {
+    porque = `Produto novo e base ainda pequena: antes de gastar com produção e anúncio, venda para um primeiro grupo a preço de fundador. Você valida a ideia, ganha depoimentos e descobre as objeções reais para a campanha grande.`;
+    fases = [
+      F("Sondagem", 5, "Confirmar que o problema dói e ouvir como as pessoas falam dele.",
+        ["Caixinha e enquete sobre a maior dificuldade", "Conversar no direct com quem responder", "Anotar as frases que as pessoas usam"],
+        ["dor", "aula", "gancho"], 0, "Sem anúncio nesta fase."),
+      F("Oferta de fundador", 5, `Vender as primeiras vagas de ${heroi.nome}.`,
+        ["Anunciar turma de fundadores com preço menor e vagas limitadas", "Enviar a oferta por mensagem para cada pessoa que conversou", "Página simples ou só link de pagamento"],
+        ["oferta", "convite", "objecao"], 70, "Impulsionar o vídeo de oferta para seguidores e quem interagiu."),
+      F("Fechamento", 2, "Encerrar a turma.",
+        ["Avisar quantas vagas restam", "Última mensagem individual para os interessados"],
+        ["urgencia"], 30, "Remarketing para quem viu a oferta."),
+      F("Entrega e prova", 2, "Entregar bem e colher depoimentos.",
+        ["Receber os alunos pessoalmente", "Pedir relato em vídeo ou print na primeira vitória"],
+        ["prova"], 0, "Sem anúncio."),
+    ];
+  } else if (modelo === "alto") {
+    porque = `${heroi.nome} custa ${reais(heroi.preco)}: ninguém compra isso por impulso em uma página. O caminho é conteúdo que mostra autoridade, um convite para conversar e o fechamento feito pessoa a pessoa (WhatsApp ou chamada).` + (anc ? ` Use a ${anc.nome} (em ${anc.faltam} dias) como prazo para a condição especial.` : "");
+    fases = [
+      F("Autoridade", 10, "Mostrar resultado e método, não só dicas.",
+        ["Estudos de caso e bastidores de clientes", "Um conteúdo longo por semana", "Formulário de interesse pronto (3 a 5 perguntas)"],
+        ["prova", "aula", "dor", "longo"], 40, "Anúncio dos estudos de caso para um público bem definido."),
+      F("Convite para conversa", 10, "Gerar pedidos de conversa de gente com perfil.",
+        ["Convidar a preencher o formulário", "Responder em até 24h", "Recusar com educação quem não tem perfil"],
+        ["convite", "prova", "objecao"], 40, "Anúncio do convite para quem assistiu aos vídeos de autoridade."),
+      F("Conversas e fechamento", 10, `Fechar ${heroi.nome}.`,
+        ["Conversa de diagnóstico de 30 a 45 min", "Proposta com prazo de 48h", "Acompanhar quem pediu para pensar"],
+        ["prova", "objecao", "urgencia"], 20, "Remarketing com depoimentos para quem preencheu o formulário."),
+    ];
+  } else {
+    porque = `O objetivo agora é ter para quem vender. Trinta dias de conteúdo com foco em alcance, uma isca gratuita para transformar seguidor em contato e, no final, uma primeira oferta de ${heroi.nome} para pagar o esforço.`;
+    fases = [
+      F("Posicionamento", 7, "Deixar claro para quem você fala e o que resolve.",
+        ["Arrumar bio, destaque e link", "Publicar os 5 vídeos que resumem o seu método", "Criar a isca gratuita (checklist, aula curta ou modelo pronto)"],
+        ["dor", "aula", "gancho"], 20, "Impulsionar o melhor vídeo para público novo."),
+      F("Alcance", 14, "Ganhar seguidores certos.",
+        ["Um vídeo por dia útil, repetindo o formato que mais alcançou", "Comentar em perfis do nicho todo dia", "Uma parceria ou collab por semana"],
+        ["gancho", "aula", "dor", "prova"], 50, "Anúncio para ganhar seguidores e para a isca."),
+      F("Isca e primeira oferta", 9, "Transformar seguidor em contato e fazer as primeiras vendas.",
+        ["Divulgar a isca todo dia", "Sequência de 3 mensagens para quem baixou", `Oferecer ${heroi.nome} no fim da sequência`],
+        ["convite", "oferta", "objecao"], 30, "Anúncio da isca; remarketing da oferta para quem baixou."),
+    ];
+  }
+
+  // datas reais e quantidade de vídeos por fase
+  const porSemana = { 2: 3, 5: 5, 10: 8 }[s.horas] || 5;
+  let cursor = hoje;
+  const contagem = {};
+  fases = fases.filter((f) => f.dias > 0).map((f) => {
+    const de = cursor, ate = soma(cursor, f.dias - 1); cursor = soma(ate, 1);
+    const tipos = f.videos.filter((v) => !(v === "longo" && s.horas < 10));
+    const fixos = tipos.filter((v) => v === "live" || v === "longo");
+    const curtos = tipos.filter((v) => !fixos.includes(v));
+    const total = curtos.length ? Math.max(curtos.length, Math.round(porSemana * f.dias / 7)) : 0;
+    const q = {};
+    for (let i = 0; i < total; i++) { const v = curtos[i % curtos.length]; q[v] = (q[v] || 0) + 1; }
+    fixos.forEach((v) => { q[v] = v === "longo" ? Math.max(1, Math.round(f.dias / 7)) : 1; });
+    Object.entries(q).forEach(([v, n]) => { contagem[v] = (contagem[v] || 0) + n; });
+    return { ...f, de, ate, q };
+  });
+  const dias = entre(hoje, cursor);
+  const fim = soma(cursor, -1);
+  if (modelo !== "semente" && modelo !== "audiencia" && !(modelo === "alto")) contagem.vsl = 1;
+
+  // verba: proporcional à duração, repartida pelo peso de cada fase
+  const verbaTotal = Math.round(s.verba * dias / 30);
+  const pesoTotal = fases.reduce((t, f) => t + f.verba, 0) || 1;
+  fases.forEach((f) => { f.reais = pago === "nao" ? 0 : Math.round(verbaTotal * f.verba / pesoTotal); });
+
+  const canal = pago === "nao" ? "100% orgânico"
+    : pago === "leve" ? "Orgânico na frente, pago só de reforço"
+    : "Tráfego pago estruturado + orgânico de apoio";
+  const canalTxt = pago === "nao" ? "Sem verba, o alcance vem de volume e constância de vídeos, parcerias e da sua lista."
+    : pago === "leve" ? `Com ${reais(s.verba)} por mês (${reais(s.verba / 30)} por dia) não dá para testar muito. Publique no orgânico, veja o que funciona e só então coloque dinheiro nos 1 ou 2 melhores vídeos e em remarketing.`
+    : `${reais(s.verba)} por mês (${reais(s.verba / 30)} por dia) permite testar vídeos e públicos de verdade. O orgânico continua: é ele que mostra de graça quais vídeos merecem verba.`;
+
+  if (calor < 200 && pago === "nao" && modelo !== "audiencia") avisos.push("Base pequena e sem verba: espere poucas vendas nesta rodada. O ganho principal será audiência, depoimentos e aprendizado para a próxima.");
+  if (pago !== "nao" && heroi.preco < 40) avisos.push(`A ${reais(heroi.preco)}, o produto dificilmente paga o anúncio sozinho. Ative um complemento no pagamento ou um próximo passo mais caro para a conta fechar.`);
+  if (pago !== "nao") avisos.push(`Conta rápida: os ${reais(verbaTotal)} de anúncio desta campanha se pagam com ${Math.ceil(verbaTotal / heroi.preco)} venda(s) de ${heroi.nome}, sem contar taxas da plataforma. Cada venda pode custar no máximo ${reais(heroi.preco)} em anúncio para não dar prejuízo.`);
+  if (s.camera === "nao") avisos.push("Sem aparecer: grave a tela, use texto grande com narração, mãos fazendo ou imagens com legenda. Depoimento de aluno em vídeo substitui bem o seu rosto.");
+  if (prods.length === 1) avisos.push("Com um produto só, cada cliente compra uma vez. Vale criar um complemento barato ou um próximo passo para aumentar o valor por venda.");
+  const perto = proximas(hoje).find((d) => d.forca === 3 && d.abreEm < 3 && d.abreEm > -4);
+  if (perto && modelo !== "data") avisos.push(`A ${perto.nome} está em cima: não dá mais tempo de aquecer. Se você tem lista, faça uma oferta simples de 3 dias só para ela, por mensagem.`);
+
+  const videos = Object.entries(contagem).map(([k, n]) => ({ k, n, ...V[k], dur: k === "vsl" ? vslDur : V[k].dur,
+    gancho: V[k].gancho.replace("{nicho}", s.nicho || "seu tema").replace("{produto}", heroi.nome).replace("{preco}", reais(heroi.preco)) }));
+
+  return { modelo, nome: modelo === "data" ? "Oferta de " + anc.nome : MODELOS[modelo], porque, heroi, papeis, fases, dias, inicio: hoje, fim, canal, canalTxt, pago, verbaTotal, avisos, videos, porSemana, anc };
+}
+
+/* ---------- tela ---------- */
+function desenhaMomento() {
+  const hoje = lerData() || dia(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate());
+  const anc = ancora(hoje);
+  const lista = proximas(hoje).filter((d) => d.faltam >= 0).slice(0, 4);
+  $("momento").innerHTML = `<div class="rotulo">Leitura do momento · ${fmt(hoje)}</div>
+    <p class="sub" style="margin-top:6px">${esc(bolso(hoje))}</p>
+    <div class="datas">${lista.map((d) => `<div class="data${anc && d.nome === anc.nome && +d.data === +anc.data ? " forte" : ""}">
+      <div class="dias">${d.faltam}<small>${d.faltam === 1 ? "dia" : "dias"}</small></div>
+      <div class="txt"><b>${d.nome} · ${fmt(d.data)}</b><span>${d.forca === 3 ? "Data forte" : d.forca === 2 ? "Boa para oferta" : "Só gancho de conteúdo"} — ${esc(d.angulo)}</span></div></div>`).join("")}</div>`;
+}
+
+function linhaProduto(p = {}) {
+  const d = document.createElement("div");
+  d.className = "produto";
+  d.innerHTML = `<input class="entrada nome" maxlength="50" placeholder="Nome do produto" value="${esc(p.nome || "")}">
+    <input class="entrada preco" type="number" inputmode="decimal" min="1" placeholder="R$" value="${esc(p.preco || "")}">
+    <button class="tira" type="button" aria-label="Remover produto">×</button>
+    <select class="entrada tipo">${["E-book / guia", "Curso gravado", "Mentoria / consultoria", "Comunidade / assinatura", "Modelo / planilha", "Outro"].map((t) => `<option${t === p.tipo ? " selected" : ""}>${t}</option>`).join("")}</select>`;
+  d.querySelector(".tira").onclick = () => { if ($("produtos").children.length > 1) d.remove(); };
+  $("produtos").appendChild(d);
+}
+
+function lerData() { const v = $("inicio").value; if (!v) return null; const [a, m, d] = v.split("-").map(Number); return dia(a, m, d); }
+function ler() {
+  const produtos = [...$("produtos").children].map((d) => ({
+    nome: d.querySelector(".nome").value.trim(), preco: parseFloat(d.querySelector(".preco").value.replace(",", ".")), tipo: d.querySelector(".tipo").value,
+  })).filter((p) => p.nome || p.preco);
+  const n = (id) => Math.max(0, parseFloat($(id).value) || 0);
+  return { produtos, nicho: $("nicho").value.trim(), seguidores: n("seguidores"), lista: n("lista"), verba: n("verba"),
+    horas: +$("horas").value, objetivo: $("objetivo").value, camera: $("camera").value, inicio: lerData() };
+}
+function guardar(s) { try { localStorage.setItem("campanhax", JSON.stringify({ ...s, inicio: undefined })); } catch (e) {} }
+function recuperar() { try { return JSON.parse(localStorage.getItem("campanhax")) || {}; } catch (e) { return {}; } }
+
+let plano = null;
+function gerar() {
+  const s = ler(), erro = $("erro");
+  const falha = !s.produtos.length ? "Adicione pelo menos um produto."
+    : s.produtos.some((p) => !p.nome || !(p.preco > 0)) ? "Preencha nome e preço de cada produto."
+    : !s.inicio ? "Escolha a data de início." : "";
+  erro.hidden = !falha; erro.textContent = falha;
+  if (falha) return;
+  guardar(s);
+  plano = montar(s);
+  desenha(plano);
+  $("resultado").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+const qtd = (f) => Object.entries(f.q).map(([k, n]) => `${n}× ${V[k].nome}`);
+function desenha(p) {
+  $("resultado").innerHTML = `
+  <section class="cartao veredito">
+    <div class="rotulo">Campanha recomendada</div>
+    <h2>${esc(p.nome)}</h2>
+    <p class="sub" style="margin:6px 0 0">${esc(p.porque)}</p>
+    <div class="grade">
+      <div class="dado"><span>Duração</span><b>${p.dias} dias</b><span>${fmt(p.inicio)} → ${fmt(p.fim)}</span></div>
+      <div class="dado"><span>Canal</span><b>${p.canal}</b></div>
+      <div class="dado"><span>Carro-chefe</span><b>${esc(p.heroi.nome)}</b><span>${reais(p.heroi.preco)}</span></div>
+      <div class="dado"><span>Vídeos</span><b>${p.videos.reduce((t, v) => t + v.n, 0)} no total</b><span>cerca de ${p.porSemana} curtos por semana</span></div>
+    </div>
+  </section>
+
+  <section class="cartao"><h2>Orgânico ou pago</h2><p class="sub" style="margin:0">${esc(p.canalTxt)}</p>
+    ${p.avisos.map((a) => `<div class="aviso">${esc(a)}</div>`).join("")}</section>
+
+  <section class="cartao"><h2>Produtos <small>o papel de cada um</small></h2>
+    ${p.papeis.map((x) => `<div class="papel"><span class="etq${x.heroi ? " heroi" : ""}">${x.etq}</span><div><b>${esc(x.p.nome)} · ${reais(x.p.preco)}</b><span>${x.txt}</span></div></div>`).join("")}</section>
+
+  <section class="cartao"><h2>Cronograma <small>${p.fases.length} fases</small></h2>
+    ${p.fases.map((f) => `<div class="fase">
+      <div class="cab"><b>${f.nome}</b><span>${f.dias === 1 ? fmt(f.de) : fmt(f.de) + " → " + fmt(f.ate)} · ${f.dias} ${f.dias === 1 ? "dia" : "dias"}</span></div>
+      <p>${esc(f.objetivo)}</p>
+      <ul class="lista">${f.acoes.map((a) => `<li>${esc(a)}</li>`).join("")}${p.pago !== "nao" && f.reais ? `<li><b>Anúncio:</b> ${esc(f.pagoTxt)}</li>` : ""}</ul>
+      <div class="chips">${qtd(f).map((t) => `<span class="chip">${t}</span>`).join("")}${f.reais ? `<span class="chip verba">${reais(f.reais)} em anúncio</span>` : ""}</div>
+    </div>`).join("")}</section>
+
+  <section class="cartao"><h2>Vídeos para gravar <small>tipo, tamanho e duração</small></h2>
+    ${p.videos.map((v) => `<div class="video">
+      <div class="cab"><b>${v.nome}</b><span>${v.n}×</span></div>
+      <p>${v.dur} · ${v.tam}</p>
+      <p>${v.onde} — para ${v.para}.</p>
+      <p class="gancho">${v.k === "vsl" || v.k === "live" ? "Roteiro: " : "Ideia de começo: "}${esc(v.gancho)}</p></div>`).join("")}</section>
+
+  <button class="btn" id="copiar" type="button">Copiar plano</button>`;
+  $("copiar").onclick = async () => {
+    const t = texto(p);
+    try { if (navigator.share) await navigator.share({ title: "Campanha: " + p.nome, text: t }); else { await navigator.clipboard.writeText(t); $("copiar").textContent = "Copiado ✓"; } }
+    catch (e) { try { await navigator.clipboard.writeText(t); $("copiar").textContent = "Copiado ✓"; } catch (e2) {} }
+  };
+}
+
+function texto(p) {
+  const L = [`CAMPANHA: ${p.nome}`, `${fmt(p.inicio)} a ${fmt(p.fim)} (${p.dias} dias) · ${p.canal}`, "", p.porque, "", "PRODUTOS"];
+  p.papeis.forEach((x) => L.push(`- ${x.etq}: ${x.p.nome} (${reais(x.p.preco)}). ${x.txt}`));
+  L.push("", "CRONOGRAMA");
+  p.fases.forEach((f) => {
+    L.push(`\n${f.nome} — ${fmt(f.de)}${f.dias > 1 ? " a " + fmt(f.ate) : ""}`, f.objetivo);
+    f.acoes.forEach((a) => L.push("- " + a));
+    if (f.reais) L.push(`- Anúncio (${reais(f.reais)}): ${f.pagoTxt}`);
+    L.push("Vídeos: " + qtd(f).join(", "));
+  });
+  L.push("", "VÍDEOS");
+  p.videos.forEach((v) => L.push(`- ${v.n}× ${v.nome} · ${v.dur} · ${v.tam} · ${v.onde}. Começo: ${v.gancho}`));
+  if (p.avisos.length) { L.push("", "ATENÇÃO"); p.avisos.forEach((a) => L.push("- " + a)); }
+  return L.join("\n");
+}
+
+/* ---------- início ---------- */
+(function () {
+  const g = recuperar(), agora = new Date();
+  $("inicio").value = iso(dia(agora.getFullYear(), agora.getMonth() + 1, agora.getDate()));
+  (g.produtos && g.produtos.length ? g.produtos : [{}]).forEach(linhaProduto);
+  ["nicho", "seguidores", "lista", "verba", "horas", "objetivo", "camera"].forEach((k) => { if (g[k] !== undefined && g[k] !== 0 && g[k] !== "") $(k).value = g[k]; });
+  $("maisProduto").onclick = () => linhaProduto();
+  $("montar").onclick = gerar;
+  $("inicio").onchange = desenhaMomento;
+  desenhaMomento();
+})();
+</script>
+</body>
+</html>

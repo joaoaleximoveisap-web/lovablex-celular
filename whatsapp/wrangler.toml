@@ -1,0 +1,31 @@
+# Configuração do robô no Cloudflare Workers.
+# O deploy é feito pelo GitHub Actions (.github/workflows/whatsapp.yml);
+# o id do KV abaixo é preenchido lá automaticamente.
+name = "lovablex-whatsapp"
+main = "src/worker.js"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[kv_namespaces]]
+binding = "DADOS"
+id = "KV_ID_AQUI"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[rules]]
+type = "Text"
+globs = ["**/*.md"]
+fallthrough = true
+
+[vars]
+NOME_DONO = "João"
+MODELO = "claude-opus-5-5"
+ESFORCO = "low"
+GRAPH_VERSION = "v24.0"
+TEMPLATE_RECADO = "recado"
+TEMPLATE_IDIOMA = "pt_BR"
+RADAR_URL = "https://raw.githubusercontent.com/joaoaleximoveisap-web/lovablex-celular/main/radar/data/londrina.json"
+
+[observability]
+enabled = true

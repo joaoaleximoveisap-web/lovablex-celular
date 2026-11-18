@@ -1,0 +1,136 @@
+# Robô do WhatsApp — publica o robô (pasta whatsapp/) no Cloudflare Workers.
+# Roda sozinho quando algo em whatsapp/ muda na branch principal (por exemplo,
+# quando você edita whatsapp/conhecimento.md pelo app), ou à mão na aba Actions.
+#
+# Secrets necessários (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID       → para publicar
+#   ANTHROPIC_API_KEY                                  → o cérebro (Claude)
+#   WHATSAPP_TOKEN, WHATSAPP_PHONE_ID,
+#   WHATSAPP_APP_SECRET, WHATSAPP_VERIFY_TOKEN         → a conta do WhatsApp (Meta)
+#   DONO_NUMERO                                        → seu WhatsApp pessoal, com DDD
+# Passo a passo completo em whatsapp/LEIAME.md.
+name: Robô do WhatsApp — publicar
+
+on:
+  push:
+    branches: [main]
+    paths: ["whatsapp/**", ".github/workflows/whatsapp.yml"]
+  # o app LovableX publica com o token do próprio GitHub, que não dispara o
+  # "push" acima; por isso também roda quando um pedido do app termina
+  workflow_run:
+    workflows: ["LovableX Celular"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: whatsapp-deploy
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: whatsapp
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: O pedido do app mexeu no robô?
+        id: mudou
+        if: github.event_name == 'workflow_run'
+        env:
+          ANTES: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          if git diff --quiet "$ANTES" HEAD -- . ../.github/workflows/whatsapp.yml; then
+            echo "Nada mudou em whatsapp/ — não precisa publicar."
+            echo "pular=sim" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: steps.mudou.outputs.pular != 'sim'
+        with:
+          node-version: 22
+
+      - name: Instalar
+        if: steps.mudou.outputs.pular != 'sim'
+        run: npm install --no-audit --no-fund
+
+      - name: Testes
+        if: steps.mudou.outputs.pular != 'sim'
+        run: npm test
+
+      - name: Conferir a conta da Cloudflare
+        id: conta
+        if: steps.mudou.outputs.pular != 'sim'
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::warning::Faltam os secrets CLOUDFLARE_API_TOKEN e/ou CLOUDFLARE_ACCOUNT_ID. Os testes passaram, mas o robô não foi publicado. Veja whatsapp/LEIAME.md."
+            echo "ok=nao" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=sim" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Criar (ou achar) o banco de dados do robô
+        if: steps.conta.outputs.ok == 'sim'
+        run: |
+          achar() {
+            npx wrangler kv namespace list 2>/dev/null | node -e '
+              let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => {
+                const lista = JSON.parse(s.slice(s.indexOf("[")));
+                const kv = lista.find((n) => n.title === "lovablex-whatsapp-dados");
+                process.stdout.write(kv ? kv.id : "");
+              });'
+          }
+          ID=$(achar)
+          if [ -z "$ID" ]; then
+            npx wrangler kv namespace create lovablex-whatsapp-dados
+            ID=$(achar)
+          fi
+          if [ -z "$ID" ]; then echo "::error::Não consegui criar o KV. O token precisa da permissão Workers KV Storage: Edit."; exit 1; fi
+          sed -i "s/KV_ID_AQUI/$ID/" wrangler.toml
+          echo "KV: $ID"
+
+      - name: Publicar
+        if: steps.conta.outputs.ok == 'sim'
+        run: npx wrangler deploy 2>&1 | tee publicar.log
+
+      - name: Guardar os segredos no robô
+        if: steps.conta.outputs.ok == 'sim'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          WHATSAPP_TOKEN: ${{ secrets.WHATSAPP_TOKEN }}
+          WHATSAPP_PHONE_ID: ${{ secrets.WHATSAPP_PHONE_ID }}
+          WHATSAPP_APP_SECRET: ${{ secrets.WHATSAPP_APP_SECRET }}
+          WHATSAPP_VERIFY_TOKEN: ${{ secrets.WHATSAPP_VERIFY_TOKEN }}
+          DONO_NUMERO: ${{ secrets.DONO_NUMERO }}
+        run: |
+          # só manda os que existem; os vazios ficam como estão
+          node -e '
+            const nomes = ["ANTHROPIC_API_KEY","WHATSAPP_TOKEN","WHATSAPP_PHONE_ID","WHATSAPP_APP_SECRET","WHATSAPP_VERIFY_TOKEN","DONO_NUMERO"];
+            const s = Object.fromEntries(nomes.filter((n) => process.env[n]).map((n) => [n, process.env[n]]));
+            const faltam = nomes.filter((n) => !process.env[n]);
+            if (faltam.length) console.log("::warning::Ainda faltam os secrets: " + faltam.join(", "));
+            require("fs").writeFileSync("segredos.json", JSON.stringify(s), { mode: 0o600 });'
+          npx wrangler secret bulk segredos.json
+          rm -f segredos.json
+
+      - name: Endereço do robô
+        if: steps.conta.outputs.ok == 'sim'
+        run: |
+          URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.workers\.dev' publicar.log | head -1)
+          {
+            echo "### Robô do WhatsApp publicado ✅"
+            echo ""
+            echo "- Página de status: $URL"
+            echo "- Callback URL para colar na Meta: \`$URL/webhook\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "Webhook: $URL/webhook"

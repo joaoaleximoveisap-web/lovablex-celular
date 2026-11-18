@@ -1,0 +1,15 @@
+{
+  "name": "lovablex-whatsapp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --import ./test/md-hook.js --test test/*.test.js",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "1.10.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.164.0"
+  }
+}

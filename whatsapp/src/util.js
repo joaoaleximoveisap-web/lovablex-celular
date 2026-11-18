@@ -58,17 +58,6 @@ export function diaDaSemana(nome) {
 
 export { DIAS };
 
-// Template do WhatsApp não aceita quebra de linha, tab nem 4+ espaços seguidos
-// dentro de uma variável.
-export function textoParaVariavel(texto) {
-  return String(texto ?? "")
-    .replace(/\s*\n+\s*/g, " — ")
-    .replace(/\t/g, " ")
-    .replace(/ {2,}/g, " ")
-    .trim()
-    .slice(0, 1000);
-}
-
 export function idCurto() {
   return Math.random().toString(36).slice(2, 7);
 }

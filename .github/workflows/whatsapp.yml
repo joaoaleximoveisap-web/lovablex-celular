@@ -5,9 +5,9 @@
 # Secrets necessários (Settings → Secrets and variables → Actions):
 #   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID       → para publicar
 #   ANTHROPIC_API_KEY                                  → o cérebro (Claude)
-#   WHATSAPP_TOKEN, WHATSAPP_PHONE_ID,
-#   WHATSAPP_APP_SECRET, WHATSAPP_VERIFY_TOKEN         → a conta do WhatsApp (Meta)
-#   DONO_NUMERO                                        → seu WhatsApp pessoal, com DDD
+#   EVOLUTION_URL, EVOLUTION_API_KEY                   → o servidor que conecta no seu WhatsApp
+#   WEBHOOK_SEGREDO                                    → senha que vai no endereço do webhook
+#   DONO_NUMERO                                        → o seu número de WhatsApp, com DDD
 # Passo a passo completo em whatsapp/LEIAME.md.
 name: Robô do WhatsApp — publicar
 
@@ -107,15 +107,14 @@ jobs:
         if: steps.conta.outputs.ok == 'sim'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          WHATSAPP_TOKEN: ${{ secrets.WHATSAPP_TOKEN }}
-          WHATSAPP_PHONE_ID: ${{ secrets.WHATSAPP_PHONE_ID }}
-          WHATSAPP_APP_SECRET: ${{ secrets.WHATSAPP_APP_SECRET }}
-          WHATSAPP_VERIFY_TOKEN: ${{ secrets.WHATSAPP_VERIFY_TOKEN }}
+          EVOLUTION_URL: ${{ secrets.EVOLUTION_URL }}
+          EVOLUTION_API_KEY: ${{ secrets.EVOLUTION_API_KEY }}
+          WEBHOOK_SEGREDO: ${{ secrets.WEBHOOK_SEGREDO }}
           DONO_NUMERO: ${{ secrets.DONO_NUMERO }}
         run: |
           # só manda os que existem; os vazios ficam como estão
           node -e '
-            const nomes = ["ANTHROPIC_API_KEY","WHATSAPP_TOKEN","WHATSAPP_PHONE_ID","WHATSAPP_APP_SECRET","WHATSAPP_VERIFY_TOKEN","DONO_NUMERO"];
+            const nomes = ["ANTHROPIC_API_KEY","EVOLUTION_URL","EVOLUTION_API_KEY","WEBHOOK_SEGREDO","DONO_NUMERO"];
             const s = Object.fromEntries(nomes.filter((n) => process.env[n]).map((n) => [n, process.env[n]]));
             const faltam = nomes.filter((n) => !process.env[n]);
             if (faltam.length) console.log("::warning::Ainda faltam os secrets: " + faltam.join(", "));
@@ -131,6 +130,6 @@ jobs:
             echo "### Robô do WhatsApp publicado ✅"
             echo ""
             echo "- Página de status: $URL"
-            echo "- Callback URL para colar na Meta: \`$URL/webhook\`"
+            echo "- Webhook para colar no Evolution: \`$URL/evolution/SEU_WEBHOOK_SEGREDO\` (troque pelo valor do secret)"
           } >> "$GITHUB_STEP_SUMMARY"
-          echo "Webhook: $URL/webhook"
+          echo "Webhook: $URL/evolution/SEU_WEBHOOK_SEGREDO"

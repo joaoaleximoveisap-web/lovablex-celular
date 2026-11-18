@@ -1,11 +1,13 @@
 // O cérebro: Claude com ferramentas.
 //
 // Dois modos, dependendo de quem escreve para o número do robô:
-//   • você (DONO_NUMERO): o robô é o seu assistente. Você pede em português normal
-//     ("toda segunda 9h manda pras imobiliárias o resumo do radar") e ele cadastra
-//     contatos, agenda e dispara mensagens.
-//   • os seus contatos (imobiliárias, corretores): o robô responde em seu nome,
-//     tira dúvidas e te avisa quando precisa de você (reunião, negócio, problema).
+//   • você, no "Conversar comigo" (a conversa com você mesmo) começando com
+//     "robô": o robô é o seu assistente. Você pede em português normal
+//     ("robô, toda segunda 9h manda pras imobiliárias o resumo do radar") e ele
+//     cadastra contatos, agenda e dispara mensagens.
+//   • os contatos que você cadastrou (imobiliárias, corretores): o robô responde
+//     no seu WhatsApp, tira dúvidas e para sozinho quando você mesmo responde.
+//     Quem não está cadastrado (família, amigos) o robô nunca responde.
 import Anthropic from "@anthropic-ai/sdk";
 import conhecimento from "../conhecimento.md";
 import { validarQuando, descreverQuando, proximaOcorrencia } from "./agenda.js";
@@ -81,7 +83,7 @@ export const FERRAMENTAS_DONO = [
   },
   {
     name: "enviar_agora",
-    description: "Manda uma mensagem agora (sai em até 5 minutos). Use {nome} para personalizar.",
+    description: "Manda uma mensagem agora. Sai aos poucos (algumas por vez, só entre 8h e 20h) para o número não ser bloqueado. Use {nome} para personalizar.",
     input_schema: {
       type: "object",
       properties: { texto: { type: "string" }, para: PARA },
@@ -100,7 +102,7 @@ export const FERRAMENTAS_DONO = [
   },
   {
     name: "pausar_robo",
-    description: "Faz o robô parar (pausado=true) ou voltar (pausado=false) a responder um contato. Use quando o dono for assumir a conversa pessoalmente.",
+    description: "Faz o robô parar de vez (pausado=true) ou voltar (pausado=false) a responder um contato. Quando o dono responde alguém pessoalmente o robô já pausa sozinho por algumas horas; isto é para pausar de vez.",
     input_schema: {
       type: "object",
       properties: { numero: { type: "string" }, pausado: { type: "boolean" } },
@@ -118,7 +120,7 @@ export const FERRAMENTAS_DONO = [
 export const FERRAMENTAS_CONTATO = [
   {
     name: "avisar_dono",
-    description: "Avisa o dono no WhatsApp pessoal dele. Use quando o contato quiser marcar reunião ou visita, falar de valores, fechar negócio, reclamar, ou pedir algo que você não sabe responder.",
+    description: "Deixa um recado para o dono. Use quando o contato quiser marcar reunião ou visita, falar de valores, fechar negócio, reclamar, ou pedir algo que você não sabe responder.",
     input_schema: {
       type: "object",
       properties: {
@@ -141,15 +143,15 @@ SOBRE O NEGÓCIO (escrito pelo ${dono}):
 ${conhecimento}`;
 
   if (modo === "dono") {
-    return `Você é o assistente pessoal de ${dono} no WhatsApp. ${dono} é assessor de imobiliárias e está falando com você agora.
+    return `Você é o assistente pessoal de ${dono} no WhatsApp. ${dono} é assessor de imobiliárias e está falando com você agora, pela conversa dele com ele mesmo.
 Você cuida dos contatos dele, agenda e dispara mensagens e mostra conversas, usando as ferramentas.
 - Antes de disparar para muita gente (todos, ou uma etiqueta), mostre o texto final e para quantos vai, e só envie depois que ele confirmar.
 - Quando agendar, confirme em uma linha o que ficou agendado e quando sai o próximo envio.
 - Mensagens para os contatos devem soar como o ${dono} escrevendo: cordiais, diretas, sem cara de robô.
 ${comum}`;
   }
-  return `Você é o assistente de ${dono}, assessor de imobiliárias, e está respondendo no WhatsApp em nome dele. Quem fala com você é um contato dele (imobiliária, corretor ou cliente).
-- Se perguntarem, diga com naturalidade que é o assistente virtual do ${dono}.
+  return `Você é o assistente virtual de ${dono}, assessor de imobiliárias, e está respondendo no WhatsApp do próprio ${dono}. Quem fala com você é um contato profissional dele (imobiliária, corretor ou cliente). Falas marcadas com "(${dono})" no histórico foram escritas por ele mesmo.
+- Se perguntarem, ou se a pessoa achar que está falando com o ${dono}, diga com naturalidade que é o assistente virtual dele.
 - Ajude com o que estiver no texto abaixo e nos dados do Radar. O que não souber, diga que vai passar para o ${dono}.
 - Para marcar reunião: pergunte o assunto e dois horários que servem, use avisar_dono e diga que o ${dono} confirma em seguida. Você não confirma horário sozinho.
 - Para valores, negociação, contrato ou reclamação: avise o ${dono} com avisar_dono.
@@ -235,7 +237,7 @@ export async function executarFerramenta(nome, entrada, ctx) {
       const quem = await dados.destinatarios(para);
       if (quem.length === 0) return { erro: `nenhum contato em ${descreverPara(para)} (ou todos pediram para sair)` };
       await dados.enfileirar(quem.map((c) => ({ numero: c.numero, texto: entrada.texto })));
-      return { ok: true, na_fila: quem.length, observacao: "sai em até 5 minutos" };
+      return { ok: true, na_fila: quem.length, observacao: "sai aos poucos, algumas a cada 5 minutos, só entre 8h e 20h" };
     }
     case "listar_agendamentos": {
       const lista = (await dados.agendamentos()).filter((a) => a.ativo !== false);
@@ -257,13 +259,13 @@ export async function executarFerramenta(nome, entrada, ctx) {
     case "pausar_robo": {
       const c = await dados.contato(entrada.numero);
       if (!c) return { erro: "contato não cadastrado" };
-      await dados.atualizarContato(entrada.numero, { pausado: entrada.pausado });
+      await dados.atualizarContato(entrada.numero, { pausado: entrada.pausado, pausado_ate: 0 });
       return { ok: true };
     }
     case "ver_conversa": {
       const h = await dados.historico(entrada.numero);
       if (!h.length) return { conversa: "sem mensagens nos últimos 30 dias" };
-      return { conversa: h.map((m) => `${m.role === "user" ? "contato" : "robô"}: ${m.content}`).join("\n") };
+      return { conversa: h.map((m) => `${m.role === "user" ? "contato" : "você/robô"}: ${m.content}`).join("\n") };
     }
     case "consultar_radar":
       return { radar: await resumoRadar(env, ctx.fetcher) };

@@ -1,135 +1,142 @@
-# Robô do WhatsApp — seu assistente e o atendente das imobiliárias
+# Robô do WhatsApp — no seu próprio número
 
-Um número de WhatsApp só do robô (o chip novo). Ele faz três coisas:
+O robô usa o **seu WhatsApp Business**, conectado como se fosse um "WhatsApp Web" (QR code).
+Você continua usando o celular normalmente. Ele faz três coisas:
 
-1. **É o seu assistente.** Do seu WhatsApp pessoal, você escreve para o número do robô em português normal:
-   - "salva a Carla da Imob Sol, 43 99999-1111, etiqueta imobiliária"
-   - "toda segunda às 9h manda para as imobiliárias o resumo do radar"
-   - "manda agora para a Carla e o Pedro: amanhã não vou conseguir passar aí"
-   - "quais disparos estão agendados?" · "cancela o #k3f9a"
-   - "como foi a conversa com a Carla?" · "pausa o robô para o Pedro, vou ligar para ele"
-2. **Dispara mensagens agendadas** (uma vez, todo dia, toda semana ou todo mês), com o nome de cada pessoa e, se você quiser, o resumo atualizado do Radar Londrina.
-3. **Responde os seus contatos** em seu nome: tira dúvidas com o que estiver em `conhecimento.md` e te avisa no seu WhatsApp quando alguém quer marcar reunião, falar de valores ou reclamar. Ele **não confirma reunião sozinho**: ele anota dois horários e te avisa.
+1. **É o seu assistente.** Abra a conversa com você mesmo (**"Conversar comigo"**, o seu próprio
+   nome na lista de contatos) e comece a mensagem com **"robô"**:
+   - "robô, salva a Carla da Imob Sol, 43 99999-1111, etiqueta imobiliária"
+   - "robô, toda segunda às 9h manda para as imobiliárias o resumo do radar"
+   - "robô, manda agora para a Carla e o Pedro: amanhã não consigo passar aí"
+   - "robô, quais disparos estão agendados?" · "cancela o #k3f9a"
 
-Quem responder **SAIR** deixa de receber os disparos (e **VOLTAR** para voltar). Contato que escreve pela primeira vez é cadastrado com a etiqueta `novo` e você é avisado.
+   Por 10 minutos depois disso, não precisa repetir "robô". As respostas dele começam com 🤖.
+   O que você escrever ali **sem** "robô" (as suas anotações) ele ignora.
+2. **Dispara mensagens agendadas** (uma vez, todo dia, toda semana ou todo mês), com o nome de cada pessoa
+   e, se você quiser, o resumo atualizado do Radar Londrina.
+3. **Responde os contatos que você cadastrou** (imobiliárias, corretores). Ele tira dúvidas com o que estiver
+   em `conhecimento.md` e, quando alguém quer reunião, valores ou reclamar, deixa um recado 🔔 no seu
+   "Conversar comigo". Ele **não confirma reunião sozinho**.
+
+### O que ele nunca faz
+
+- **Não responde quem não está cadastrado**: família, amigos, clientes antigos, grupos. Para ele, essas conversas não existem.
+- **Não atrapalha você**: se você mesmo responde um contato, ele fica quieto com aquela pessoa por 12 horas.
+- **Não dispara à noite nem em rajada**: só entre 8h e 20h, 4 mensagens a cada 5 minutos, com "digitando…"
+  e intervalo entre uma e outra, no máximo 80 por dia. Tudo isso é ajustável em `wrangler.toml`.
+- Quem responde **SAIR** não recebe mais disparos (e **VOLTAR** para voltar).
+
+## ⚠️ O risco, em uma frase
+
+Conectar por QR code **não é permitido pela Meta**. Se muita gente bloquear ou denunciar as suas mensagens,
+a Meta pode **banir o seu número**. Os limites acima reduzem o risco, mas não zeram.
+Para diminuir ainda mais: mande só para quem te conhece, comece com poucas pessoas por dia e não mande o mesmo texto para todo mundo.
 
 ```
-seu WhatsApp ─┐                         ┌─► Claude (o cérebro)
-              ├─► número do robô ─► Meta ─► robô na Cloudflare ─┤
-contatos ─────┘     (chip novo)          (grátis)               └─► banco de dados (contatos, agenda)
+seu celular (WhatsApp Business) ── QR code ──► Evolution (seu servidor)
+                                                    │  webhook
+                                                    ▼
+                                     robô na Cloudflare (grátis) ──► Claude (o cérebro)
+                                                    │
+                                                    └─► banco: contatos, agenda, conversas
 ```
 
 ---
 
-## Configuração (uma vez só, ~1 hora)
+## Configuração (uma vez só)
 
-Dá para fazer tudo pelo navegador do celular, mas é mais confortável no computador.
-Você vai juntar **8 secrets** e colar no GitHub. Anote cada um conforme for pegando.
+### 1. Um servidor para o Evolution (~R$ 25–40/mês)
 
-### 1. O chip
+O Evolution precisa ficar ligado 24h, conectado ao seu WhatsApp. A Cloudflare grátis não serve para isso.
 
-- Ative o chip novo num celular qualquer só para **receber o SMS** de confirmação.
-- **Não instale o WhatsApp nesse número.** Um número usado pela API oficial não pode estar no app. Se já estiver, apague a conta no app primeiro (WhatsApp → Configurações → Conta → Apagar conta).
+**Caminho mais fácil:** contrate uma VPS com o **EasyPanel** (a Hostinger oferece pronto, por exemplo) e instale o
+modelo **"Evolution API"** com um clique. Ele já dá um endereço https. Anote:
+- o endereço (ex.: `https://evolution.seuservidor.com`) → secret `EVOLUTION_URL`
+- a **API key global** que você definir na instalação → secret `EVOLUTION_API_KEY`
 
-### 2. Meta (a conta oficial do WhatsApp)
+**Caminho manual (qualquer VPS com Docker):** copie a pasta `whatsapp/servidor/` para o servidor,
+faça `cp .env.exemplo .env`, preencha o arquivo e rode `docker compose up -d`. O endereço é `https://` + `ENDERECO`,
+e a chave é o `AUTHENTICATION_API_KEY`.
 
-1. Entre em **developers.facebook.com** com o seu Facebook → **Meus apps → Criar app** → caso de uso **"Conectar-se com clientes pelo WhatsApp"** (ou tipo **Empresa**). Se pedir um portfólio empresarial, crie um com o nome do seu negócio.
-2. No app, abra **WhatsApp → Configuração da API** (API Setup):
-   - Clique em **Adicionar número de telefone**, coloque o chip novo, o nome que aparece para os contatos (ex.: "João Assessoria") e confirme com o SMS.
-   - Copie o **Identificação do número de telefone** (Phone number ID) → secret `WHATSAPP_PHONE_ID`.
-3. **Token permanente** (o token que aparece na tela expira em 24h, não use):
-   - **business.facebook.com → Configurações → Usuários → Usuários do sistema → Adicionar** (função Administrador).
-   - **Atribuir ativos** → o seu app (controle total) e a sua conta do WhatsApp (controle total).
-   - **Gerar token** → escolha o app, validade **Nunca**, permissões `whatsapp_business_messaging` e `whatsapp_business_management` → secret `WHATSAPP_TOKEN`.
-4. **Configurações do app → Básico → Chave secreta do app** (App Secret) → secret `WHATSAPP_APP_SECRET`.
-5. Cadastre uma forma de pagamento na conta do WhatsApp (as mensagens que **você** inicia são cobradas pela Meta; responder quem te escreveu é grátis).
+### 2. Conectar o seu WhatsApp
 
-### 3. A mensagem-modelo "recado" (obrigatória para os disparos)
+1. Abra `EVOLUTION_URL/manager` e entre com a API key.
+2. **Criar instância** com o nome **`joao`**, canal Baileys / WhatsApp.
+3. Aparece um QR code. No celular: **WhatsApp Business → ⋮ (ou Configurações) → Dispositivos conectados → Conectar dispositivo** → leia o QR.
 
-O WhatsApp só deixa mandar texto livre para quem te escreveu nas últimas 24 horas. Para o resto, a mensagem precisa ir num **modelo aprovado**. O robô usa um modelo só, com espaço para qualquer texto.
+Pronto: o Evolution aparece como um "computador conectado". Se um dia você desconectar por ali, o robô para.
 
-**WhatsApp Manager → Modelos de mensagem → Criar modelo**:
+### 3. Claude (o cérebro)
 
-- Categoria: **Marketing** (novidades, convites, resumos) — se for só aviso operacional, **Utilidade**.
-- Nome: `recado` · Idioma: **Português (BR)**
-- Corpo:
-  ```
-  Olá, {{1}}! {{2}}
+**console.anthropic.com → API Keys → Create Key** → secret `ANTHROPIC_API_KEY`. Coloque créditos em **Billing**.
+É pago à parte da assinatura do app do Claude.
 
-  Se não quiser mais receber estas mensagens, responda SAIR.
-  ```
-- Exemplos: `{{1}}` = `Carla` · `{{2}}` = `Saiu o resumo do Radar Londrina desta semana.`
+### 4. Cloudflare (onde o robô fica, grátis)
 
-A aprovação costuma sair em minutos. O robô também usa esse modelo para te avisar quando você não escreveu para ele nas últimas 24h.
-
-### 4. Claude (o cérebro)
-
-**console.anthropic.com → API Keys → Create Key** → secret `ANTHROPIC_API_KEY`. Coloque créditos em **Billing**. A chave da API é paga à parte, não vem da assinatura do app do Claude.
-
-### 5. Cloudflare (onde o robô fica no ar, grátis)
-
-1. Crie a conta em **dash.cloudflare.com**. Abra **Workers e Pages** uma vez e aceite o subdomínio `*.workers.dev` que ela sugerir.
-2. Copie o **Account ID** (aparece na lateral da página inicial da conta) → secret `CLOUDFLARE_ACCOUNT_ID`.
+1. Crie a conta em **dash.cloudflare.com**. Abra **Workers e Pages** uma vez e aceite o subdomínio `*.workers.dev`.
+2. Copie o **Account ID** → secret `CLOUDFLARE_ACCOUNT_ID`.
 3. **Meu perfil → Tokens de API → Criar token → modelo "Editar Cloudflare Workers"** → secret `CLOUDFLARE_API_TOKEN`.
 
-### 6. Os outros dois secrets
+### 5. Os dois últimos secrets
 
-- `WHATSAPP_VERIFY_TOKEN`: invente uma senha qualquer (ex.: `robo-joao-2026`). Você vai colar ela na Meta no passo 8.
-- `DONO_NUMERO`: o **seu** WhatsApp pessoal, com DDD (ex.: `43988887777`). É assim que o robô sabe que é você.
+- `WEBHOOK_SEGREDO`: invente uma senha só com letras e números (ex.: `k8Jq2xVb7mPz`). Ela vai no endereço do webhook,
+  e assim ninguém mais consegue mandar mensagens falsas para o robô.
+- `DONO_NUMERO`: o seu número, com DDD (ex.: `43988887777`).
 
-### 7. Colar tudo no GitHub e publicar
+### 6. Colar tudo no GitHub e publicar
 
 1. GitHub → este repositório → **Settings → Secrets and variables → Actions → New repository secret**, um para cada:
-   `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_ID`, `WHATSAPP_APP_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `DONO_NUMERO`.
+   `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ANTHROPIC_API_KEY`, `EVOLUTION_URL`, `EVOLUTION_API_KEY`,
+   `WEBHOOK_SEGREDO`, `DONO_NUMERO`.
 2. **Actions → Robô do WhatsApp — publicar → Run workflow**.
-3. Quando terminar, abra a execução: o resumo mostra o endereço do robô, algo como `https://lovablex-whatsapp.SEU-NOME.workers.dev`. Abra esse endereço: ele diz se falta algum secret.
+3. No resumo da execução aparece o endereço do robô, algo como `https://lovablex-whatsapp.SEU-NOME.workers.dev`.
+   Abra esse endereço: ele diz se falta algum secret.
 
-### 8. Ligar a Meta no robô
+### 7. Ligar o Evolution no robô
 
-No app da Meta: **WhatsApp → Configuração** (Configuration) → **Webhook → Editar**:
+No `/manager` do Evolution → instância **joao** → **Eventos → Webhook**:
+- **Ativado**
+- URL: `https://lovablex-whatsapp.SEU-NOME.workers.dev/evolution/SEU_WEBHOOK_SEGREDO`
+- **Webhook by events**: desligado · **Webhook base64**: desligado
+- Eventos: marque **MESSAGES_UPSERT**
+- Salvar.
 
-- URL de callback: `https://lovablex-whatsapp.SEU-NOME.workers.dev/webhook`
-- Token de verificação: o mesmo `WHATSAPP_VERIFY_TOKEN`
-- Depois, em **Campos do webhook**, assine **messages**.
+### 8. Testar
 
-Por fim, no topo do app, mude de **Desenvolvimento** para **Publicado** (Live). Sem isso, só números de teste recebem resposta.
-
-### 9. Testar
-
-Do seu WhatsApp pessoal, mande **"oi"** para o número do robô. Ele responde como seu assistente. Depois: *"salva meu contato de teste: Maria, 43 9xxxx-xxxx, etiqueta teste"* e *"manda agora para a etiqueta teste: olá {nome}, isto é um teste"*.
+1. No WhatsApp, abra a conversa com **você mesmo** e escreva: **robô, oi**. A resposta deve chegar com 🤖.
+2. **robô, salva meu contato de teste: Maria, 43 9xxxx-xxxx, etiqueta teste** (use o número de alguém de confiança).
+3. **robô, manda agora para a etiqueta teste: olá {nome}, isto é um teste** (sai em até 5 minutos, se for entre 8h e 20h).
+4. Peça para a Maria responder e veja o robô conversar com ela.
 
 ---
 
 ## No dia a dia
 
-- **Ensinar o robô sobre o seu trabalho:** edite `whatsapp/conhecimento.md` (pode pedir pelo app LovableX: *"no conhecimento do robô do WhatsApp, acrescenta que eu atendo sábado de manhã"*). O robô é republicado sozinho.
-  ⚠️ Se este repositório for público, esse arquivo também é: não ponha nele nada confidencial.
+- **Ensinar o robô sobre o seu trabalho:** edite `whatsapp/conhecimento.md`. Pode pedir pelo app LovableX, por exemplo:
+  *"no conhecimento do robô do WhatsApp, acrescenta que eu atendo sábado de manhã"*. O robô é republicado sozinho.
+  ⚠️ Se este repositório for público, esse arquivo também é: não ponha nada confidencial nele.
 - **Contatos e agenda** ficam no banco do robô na Cloudflare, **não no GitHub**. Para mexer, fale com o robô.
-- **Modelo do Claude:** em `wrangler.toml`, `MODELO = "claude-opus-5-5"` (o melhor). Para gastar menos, troque por `claude-sonnet-5-5` ou `claude-haiku-5-5` (bem mais barato).
+- **Só disparos, sem respostas automáticas:** em `wrangler.toml`, `AUTO_RESPOSTA = "nao"`.
+- **Gastar menos com o Claude:** em `wrangler.toml`, troque `MODELO = "claude-opus-5-5"` por `claude-sonnet-5-5` ou `claude-haiku-5-5`.
 - **Ver erros:** Cloudflare → Workers → lovablex-whatsapp → Logs.
 
-## Limites desta primeira versão
+## Limites desta versão
 
-- Lê só **texto**: áudio, foto e documento recebem um aviso pedindo texto, e você é avisado.
-- Envia até **40 mensagens a cada 5 minutos** (~480 por hora). Listas maiores saem em lotes, sozinhas.
-- Um disparo que atrasar mais de 6 horas (robô fora do ar) é pulado, para não chegar fora de hora.
-
-## Regras do jogo (para não perder o número)
-
-- Mande disparos **só para quem te conhece e aceitou receber**. Muitos bloqueios e denúncias derrubam a qualidade do número e a Meta limita ou bane.
-- Comece com poucos contatos por dia. A Meta aumenta o seu limite de conversas aos poucos (começa em 250 pessoas por dia).
-- LGPD: o robô respeita o SAIR automaticamente. Não importe listas compradas.
+- Lê só **texto**. Áudio, foto e documento ficam para você responder.
+- Os recados 🔔 chegam no "Conversar comigo", que **não toca notificação**. Mas a mensagem do próprio contato toca, então você vê de qualquer jeito.
+- Não participa de grupos.
 
 ## Para quem for mexer no código
 
 ```
 whatsapp/
-  conhecimento.md   o que o robô sabe (texto livre)
-  wrangler.toml     configuração da Cloudflare
-  src/worker.js     entrada: webhook da Meta, disparos a cada 5 minutos
-  src/agente.js     Claude, instruções e ferramentas (dono × contato)
-  src/agenda.js     cálculo de quando cada agendamento sai
-  src/dados.js      contatos, agenda, fila e conversas (Cloudflare KV)
-  src/whatsapp.js   API oficial do WhatsApp (texto, template, assinatura)
-  test/             npm test
+  conhecimento.md     o que o robô sabe (texto livre)
+  wrangler.toml       configuração e limites
+  servidor/           docker-compose do Evolution API (opcional)
+  src/worker.js       entrada: webhook do Evolution, disparos a cada 5 minutos, regras de quem responder
+  src/agente.js       Claude, instruções e ferramentas (dono × contato)
+  src/agenda.js       cálculo de quando cada agendamento sai
+  src/dados.js        contatos, agenda, fila e conversas (Cloudflare KV)
+  src/evolution.js    envio pelo Evolution e leitura do webhook
+  test/               npm test
 ```

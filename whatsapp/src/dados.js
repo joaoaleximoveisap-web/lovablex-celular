@@ -5,8 +5,9 @@
 //   agendamentos      [ { id, texto, para, quando, ativo, criado_em, ultimo_envio } ]
 //   fila              [ { numero, texto } ]  mensagens esperando para sair
 //   hist:<numero>     últimas falas da conversa (some sozinho em 30 dias)
-//   ultima:<numero>   quando o contato escreveu por último (janela de 24h)
-//   msg:<id>          mensagens já processadas (a Meta às vezes reenvia)
+//   robo:<id>         mensagens que o robô mandou (para não confundir com você)
+//   dia:<AAAA-MM-DD>  quantos disparos saíram no dia
+//   msg:<id>          mensagens já processadas (o webhook às vezes repete)
 import { normalizarNumero } from "./util.js";
 
 const DIA_S = 24 * 60 * 60;
@@ -110,15 +111,35 @@ export class Dados {
     await this.kv.put(`hist:${n}`, JSON.stringify(h.slice(-MAX_HISTORICO)), { expirationTtl: 30 * DIA_S });
   }
 
-  async marcarEntrada(numero) {
-    await this.kv.put(`ultima:${normalizarNumero(numero)}`, String(Date.now()), { expirationTtl: 2 * DIA_S });
+  // Mensagens que o próprio robô mandou. O WhatsApp devolve uma cópia de tudo
+  // que sai do seu número; assim dá para separar o que foi o robô do que foi você.
+  async marcarDoRobo(idMensagem) {
+    if (idMensagem) await this.kv.put(`robo:${idMensagem}`, "1", { expirationTtl: 2 * DIA_S });
   }
 
-  // O WhatsApp só deixa mandar texto livre até 24h depois da última mensagem
-  // do contato. Fora disso, só mensagem-modelo (template) aprovada.
-  async janelaAberta(numero, agora = Date.now()) {
-    const t = Number(await this.kv.get(`ultima:${normalizarNumero(numero)}`));
-    return t > 0 && agora - t < 23.5 * 60 * 60 * 1000;
+  async foiDoRobo(idMensagem) {
+    return Boolean(idMensagem && (await this.kv.get(`robo:${idMensagem}`)));
+  }
+
+  // Quantos disparos já saíram hoje (limite diário contra bloqueio).
+  async enviadosNoDia(dia) {
+    return Number(await this.kv.get(`dia:${dia}`)) || 0;
+  }
+
+  async somarEnviados(dia, n) {
+    const atual = await this.enviadosNoDia(dia);
+    await this.kv.put(`dia:${dia}`, String(atual + n), { expirationTtl: 3 * DIA_S });
+  }
+
+  // Conversa com o dono no "Conversar comigo": depois da 1ª mensagem com
+  // "robô", as seguintes não precisam da palavra por alguns minutos.
+  async donoConversando(agora) {
+    const t = Number(await this.kv.get("dono:ativo"));
+    return t > 0 && agora - t < 10 * 60 * 1000;
+  }
+
+  async marcarDonoConversando(agora) {
+    await this.kv.put("dono:ativo", String(agora), { expirationTtl: DIA_S });
   }
 
   async jaProcessada(idMensagem) {

@@ -22,9 +22,13 @@ fallthrough = true
 NOME_DONO = "João"
 MODELO = "claude-opus-5-5"
 ESFORCO = "low"
-GRAPH_VERSION = "v24.0"
-TEMPLATE_RECADO = "recado"
-TEMPLATE_IDIOMA = "pt_BR"
+EVOLUTION_INSTANCIA = "joao"     # o nome que você deu à instância no Evolution
+AUTO_RESPOSTA = "sim"            # "nao" = o robô só faz disparos e não responde ninguém
+PAUSA_HORAS = "12"               # quando você responde alguém, o robô fica quieto com ele por X horas
+HORA_INICIO = "8"                # disparos só entre 8h…
+HORA_FIM = "20"                  # …e 20h (Brasília)
+LOTE = "4"                       # mensagens por rodada (a cada 5 minutos)
+LIMITE_DIA = "80"                # máximo de disparos por dia
 RADAR_URL = "https://raw.githubusercontent.com/joaoaleximoveisap-web/lovablex-celular/main/radar/data/londrina.json"
 
 [observability]
